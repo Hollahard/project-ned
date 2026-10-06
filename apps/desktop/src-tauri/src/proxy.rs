@@ -41,12 +41,88 @@ pub struct ModelProfile {
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct GpuTelemetry {
+    #[serde(default)]
+    pub available: bool,
+    #[serde(default)]
+    pub device_name: String,
+    #[serde(default)]
+    pub driver_version: String,
+    #[serde(default)]
+    pub nvml_version: String,
+    #[serde(default)]
+    pub vram_total_mb: f64,
+    #[serde(default)]
+    pub vram_used_mb: f64,
+    #[serde(default)]
+    pub vram_free_mb: f64,
+    #[serde(default)]
+    pub vram_usage_percent: f64,
+    #[serde(default)]
+    pub temperature_c: i64,
+    #[serde(default)]
+    pub power_watts: f64,
+    #[serde(default)]
+    pub power_limit_watts: f64,
+    #[serde(default)]
+    pub utilization_gpu_percent: i64,
+    #[serde(default)]
+    pub utilization_mem_percent: i64,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct PreflightRequest {
+    pub model_name: String,
+    #[serde(default = "default_context_length")]
+    pub context_length: u32,
+    #[serde(default = "default_kv_cache")]
+    pub kv_cache_dtype: String,
+    pub available_vram_mb: Option<f64>,
+    pub bpw: Option<f64>,
+}
+
+fn default_context_length() -> u32 {
+    32768
+}
+
+fn default_kv_cache() -> String {
+    "q6".to_string()
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct PreflightResult {
+    pub fits: bool,
+    pub model_name: String,
+    pub context_length: u32,
+    pub kv_cache_dtype: String,
+    pub estimated_weights_mb: f64,
+    pub estimated_kv_cache_mb: f64,
+    pub estimated_total_mb: f64,
+    pub available_vram_mb: f64,
+    pub headroom_mb: f64,
+    pub recommended_context: Option<u32>,
+    pub recommended_kv_cache: Option<String>,
+    pub message: String,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct GamingModeStatus {
+    pub active: bool,
+    pub activated_at: Option<f64>,
+    pub elapsed_seconds: f64,
+    pub vram_freed_mb: f64,
+    pub message: String,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct RuntimeStatus {
     pub core_status: String,
     pub inference_status: String,
     pub active_model: Option<String>,
     pub vram_allocated_mb: Option<f64>,
     pub vram_total_mb: Option<f64>,
+    pub gpu_telemetry: Option<GpuTelemetry>,
+    pub gaming_mode: Option<GamingModeStatus>,
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
@@ -135,8 +211,29 @@ impl CoreProxy {
             return Err(ProxyError::CoreError { status, body });
         }
 
-        let data = res.json::<RuntimeStatus>().await?;
-        Ok(data)
+        let raw: serde_json::Value = res.json().await?;
+        let core_status = raw["status"].as_str().unwrap_or("unknown").to_string();
+        let inf_state = raw["inference"]["state"].as_str().unwrap_or("unknown").to_string();
+        let active_model = raw["inference"]["model_id"].as_str().map(|s| s.to_string());
+
+        let telem: Option<GpuTelemetry> = serde_json::from_value(raw["telemetry"].clone()).ok();
+        let gm: Option<GamingModeStatus> = serde_json::from_value(raw["gaming_mode"].clone()).ok();
+
+        let (vram_used, vram_total) = if let Some(ref t) = telem {
+            (Some(t.vram_used_mb), Some(t.vram_total_mb))
+        } else {
+            (None, None)
+        };
+
+        Ok(RuntimeStatus {
+            core_status,
+            inference_status: inf_state,
+            active_model,
+            vram_allocated_mb: vram_used,
+            vram_total_mb: vram_total,
+            gpu_telemetry: telem,
+            gaming_mode: gm,
+        })
     }
 
     /// List available EXL3 models.
@@ -317,8 +414,116 @@ impl CoreProxy {
         }
 
         let resp: serde_json::Value = res.json().await?;
-        let token = resp["token"].as_str().unwrap_or_default().to_string();
+        let token = resp["one_shot_token"]
+            .as_str()
+            .or_else(|| resp["token"].as_str())
+            .unwrap_or_default()
+            .to_string();
         let args_hash = resp["args_hash"].as_str().unwrap_or_default().to_string();
         Ok((token, args_hash))
+    }
+
+    /// Fetch real-time NVIDIA GPU telemetry via Core NVML service.
+    pub async fn get_gpu_telemetry(&self) -> Result<GpuTelemetry, ProxyError> {
+        let url = format!("{}/api/v1/telemetry/gpu", self.core_base_url);
+        let res = self
+            .client
+            .get(&url)
+            .header("Authorization", format!("Bearer {}", self.core_bearer_token))
+            .send()
+            .await?;
+
+        if !res.status().is_success() {
+            let status = res.status();
+            let body = res.text().await.unwrap_or_default();
+            return Err(ProxyError::CoreError { status, body });
+        }
+
+        let data = res.json::<GpuTelemetry>().await?;
+        Ok(data)
+    }
+
+    /// Perform preflight calculation checking if model fits in VRAM.
+    pub async fn check_vram_preflight(
+        &self,
+        request: &PreflightRequest,
+    ) -> Result<PreflightResult, ProxyError> {
+        let url = format!("{}/api/v1/models/preflight", self.core_base_url);
+        let res = self
+            .client
+            .post(&url)
+            .header("Authorization", format!("Bearer {}", self.core_bearer_token))
+            .json(request)
+            .send()
+            .await?;
+
+        if !res.status().is_success() {
+            let status = res.status();
+            let body = res.text().await.unwrap_or_default();
+            return Err(ProxyError::CoreError { status, body });
+        }
+
+        let data = res.json::<PreflightResult>().await?;
+        Ok(data)
+    }
+
+    /// Activate Gaming Mode (one-click turn abort and instant VRAM evacuation).
+    pub async fn activate_gaming_mode(&self) -> Result<GamingModeStatus, ProxyError> {
+        let url = format!("{}/api/v1/gaming-mode/activate", self.core_base_url);
+        let res = self
+            .client
+            .post(&url)
+            .header("Authorization", format!("Bearer {}", self.core_bearer_token))
+            .send()
+            .await?;
+
+        if !res.status().is_success() {
+            let status = res.status();
+            let body = res.text().await.unwrap_or_default();
+            return Err(ProxyError::CoreError { status, body });
+        }
+
+        let data = res.json::<GamingModeStatus>().await?;
+        Ok(data)
+    }
+
+    /// Deactivate Gaming Mode, restoring normal model load and inference capabilities.
+    pub async fn deactivate_gaming_mode(&self) -> Result<GamingModeStatus, ProxyError> {
+        let url = format!("{}/api/v1/gaming-mode/deactivate", self.core_base_url);
+        let res = self
+            .client
+            .post(&url)
+            .header("Authorization", format!("Bearer {}", self.core_bearer_token))
+            .send()
+            .await?;
+
+        if !res.status().is_success() {
+            let status = res.status();
+            let body = res.text().await.unwrap_or_default();
+            return Err(ProxyError::CoreError { status, body });
+        }
+
+        let data = res.json::<GamingModeStatus>().await?;
+        Ok(data)
+    }
+
+    /// Get current Gaming Mode status.
+    pub async fn get_gaming_mode_status(&self) -> Result<GamingModeStatus, ProxyError> {
+        let url = format!("{}/api/v1/gaming-mode/status", self.core_base_url);
+        let res = self
+            .client
+            .get(&url)
+            .header("Authorization", format!("Bearer {}", self.core_bearer_token))
+            .send()
+            .await?;
+
+        if !res.status().is_success() {
+            let status = res.status();
+            let body = res.text().await.unwrap_or_default();
+            return Err(ProxyError::CoreError { status, body });
+        }
+
+        let data = res.json::<GamingModeStatus>().await?;
+        Ok(data)
     }
 }

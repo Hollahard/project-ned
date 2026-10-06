@@ -9,7 +9,10 @@ use std::sync::Arc;
 use tauri::State;
 use tokio::sync::RwLock;
 
-use crate::proxy::{ModelProfile, RuntimeStatus, SessionSummary};
+use crate::proxy::{
+    GamingModeStatus, GpuTelemetry, ModelProfile, PreflightRequest, PreflightResult, RuntimeStatus,
+    SessionSummary,
+};
 use crate::runtime::SupervisorRuntime;
 
 pub type AppState = Arc<RwLock<SupervisorRuntime>>;
@@ -88,4 +91,45 @@ pub async fn trigger_native_approval_test(
     approvals
         .request_approval_and_mint(&tool_name, &arguments, &risk_reason, &turn_id)
         .map_err(|e| e.to_string())
+}
+
+#[tauri::command]
+pub async fn get_gpu_telemetry(state: State<'_, AppState>) -> Result<GpuTelemetry, String> {
+    let runtime = state.read().await;
+    let proxy = runtime.proxy().ok_or("Supervisor proxy not initialized")?;
+    proxy.get_gpu_telemetry().await.map_err(|e| e.to_string())
+}
+
+#[tauri::command]
+pub async fn check_vram_preflight(
+    state: State<'_, AppState>,
+    request: PreflightRequest,
+) -> Result<PreflightResult, String> {
+    let runtime = state.read().await;
+    let proxy = runtime.proxy().ok_or("Supervisor proxy not initialized")?;
+    proxy
+        .check_vram_preflight(&request)
+        .await
+        .map_err(|e| e.to_string())
+}
+
+#[tauri::command]
+pub async fn activate_gaming_mode(state: State<'_, AppState>) -> Result<GamingModeStatus, String> {
+    let runtime = state.read().await;
+    let proxy = runtime.proxy().ok_or("Supervisor proxy not initialized")?;
+    proxy.activate_gaming_mode().await.map_err(|e| e.to_string())
+}
+
+#[tauri::command]
+pub async fn deactivate_gaming_mode(state: State<'_, AppState>) -> Result<GamingModeStatus, String> {
+    let runtime = state.read().await;
+    let proxy = runtime.proxy().ok_or("Supervisor proxy not initialized")?;
+    proxy.deactivate_gaming_mode().await.map_err(|e| e.to_string())
+}
+
+#[tauri::command]
+pub async fn get_gaming_mode_status(state: State<'_, AppState>) -> Result<GamingModeStatus, String> {
+    let runtime = state.read().await;
+    let proxy = runtime.proxy().ok_or("Supervisor proxy not initialized")?;
+    proxy.get_gaming_mode_status().await.map_err(|e| e.to_string())
 }

@@ -7,6 +7,9 @@ from pydantic import BaseModel
 
 from friday.sessions.manager import Session
 from friday.inference.protocol import ModelProfile
+from friday.inference.telemetry import GpuTelemetry
+from friday.inference.preflight import PreflightResult, check_vram_preflight
+from friday.inference.gaming_mode import GamingModeStatus
 
 router = APIRouter(prefix="/api/v1")
 
@@ -60,6 +63,12 @@ async def delete_session(request: Request, session_id: str) -> None:
 
 @router.post("/sessions/{session_id}/turns")
 async def run_turn(request: Request, session_id: str, payload: TurnPayload) -> dict:
+    if getattr(request.app.state, "gaming_mode_controller", None) and request.app.state.gaming_mode_controller.active:
+        raise HTTPException(
+            status_code=status.HTTP_409_CONFLICT,
+            detail="Gaming Mode is active. Inference turns are blocked.",
+        )
+
     session_mgr = request.app.state.session_manager
     session = await session_mgr.get_session(session_id)
     if not session:
@@ -112,6 +121,14 @@ class LoadModelPayload(BaseModel):
     kv_cache_dtype: str = "q6"
 
 
+class PreflightPayload(BaseModel):
+    model_name: str
+    context_length: int = 32768
+    kv_cache_dtype: str = "q6"
+    available_vram_mb: float | None = None
+    bpw: float | None = None
+
+
 @router.get("/models")
 async def list_models(request: Request) -> list:
     backend = request.app.state.inference_backend
@@ -121,6 +138,12 @@ async def list_models(request: Request) -> list:
 
 @router.post("/models/load")
 async def load_model(request: Request, payload: LoadModelPayload) -> dict:
+    if getattr(request.app.state, "gaming_mode_controller", None) and request.app.state.gaming_mode_controller.active:
+        raise HTTPException(
+            status_code=status.HTTP_409_CONFLICT,
+            detail="Gaming Mode is active. Model loading is blocked until Gaming Mode is deactivated.",
+        )
+
     backend = request.app.state.inference_backend
     profile = ModelProfile(
         name=payload.name,
@@ -145,11 +168,72 @@ async def unload_model(request: Request) -> dict:
         raise HTTPException(status_code=500, detail=str(exc))
 
 
+@router.post("/models/preflight", response_model=PreflightResult)
+async def model_preflight(request: Request, payload: PreflightPayload) -> PreflightResult:
+    available_vram = payload.available_vram_mb
+    if available_vram is None:
+        telem_provider = getattr(request.app.state, "telemetry_provider", None)
+        if telem_provider:
+            telem = telem_provider.get_gpu_telemetry()
+            available_vram = telem.vram_total_mb if telem.available else 32000.0
+        else:
+            available_vram = 32000.0
+
+    return check_vram_preflight(
+        model_name=payload.model_name,
+        context_length=payload.context_length,
+        kv_cache_dtype=payload.kv_cache_dtype,
+        available_vram_mb=available_vram,
+        bpw=payload.bpw,
+    )
+
+
+@router.get("/telemetry/gpu", response_model=GpuTelemetry)
+async def get_gpu_telemetry(request: Request) -> GpuTelemetry:
+    telem_provider = getattr(request.app.state, "telemetry_provider", None)
+    if not telem_provider:
+        return GpuTelemetry(available=False, device_name="Telemetry provider not initialized")
+    return telem_provider.get_gpu_telemetry()
+
+
+@router.post("/gaming-mode/activate", response_model=GamingModeStatus)
+async def activate_gaming_mode(request: Request) -> GamingModeStatus:
+    gaming_mode = getattr(request.app.state, "gaming_mode_controller", None)
+    if not gaming_mode:
+        raise HTTPException(status_code=500, detail="Gaming mode controller not initialized")
+    backend = request.app.state.inference_backend
+    agent_loop = getattr(request.app.state, "agent_loop", None)
+    return await gaming_mode.activate(backend=backend, agent_loop=agent_loop)
+
+
+@router.post("/gaming-mode/deactivate", response_model=GamingModeStatus)
+async def deactivate_gaming_mode(request: Request) -> GamingModeStatus:
+    gaming_mode = getattr(request.app.state, "gaming_mode_controller", None)
+    if not gaming_mode:
+        raise HTTPException(status_code=500, detail="Gaming mode controller not initialized")
+    return await gaming_mode.deactivate()
+
+
+@router.get("/gaming-mode/status", response_model=GamingModeStatus)
+async def get_gaming_mode_status(request: Request) -> GamingModeStatus:
+    gaming_mode = getattr(request.app.state, "gaming_mode_controller", None)
+    if not gaming_mode:
+        return GamingModeStatus(active=False, message="Gaming mode not initialized")
+    return gaming_mode.get_status()
+
+
 @router.get("/runtime/status")
 async def runtime_status(request: Request) -> dict:
     backend = request.app.state.inference_backend
     health = await backend.health()
+    telem_provider = getattr(request.app.state, "telemetry_provider", None)
+    telemetry = telem_provider.get_gpu_telemetry() if telem_provider else GpuTelemetry()
+    gaming_mode = getattr(request.app.state, "gaming_mode_controller", None)
+    gm_status = gaming_mode.get_status() if gaming_mode else GamingModeStatus(active=False, message="Not initialized")
+
     return {
         "status": "online",
         "inference": health.model_dump(),
+        "telemetry": telemetry.model_dump(),
+        "gaming_mode": gm_status.model_dump(),
     }

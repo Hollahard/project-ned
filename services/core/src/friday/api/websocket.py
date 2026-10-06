@@ -85,6 +85,18 @@ async def websocket_session_endpoint(websocket: WebSocket, session_id: str) -> N
                 continue
 
             if msg_type == "turn.submit":
+                gaming_mode = getattr(websocket.app.state, "gaming_mode_controller", None)
+                if gaming_mode and gaming_mode.active:
+                    await websocket.send_json({
+                        "event_id": str(uuid.uuid4()),
+                        "timestamp": datetime.datetime.now(datetime.timezone.utc).isoformat(),
+                        "session_id": session_id,
+                        "turn_id": "",
+                        "type": "error",
+                        "payload": {"error": "Gaming Mode is active. Inference turns are blocked."},
+                    })
+                    continue
+
                 prompt = data.get("prompt", "")
                 model_name = data.get("model_name", "default")
 

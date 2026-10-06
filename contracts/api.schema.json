@@ -48,6 +48,65 @@
         "tool_name": { "type": "string" },
         "canonical_args_hash": { "type": "string" }
       }
+    },
+    "GpuTelemetryResponse": {
+      "type": "object",
+      "required": ["available", "device_name"],
+      "properties": {
+        "available": { "type": "boolean" },
+        "device_name": { "type": "string" },
+        "driver_version": { "type": "string" },
+        "nvml_version": { "type": "string" },
+        "vram_total_mb": { "type": "number" },
+        "vram_used_mb": { "type": "number" },
+        "vram_free_mb": { "type": "number" },
+        "vram_usage_percent": { "type": "number" },
+        "temperature_c": { "type": "integer" },
+        "power_watts": { "type": "number" },
+        "power_limit_watts": { "type": "number" },
+        "utilization_gpu_percent": { "type": "integer" },
+        "utilization_mem_percent": { "type": "integer" }
+      }
+    },
+    "PreflightRequest": {
+      "type": "object",
+      "required": ["model_name"],
+      "properties": {
+        "model_name": { "type": "string" },
+        "context_length": { "type": "integer", "default": 32768 },
+        "kv_cache_dtype": { "type": "string", "default": "q6" },
+        "available_vram_mb": { "type": "number" },
+        "bpw": { "type": "number" }
+      }
+    },
+    "PreflightResponse": {
+      "type": "object",
+      "required": ["fits", "model_name", "context_length", "kv_cache_dtype", "estimated_total_mb", "available_vram_mb", "message"],
+      "properties": {
+        "fits": { "type": "boolean" },
+        "model_name": { "type": "string" },
+        "context_length": { "type": "integer" },
+        "kv_cache_dtype": { "type": "string" },
+        "estimated_weights_mb": { "type": "number" },
+        "estimated_kv_cache_mb": { "type": "number" },
+        "estimated_total_mb": { "type": "number" },
+        "available_vram_mb": { "type": "number" },
+        "headroom_mb": { "type": "number" },
+        "recommended_context": { "type": ["integer", "null"] },
+        "recommended_kv_cache": { "type": ["string", "null"] },
+        "message": { "type": "string" }
+      }
+    },
+    "GamingModeStatusResponse": {
+      "type": "object",
+      "required": ["active", "elapsed_seconds", "vram_freed_mb", "message"],
+      "properties": {
+        "active": { "type": "boolean" },
+        "activated_at": { "type": ["number", "null"] },
+        "elapsed_seconds": { "type": "number" },
+        "vram_freed_mb": { "type": "number" },
+        "message": { "type": "string" }
+      }
     }
   }
 }

@@ -38,12 +38,61 @@ export interface ModelProfile {
   vram_estimate_mb?: number;
 }
 
+export interface GpuTelemetry {
+  available: boolean;
+  device_name: string;
+  driver_version?: string;
+  nvml_version?: string;
+  vram_total_mb: number;
+  vram_used_mb: number;
+  vram_free_mb: number;
+  vram_usage_percent: number;
+  temperature_c: number;
+  power_watts: number;
+  power_limit_watts?: number;
+  utilization_gpu_percent?: number;
+  utilization_mem_percent?: number;
+}
+
+export interface GamingModeStatus {
+  active: boolean;
+  activated_at?: number | null;
+  elapsed_seconds: number;
+  vram_freed_mb: number;
+  message: string;
+}
+
+export interface PreflightRequest {
+  model_name: string;
+  context_length?: number;
+  kv_cache_dtype?: string;
+  available_vram_mb?: number;
+  bpw?: number;
+}
+
+export interface PreflightResult {
+  fits: boolean;
+  model_name: string;
+  context_length: number;
+  kv_cache_dtype: string;
+  estimated_weights_mb: number;
+  estimated_kv_cache_mb: number;
+  estimated_total_mb: number;
+  available_vram_mb: number;
+  headroom_mb: number;
+  recommended_context?: number | null;
+  recommended_kv_cache?: string | null;
+  message: string;
+}
+
 export interface RuntimeStatus {
   core_status: string;
   inference_status: string;
   active_model?: string;
   vram_allocated_mb?: number;
   vram_total_mb?: number;
+  gpu_telemetry?: GpuTelemetry;
+  gaming_mode?: GamingModeStatus;
 }
 
 export interface EventEnvelope {

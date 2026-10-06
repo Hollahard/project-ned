@@ -13,8 +13,18 @@ export const App: React.FC = () => {
   const [streamingToken, setStreamingToken] = useState<string>('');
   const [status, setStatus] = useState<RuntimeStatus | null>(null);
   const [models, setModels] = useState<ModelProfile[]>([]);
+  const [gamingModeLoading, setGamingModeLoading] = useState<boolean>(false);
 
-  // Load initial telemetry and sessions on mount
+  const refreshStatus = async () => {
+    try {
+      const stat = await TauriClient.getRuntimeStatus();
+      setStatus(stat);
+    } catch (err) {
+      console.error('Failed to refresh status:', err);
+    }
+  };
+
+  // Load initial telemetry and sessions on mount, plus background telemetry interval
   useEffect(() => {
     async function loadInitial() {
       try {
@@ -34,7 +44,28 @@ export const App: React.FC = () => {
       }
     }
     loadInitial();
+
+    const interval = setInterval(refreshStatus, 4000);
+    return () => clearInterval(interval);
   }, []);
+
+  const handleToggleGamingMode = async () => {
+    if (gamingModeLoading) return;
+    setGamingModeLoading(true);
+    try {
+      if (status?.gaming_mode?.active) {
+        await TauriClient.deactivateGamingMode();
+      } else {
+        await TauriClient.activateGamingMode();
+        setIsStreaming(false);
+      }
+      await refreshStatus();
+    } catch (err) {
+      console.error('Failed to toggle Gaming Mode:', err);
+    } finally {
+      setGamingModeLoading(false);
+    }
+  };
 
   const handleCreateSession = async () => {
     try {
@@ -131,8 +162,26 @@ export const App: React.FC = () => {
           </span>
         </div>
 
-        <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
-          {status?.vram_allocated_mb && (
+        <div style={{ display: 'flex', alignItems: 'center', gap: '14px' }}>
+          {status?.gpu_telemetry?.available ? (
+            <div style={{ display: 'flex', alignItems: 'center', gap: '12px', color: '#a6adc8' }}>
+              <span>
+                VRAM:{' '}
+                <strong style={{ color: '#a6e3a1' }}>
+                  {(status.gpu_telemetry.vram_used_mb / 1024).toFixed(1)}
+                </strong>{' '}
+                /{' '}
+                {(status.gpu_telemetry.vram_total_mb / 1024).toFixed(1)} GB (
+                {status.gpu_telemetry.vram_usage_percent.toFixed(0)}%)
+              </span>
+              <span>
+                Temp: <strong style={{ color: '#f9e2af' }}>{status.gpu_telemetry.temperature_c}°C</strong>
+              </span>
+              <span>
+                Power: <strong style={{ color: '#89b4fa' }}>{status.gpu_telemetry.power_watts.toFixed(0)} W</strong>
+              </span>
+            </div>
+          ) : status?.vram_allocated_mb ? (
             <div style={{ color: '#a6adc8' }}>
               VRAM:{' '}
               <span style={{ color: '#a6e3a1', fontWeight: 600 }}>
@@ -140,7 +189,45 @@ export const App: React.FC = () => {
               </span>{' '}
               / 32 GB
             </div>
-          )}
+          ) : null}
+
+          <button
+            onClick={handleToggleGamingMode}
+            disabled={gamingModeLoading}
+            title={
+              status?.gaming_mode?.active
+                ? 'Deactivate Gaming Mode and resume inference'
+                : 'Instant VRAM Evacuation (<2s) and Turn Abort'
+            }
+            style={{
+              background: status?.gaming_mode?.active ? '#f38ba8' : '#313244',
+              color: status?.gaming_mode?.active ? '#11111b' : '#cdd6f4',
+              border: `1px solid ${status?.gaming_mode?.active ? '#f38ba8' : '#45475a'}`,
+              borderRadius: '6px',
+              padding: '4px 10px',
+              fontSize: '11px',
+              fontWeight: 700,
+              cursor: gamingModeLoading ? 'wait' : 'pointer',
+              display: 'flex',
+              alignItems: 'center',
+              gap: '6px',
+            }}
+          >
+            <span
+              style={{
+                width: '6px',
+                height: '6px',
+                borderRadius: '50%',
+                background: status?.gaming_mode?.active ? '#11111b' : '#a6e3a1',
+              }}
+            />
+            {gamingModeLoading
+              ? 'SWITCHING...'
+              : status?.gaming_mode?.active
+              ? 'GAMING MODE ACTIVE'
+              : 'GAMING MODE'}
+          </button>
+
           <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
             <span
               style={{
@@ -180,6 +267,42 @@ export const App: React.FC = () => {
             onCancelTurn={handleCancelTurn}
           />
 
+          {/* Gaming Mode Active Notification Banner */}
+          {status?.gaming_mode?.active && (
+            <div
+              style={{
+                background: 'rgba(243, 139, 168, 0.12)',
+                borderTop: '1px solid #f38ba8',
+                color: '#f38ba8',
+                padding: '10px 24px',
+                fontSize: '12px',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'space-between',
+              }}
+            >
+              <span>
+                🎮 <strong>Gaming Mode Active:</strong> GPU VRAM evacuated (&lt;2.0s) to return full memory to Windows games & apps. Inference turns are paused.
+              </span>
+              <button
+                onClick={handleToggleGamingMode}
+                disabled={gamingModeLoading}
+                style={{
+                  background: '#f38ba8',
+                  color: '#11111b',
+                  border: 'none',
+                  borderRadius: '4px',
+                  padding: '4px 12px',
+                  fontSize: '11px',
+                  fontWeight: 700,
+                  cursor: gamingModeLoading ? 'wait' : 'pointer',
+                }}
+              >
+                Exit Gaming Mode
+              </button>
+            </div>
+          )}
+
           {/* Prompt Input Form */}
           <footer
             style={{
@@ -193,33 +316,45 @@ export const App: React.FC = () => {
                 value={prompt}
                 onChange={(e) => setPrompt(e.target.value)}
                 onKeyDown={handleKeyDown}
-                placeholder="Ask Friday a question or command (Enter to send, Shift+Enter for newline)..."
+                disabled={status?.gaming_mode?.active}
+                placeholder={
+                  status?.gaming_mode?.active
+                    ? 'Gaming Mode is active. Exit Gaming Mode to submit prompts...'
+                    : 'Ask Friday a question or command (Enter to send, Shift+Enter for newline)...'
+                }
                 rows={2}
                 style={{
                   flex: 1,
-                  background: '#1e1e2e',
+                  background: status?.gaming_mode?.active ? '#181825' : '#1e1e2e',
                   border: '1px solid #313244',
                   borderRadius: '8px',
-                  color: '#cdd6f4',
+                  color: status?.gaming_mode?.active ? '#6c7086' : '#cdd6f4',
                   padding: '10px 14px',
                   fontSize: '13px',
                   fontFamily: 'inherit',
                   resize: 'none',
                   outline: 'none',
+                  cursor: status?.gaming_mode?.active ? 'not-allowed' : 'text',
                 }}
               />
               <button
                 onClick={() => handleSubmitPrompt()}
-                disabled={isStreaming || !prompt.trim()}
+                disabled={isStreaming || !prompt.trim() || status?.gaming_mode?.active}
                 style={{
-                  background: isStreaming || !prompt.trim() ? '#45475a' : '#89b4fa',
+                  background:
+                    isStreaming || !prompt.trim() || status?.gaming_mode?.active
+                      ? '#45475a'
+                      : '#89b4fa',
                   color: '#11111b',
                   border: 'none',
                   borderRadius: '8px',
                   padding: '12px 20px',
                   fontWeight: 600,
                   fontSize: '13px',
-                  cursor: isStreaming || !prompt.trim() ? 'not-allowed' : 'pointer',
+                  cursor:
+                    isStreaming || !prompt.trim() || status?.gaming_mode?.active
+                      ? 'not-allowed'
+                      : 'pointer',
                   transition: 'background 0.2s ease',
                 }}
               >

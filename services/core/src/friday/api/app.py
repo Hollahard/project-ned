@@ -22,6 +22,8 @@ from friday.tools.native_read import (
 )
 from friday.inference.protocol import InferenceBackend
 from friday.inference.mock import MockInferenceBackend
+from friday.inference.telemetry import TelemetryProvider
+from friday.inference.gaming_mode import GamingModeController
 from friday.agent.loop import AgentLoop
 
 logger = logging.getLogger(__name__)
@@ -57,6 +59,12 @@ def create_app(
         tools=tool_registry,
         policy=policy_engine,
     )
+    from friday.api.websocket import manager as ws_manager
+    telemetry_provider = TelemetryProvider()
+    gaming_mode_controller = GamingModeController(
+        telemetry_provider=telemetry_provider,
+        connection_manager=ws_manager,
+    )
 
     @asynccontextmanager
     async def lifespan(app: FastAPI) -> AsyncGenerator[None, None]:
@@ -82,6 +90,8 @@ def create_app(
     app.state.policy_engine = policy_engine
     app.state.inference_backend = inference_backend
     app.state.agent_loop = agent_loop
+    app.state.telemetry_provider = telemetry_provider
+    app.state.gaming_mode_controller = gaming_mode_controller
 
     # Security middleware: Reject non-loopback Host / Origin headers
     @app.middleware("http")

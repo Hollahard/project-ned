@@ -43,6 +43,11 @@ pub fn run() {
             commands::list_sessions,
             commands::cancel_turn,
             commands::trigger_native_approval_test,
+            commands::get_gpu_telemetry,
+            commands::check_vram_preflight,
+            commands::activate_gaming_mode,
+            commands::deactivate_gaming_mode,
+            commands::get_gaming_mode_status,
         ])
         .build(tauri::generate_context!())
         .expect("error while building tauri application")
