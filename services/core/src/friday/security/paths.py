@@ -140,3 +140,6 @@ def is_path_within_root(target_path: Path | str, safe_root: Path | str) -> bool:
             canonical_target, canonical_root
         )
         return False
+
+# Alias for semantic clarity
+is_contained_in = is_path_within_root
