@@ -20,6 +20,8 @@ from friday.tools.native_read import (
     GitDiffTool,
     SystemInfoTool,
 )
+from friday.tools.filesystem_write import FilesystemWriteTool, FilesystemRollbackTool
+from friday.tools.terminal_exec import TerminalExecTool
 from friday.inference.protocol import InferenceBackend
 from friday.inference.mock import MockInferenceBackend
 from friday.inference.telemetry import TelemetryProvider
@@ -46,6 +48,10 @@ def create_app(
     tool_registry.register(GitStatusTool())
     tool_registry.register(GitDiffTool())
     tool_registry.register(SystemInfoTool())
+    tool_registry.register(FilesystemWriteTool(safe_roots=[config.workspace_root]))
+    tool_registry.register(FilesystemRollbackTool())
+    tool_registry.register(TerminalExecTool(safe_roots=[config.workspace_root]))
+
 
     policy_engine = PolicyEngine(
         token_manager=token_manager,

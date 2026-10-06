@@ -20,6 +20,18 @@ from friday.tools.registry import ToolRegistry
 logger = logging.getLogger(__name__)
 
 
+VERIFICATION_KEYWORDS = (
+    "pytest",
+    "cargo test",
+    "npm test",
+    "test",
+    "ruff",
+    "unittest",
+    "lint",
+    "tsc",
+)
+
+
 class AgentBudgetExceededError(RuntimeError):
     """Raised when an agent turn exceeds iterations, timeout, or consecutive failures."""
     pass
@@ -31,11 +43,14 @@ class AgentTurnBudget:
         max_iterations: int = 15,
         max_wall_clock_seconds: int = 180,
         max_consecutive_tool_failures: int = 3,
+        enforce_verify_on_stop: bool = True,
     ) -> None:
         self.max_iterations = max_iterations
         self.max_wall_clock_seconds = max_wall_clock_seconds
         self.max_consecutive_tool_failures = max_consecutive_tool_failures
+        self.enforce_verify_on_stop = enforce_verify_on_stop
         self.start_time = time.time()
+
         self.iteration = 0
         self.consecutive_failures = 0
 
@@ -118,7 +133,11 @@ class AgentLoop:
         messages.append(ChatMessage(role="user", content=user_prompt))
 
         assistant_content = ""
+        files_modified_in_turn = False
+        verification_executed_in_turn = False
+        verify_on_stop_prompted = False
         try:
+
             while True:
                 if turn_cancel.is_set():
                     yield {
@@ -190,13 +209,37 @@ class AgentLoop:
 
                 # If no tool calls were requested, turn is complete!
                 if not tool_calls:
+                    if (
+                        budget.enforce_verify_on_stop
+                        and files_modified_in_turn
+                        and not verification_executed_in_turn
+                        and not verify_on_stop_prompted
+                    ):
+                        verify_on_stop_prompted = True
+                        messages.append(
+                            ChatMessage(
+                                role="user",
+                                content=(
+                                    "[SYSTEM GUARDRAIL - VERIFY ON STOP] Code changes were made during this turn, "
+                                    "but no test or verification command (e.g., pytest, cargo test, npm test, ruff) "
+                                    "was executed. You must run the appropriate test or lint command to verify your changes "
+                                    "before completing the turn."
+                                ),
+                            )
+                        )
+                        continue
+
                     yield {
                         "type": "turn.completed",
                         "session_id": session_id,
                         "turn_id": turn_id,
-                        "payload": {"final_answer": assistant_content},
+                        "payload": {
+                            "final_answer": assistant_content,
+                            "verified": verification_executed_in_turn or not files_modified_in_turn,
+                        },
                     }
                     break
+
 
                 # Handle proposed tool calls
                 for tc in tool_calls:
@@ -269,8 +312,15 @@ class AgentLoop:
 
                     if res.success:
                         budget.consecutive_failures = 0
+                        if name == "filesystem.write":
+                            files_modified_in_turn = True
+                        elif name == "terminal.exec":
+                            cmd_str = str(args.get("command", "")).lower()
+                            if any(kw in cmd_str for kw in VERIFICATION_KEYWORDS):
+                                verification_executed_in_turn = True
                     else:
                         budget.consecutive_failures += 1
+
 
                     yield {
                         "type": "tool.completed",

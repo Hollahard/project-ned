@@ -94,6 +94,22 @@ pub async fn trigger_native_approval_test(
 }
 
 #[tauri::command]
+pub async fn request_tool_approval(
+    state: State<'_, AppState>,
+    tool_name: String,
+    arguments: serde_json::Value,
+    risk_reason: String,
+    turn_id: String,
+) -> Result<String, String> {
+    let runtime = state.read().await;
+    let approvals = runtime.approvals().ok_or("Approval manager not initialized")?;
+    approvals
+        .request_approval_and_mint(&tool_name, &arguments, &risk_reason, &turn_id)
+        .map_err(|e| e.to_string())
+}
+
+
+#[tauri::command]
 pub async fn get_gpu_telemetry(state: State<'_, AppState>) -> Result<GpuTelemetry, String> {
     let runtime = state.read().await;
     let proxy = runtime.proxy().ok_or("Supervisor proxy not initialized")?;

@@ -142,3 +142,102 @@ async def test_agent_turn_budget_wall_clock_timeout():
     assert "turn.failed" in types
     failed_event = next(e for e in events if e["type"] == "turn.failed")
     assert "wall-clock timeout" in failed_event["payload"]["error"]
+
+
+class MockCodingBackend(InferenceBackend):
+    def __init__(self, target_path: str, token_manager: CapabilityTokenManager):
+        self.step = 0
+        self.target_path = target_path
+        self.token_manager = token_manager
+
+    async def generate(self, request: ChatRequest) -> AsyncIterator[InferenceEvent]:
+        import json
+        self.step += 1
+        if self.step == 1:
+            yield InferenceEvent(
+                type=InferenceEventType.TOOL_CALL,
+                tool_call={
+                    "id": "call-write",
+                    "type": "function",
+                    "function": {
+                        "name": "filesystem.write",
+                        "arguments": json.dumps({"path": self.target_path, "content": "x = 1"}),
+                    },
+                },
+            )
+        elif self.step == 2:
+            yield InferenceEvent(
+                type=InferenceEventType.TOKEN_DELTA,
+                content="I wrote the file and I am ready to stop.",
+            )
+        elif self.step == 3:
+            cmd = "Write-Output 'pytest: 1 passed'"
+            token, _ = self.token_manager.mint_token("terminal.exec", {"command": cmd})
+            yield InferenceEvent(
+                type=InferenceEventType.TOOL_CALL,
+                tool_call={
+                    "id": "call-test",
+                    "type": "function",
+                    "function": {
+                        "name": "terminal.exec",
+                        "arguments": json.dumps({"command": cmd, "capability_token": token}),
+                    },
+                },
+            )
+        else:
+            yield InferenceEvent(
+                type=InferenceEventType.TOKEN_DELTA,
+                content="Tests passed and work verified.",
+            )
+
+    async def health(self):
+        from friday.inference.protocol import BackendHealth, ModelState
+        return BackendHealth(healthy=True, state=ModelState.READY)
+
+    async def list_models(self):
+        return []
+
+    async def load_model(self, profile):
+        pass
+
+    async def unload_model(self):
+        pass
+
+
+@pytest.mark.asyncio
+async def test_agent_verify_on_stop_rule(tmp_path: Path):
+    from friday.tools.filesystem_write import FilesystemWriteTool
+    from friday.tools.terminal_exec import TerminalExecTool
+
+    safe_root = tmp_path / "workspace"
+    safe_root.mkdir()
+    target_file = str(safe_root / "code.py")
+
+    token_mgr = CapabilityTokenManager("secret")
+    backend = MockCodingBackend(target_file, token_manager=token_mgr)
+    registry = ToolRegistry()
+    registry.register(FilesystemWriteTool(safe_roots=[safe_root]))
+    registry.register(TerminalExecTool(safe_roots=[safe_root]))
+
+
+    policy = PolicyEngine(token_manager=token_mgr, safe_roots=[safe_root])
+
+    loop = AgentLoop(inference=backend, tools=registry, policy=policy)
+
+    events = []
+    async for event in loop.run_turn(
+        session_id="sess-verify",
+        user_prompt="Write code and verify",
+        conversation_history=[],
+    ):
+        events.append(event)
+
+    types = [e["type"] for e in events]
+    assert "turn.started" in types
+    assert "turn.completed" in types
+
+    # Completed event should record verified: True
+    completed_event = next(e for e in events if e["type"] == "turn.completed")
+    assert completed_event["payload"]["verified"] is True
+    assert backend.step >= 4
+

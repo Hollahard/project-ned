@@ -44,9 +44,13 @@ class PolicyEngine:
         capability_token: str | None = None,
     ) -> PolicyDecision:
         """Evaluate a tool invocation against security invariants."""
+        clean_args = dict(arguments)
+        if not capability_token:
+            capability_token = clean_args.pop("capability_token", None) or clean_args.pop("_capability_token", None)
+
         # Check path boundaries if the tool targets a filesystem path
-        if "path" in arguments or "target_path" in arguments:
-            target_path = Path(arguments.get("path") or arguments.get("target_path"))
+        if "path" in clean_args or "target_path" in clean_args:
+            target_path = Path(clean_args.get("path") or clean_args.get("target_path"))
             within_any_root = any(is_path_within_root(target_path, root) for root in self.safe_roots)
             if not within_any_root:
                 # Target path is outside approved safe roots
@@ -63,7 +67,7 @@ class PolicyEngine:
                             allowed=False,
                             requires_approval=True,
                             reason="Reading outside safe workspace root requires user approval",
-                            canonical_args=arguments,
+                            canonical_args=clean_args,
                         )
 
         # High risk tools (exec, script, destructive) ALWAYS require native approval
@@ -73,18 +77,19 @@ class PolicyEngine:
                     allowed=False,
                     requires_approval=True,
                     reason=f"Tool {tool.name} (risk={tool.risk_level}) requires native OS approval",
-                    canonical_args=arguments,
+                    canonical_args=clean_args,
                 )
 
         # If a capability token was supplied, verify and consume it
         if capability_token:
-            valid = self.token_manager.consume_token(capability_token, tool.name, arguments)
+            valid = self.token_manager.consume_token(capability_token, tool.name, clean_args)
             if not valid:
                 return PolicyDecision(
                     allowed=False,
                     reason="Invalid, expired, or mismatched one-shot capability token",
                 )
             return PolicyDecision(allowed=True, reason="Authorized via valid one-shot capability token")
+
 
         # Risk 0 read tools inside safe root are allowed automatically
         if tool.risk_level == 0:

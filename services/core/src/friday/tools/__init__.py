@@ -11,6 +11,9 @@ from friday.tools.native_read import (
     SystemInfoTool,
 )
 
+from friday.tools.filesystem_write import FilesystemWriteTool, FilesystemRollbackTool
+from friday.tools.terminal_exec import TerminalExecTool
+
 __all__ = [
     "Tool",
     "ToolResult",
@@ -22,4 +25,8 @@ __all__ = [
     "GitStatusTool",
     "GitDiffTool",
     "SystemInfoTool",
+    "FilesystemWriteTool",
+    "FilesystemRollbackTool",
+    "TerminalExecTool",
 ]
+
