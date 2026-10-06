@@ -22,6 +22,8 @@ from friday.tools.native_read import (
 )
 from friday.tools.filesystem_write import FilesystemWriteTool, FilesystemRollbackTool
 from friday.tools.terminal_exec import TerminalExecTool
+from friday.tools.memory import MemorySearchTool, MemorySaveTool, MemoryDeleteTool
+from friday.memory import MemoryCoordinator
 from friday.inference.protocol import InferenceBackend
 from friday.inference.mock import MockInferenceBackend
 from friday.inference.telemetry import TelemetryProvider
@@ -52,6 +54,11 @@ def create_app(
     tool_registry.register(FilesystemWriteTool(safe_roots=[config.workspace_root]))
     tool_registry.register(FilesystemRollbackTool())
     tool_registry.register(TerminalExecTool(safe_roots=[config.workspace_root]))
+
+    memory_coordinator = MemoryCoordinator(db_manager)
+    tool_registry.register(MemorySearchTool(memory_coordinator, workspace_root=config.workspace_root))
+    tool_registry.register(MemorySaveTool(memory_coordinator, workspace_root=config.workspace_root))
+    tool_registry.register(MemoryDeleteTool(memory_coordinator, workspace_root=config.workspace_root))
 
 
     policy_engine = PolicyEngine(
@@ -107,6 +114,7 @@ def create_app(
     app.state.telemetry_provider = telemetry_provider
     app.state.gaming_mode_controller = gaming_mode_controller
     app.state.mcp_host = mcp_host
+    app.state.memory_coordinator = memory_coordinator
 
     # Security middleware: Reject non-loopback Host / Origin headers
     @app.middleware("http")

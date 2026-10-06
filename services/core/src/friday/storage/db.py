@@ -71,6 +71,74 @@ END;
 CREATE TRIGGER IF NOT EXISTS messages_ad AFTER DELETE ON messages BEGIN
     INSERT INTO messages_fts(messages_fts, rowid, content) VALUES('delete', old.rowid, old.content);
 END;
+
+-- Semantic Memory (Long-term persistent facts, preferences, domain knowledge)
+CREATE TABLE IF NOT EXISTS semantic_memory (
+    id TEXT PRIMARY KEY,
+    workspace_root TEXT NOT NULL,
+    sensitivity TEXT NOT NULL DEFAULT 'normal',
+    category TEXT NOT NULL,
+    title TEXT NOT NULL,
+    content TEXT NOT NULL,
+    source_session_id TEXT REFERENCES sessions(id) ON DELETE SET NULL,
+    created_at REAL NOT NULL,
+    updated_at REAL NOT NULL
+);
+
+CREATE VIRTUAL TABLE IF NOT EXISTS semantic_memory_fts USING fts5(
+    title,
+    content,
+    content='semantic_memory',
+    content_rowid='rowid'
+);
+
+CREATE TRIGGER IF NOT EXISTS semantic_memory_ai AFTER INSERT ON semantic_memory BEGIN
+    INSERT INTO semantic_memory_fts(rowid, title, content) VALUES (new.rowid, new.title, new.content);
+END;
+
+CREATE TRIGGER IF NOT EXISTS semantic_memory_ad AFTER DELETE ON semantic_memory BEGIN
+    INSERT INTO semantic_memory_fts(semantic_memory_fts, rowid, title, content) VALUES('delete', old.rowid, old.title, old.content);
+END;
+
+CREATE TRIGGER IF NOT EXISTS semantic_memory_au AFTER UPDATE ON semantic_memory BEGIN
+    INSERT INTO semantic_memory_fts(semantic_memory_fts, rowid, title, content) VALUES('delete', old.rowid, old.title, old.content);
+    INSERT INTO semantic_memory_fts(rowid, title, content) VALUES (new.rowid, new.title, new.content);
+END;
+
+-- Procedural Memory (Playbooks, recipes, reproduction workflows)
+CREATE TABLE IF NOT EXISTS procedural_memory (
+    id TEXT PRIMARY KEY,
+    workspace_root TEXT NOT NULL,
+    sensitivity TEXT NOT NULL DEFAULT 'normal',
+    title TEXT NOT NULL,
+    steps TEXT NOT NULL,
+    source TEXT NOT NULL,
+    approved INTEGER NOT NULL DEFAULT 0,
+    source_session_id TEXT REFERENCES sessions(id) ON DELETE SET NULL,
+    created_at REAL NOT NULL,
+    updated_at REAL NOT NULL
+);
+
+CREATE VIRTUAL TABLE IF NOT EXISTS procedural_memory_fts USING fts5(
+    title,
+    steps,
+    source,
+    content='procedural_memory',
+    content_rowid='rowid'
+);
+
+CREATE TRIGGER IF NOT EXISTS procedural_memory_ai AFTER INSERT ON procedural_memory BEGIN
+    INSERT INTO procedural_memory_fts(rowid, title, steps, source) VALUES (new.rowid, new.title, new.steps, new.source);
+END;
+
+CREATE TRIGGER IF NOT EXISTS procedural_memory_ad AFTER DELETE ON procedural_memory BEGIN
+    INSERT INTO procedural_memory_fts(procedural_memory_fts, rowid, title, steps, source) VALUES('delete', old.rowid, old.title, old.steps, old.source);
+END;
+
+CREATE TRIGGER IF NOT EXISTS procedural_memory_au AFTER UPDATE ON procedural_memory BEGIN
+    INSERT INTO procedural_memory_fts(procedural_memory_fts, rowid, title, steps, source) VALUES('delete', old.rowid, old.title, old.steps, old.source);
+    INSERT INTO procedural_memory_fts(rowid, title, steps, source) VALUES (new.rowid, new.title, new.steps, new.source);
+END;
 """
 
 

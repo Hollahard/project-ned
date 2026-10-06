@@ -70,13 +70,16 @@ class PolicyEngine:
                             canonical_args=clean_args,
                         )
 
-        # High risk tools (exec, script, destructive) ALWAYS require native approval
-        if tool.risk_level >= 2 or tool.requires_approval:
+        # Determine effective risk level (supports dynamic classifier on tools like memory.save)
+        effective_risk = tool.classify_risk(clean_args) if hasattr(tool, "classify_risk") else tool.risk_level
+
+        # High risk tools (exec, script, destructive, or elevated dynamic risk) ALWAYS require native approval
+        if effective_risk >= 2 or tool.requires_approval:
             if not capability_token:
                 return PolicyDecision(
                     allowed=False,
                     requires_approval=True,
-                    reason=f"Tool {tool.name} (risk={tool.risk_level}) requires native OS approval",
+                    reason=f"Tool {tool.name} (risk={effective_risk}) requires native OS approval",
                     canonical_args=clean_args,
                 )
 

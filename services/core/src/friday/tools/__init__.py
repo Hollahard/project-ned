@@ -13,6 +13,7 @@ from friday.tools.native_read import (
 
 from friday.tools.filesystem_write import FilesystemWriteTool, FilesystemRollbackTool
 from friday.tools.terminal_exec import TerminalExecTool
+from friday.tools.memory import MemorySearchTool, MemorySaveTool, MemoryDeleteTool
 
 __all__ = [
     "Tool",
@@ -28,5 +29,8 @@ __all__ = [
     "FilesystemWriteTool",
     "FilesystemRollbackTool",
     "TerminalExecTool",
+    "MemorySearchTool",
+    "MemorySaveTool",
+    "MemoryDeleteTool",
 ]
 
