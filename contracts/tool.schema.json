@@ -1,0 +1,43 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "FridayToolDefinition",
+  "description": "Definition and security policy specification for native and MCP tools in Friday.",
+  "type": "object",
+  "required": [
+    "name",
+    "description",
+    "risk_level",
+    "parameters",
+    "requires_native_approval"
+  ],
+  "properties": {
+    "name": {
+      "type": "string",
+      "pattern": "^[a-z0-9_]+\\.[a-z0-9_]+$",
+      "description": "Namespaced tool name, e.g. filesystem.read, git.status, terminal.exec."
+    },
+    "description": {
+      "type": "string",
+      "description": "Clear documentation for the model and UI on what the tool does."
+    },
+    "risk_level": {
+      "type": "integer",
+      "minimum": 0,
+      "maximum": 3,
+      "description": "0 = Read-only / safe within root, 1 = Safe write with checkpoint, 2 = Execution / high impact, 3 = Critical / denied by default."
+    },
+    "requires_native_approval": {
+      "type": "boolean",
+      "description": "Whether execution requires a native OS approval dialog from Rust."
+    },
+    "parameters": {
+      "type": "object",
+      "description": "JSON Schema object representing expected tool arguments."
+    },
+    "source": {
+      "type": "string",
+      "enum": ["native", "mcp", "skill"],
+      "default": "native"
+    }
+  }
+}

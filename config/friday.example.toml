@@ -1,0 +1,36 @@
+# Project Friday Core Configuration Template
+
+[server]
+host = "127.0.0.1"
+port = 8200
+# IPv6 explicitly disabled to prevent non-loopback exposure
+ipv6_enabled = false
+
+[tabby]
+host = "127.0.0.1"
+port = 5000
+auto_start = true
+# Qualified pinned commit for TabbyAPI
+pinned_commit = "main"
+
+[storage]
+database_path = "state.db"
+wal_mode = true
+
+[security]
+# Strict loopback validation
+validate_host_origin = true
+allowed_origins = ["tauri://localhost", "http://tauri.localhost"]
+# Sandbox & execution controls
+deny_breakaway = true
+powershell_constrained_language = true
+# Approval policy: 0 = prompt all writes & exec, 1 = prompt external & exec, 2 = prompt exec only
+approval_level = 1
+
+[agent]
+max_iterations = 20
+max_wall_clock_seconds = 900
+max_consecutive_tool_failures = 5
+max_reasoning_tokens = 4096
+default_context_budget = 32768
+verify_on_stop = true

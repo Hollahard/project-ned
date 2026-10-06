@@ -1,0 +1,56 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "FridayEventEnvelope",
+  "description": "Standard event envelope emitted by Friday Core and forwarded through the Rust proxy to the UI.",
+  "type": "object",
+  "required": [
+    "event_id",
+    "timestamp",
+    "session_id",
+    "turn_id",
+    "type",
+    "payload"
+  ],
+  "properties": {
+    "event_id": {
+      "type": "string",
+      "format": "uuid",
+      "description": "Globally unique event ID."
+    },
+    "timestamp": {
+      "type": "string",
+      "format": "date-time",
+      "description": "ISO 8601 UTC timestamp."
+    },
+    "session_id": {
+      "type": "string",
+      "description": "Session ID this event belongs to."
+    },
+    "turn_id": {
+      "type": "string",
+      "description": "Turn ID within the session."
+    },
+    "type": {
+      "type": "string",
+      "enum": [
+        "turn.started",
+        "prompt.prefill",
+        "reasoning.delta",
+        "assistant.delta",
+        "tool.requested",
+        "approval.required",
+        "tool.started",
+        "tool.completed",
+        "usage",
+        "turn.completed",
+        "error"
+      ],
+      "description": "Type of event in the agent turn lifecycle."
+    },
+    "payload": {
+      "type": "object",
+      "description": "Event-specific data.",
+      "additionalProperties": true
+    }
+  }
+}

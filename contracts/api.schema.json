@@ -1,0 +1,53 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "FridayApiContract",
+  "description": "API contract for Friday Core REST endpoints and capability token exchange.",
+  "type": "object",
+  "definitions": {
+    "HealthResponse": {
+      "type": "object",
+      "required": ["status", "version", "uptime_seconds"],
+      "properties": {
+        "status": { "type": "string", "enum": ["ok", "degraded", "error"] },
+        "version": { "type": "string" },
+        "uptime_seconds": { "type": "number" },
+        "inference_backend": { "type": "string" },
+        "gpu_available": { "type": "boolean" }
+      }
+    },
+    "CreateSessionRequest": {
+      "type": "object",
+      "properties": {
+        "title": { "type": "string" },
+        "working_directory": { "type": "string" },
+        "model_profile": { "type": "string" }
+      }
+    },
+    "TurnRequest": {
+      "type": "object",
+      "required": ["prompt"],
+      "properties": {
+        "prompt": { "type": "string" },
+        "attachments": {
+          "type": "array",
+          "items": { "type": "string" }
+        },
+        "cloud_fallback": {
+          "type": "boolean",
+          "default": false,
+          "description": "Explicit per-turn cloud fallback opt-in. Never silent."
+        }
+      }
+    },
+    "ApprovalGrantRequest": {
+      "type": "object",
+      "required": ["request_id", "one_shot_token", "tool_name", "canonical_args_hash"],
+      "properties": {
+        "request_id": { "type": "string" },
+        "one_shot_token": { "type": "string" },
+        "tool_name": { "type": "string" },
+        "canonical_args_hash": { "type": "string" }
+      }
+    }
+  }
+}

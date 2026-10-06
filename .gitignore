@@ -1,0 +1,48 @@
+# Python & Virtual Environments
+.venv/
+venv/
+ENV/
+env/
+__pycache__/
+*.py[cod]
+*$py.class
+*.egg-info/
+dist/
+build/
+.pytest_cache/
+.ruff_cache/
+.mypy_cache/
+.coverage
+htmlcov/
+
+# Node & Desktop
+node_modules/
+apps/desktop/dist/
+apps/desktop/dist-ssr/
+*.local
+
+# Rust & Cargo
+apps/desktop/src-tauri/target/
+Cargo.lock
+
+# Friday Runtime & Storage
+state.db
+state.db-wal
+state.db-shm
+logs/
+cache/
+models/
+runtime/
+*.log
+
+# Environment & Secrets
+.env
+.env.*
+!.env.example
+secrets/
+
+# IDE & OS
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db

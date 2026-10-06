@@ -1,0 +1,41 @@
+# Project Friday Model Profiles Template (Target: RTX 5090 32 GB GDDR7)
+
+[models.qwen3_5_27b]
+name = "Qwen3.5-27B"
+role = "general_default"
+model_dir = "models/Qwen3.5-27B-EXL3"
+bpw = 6.0
+kv_cache_dtype = "q6"
+context_length = 32768
+max_context_length = 65536
+tool_format = "auto"
+unload_when_idle_minutes = 30
+reasoning_mode = true
+
+[models.qwen3_coder_30b]
+name = "Qwen3-Coder-30B-A3B"
+role = "coding"
+model_dir = "models/Qwen3-Coder-30B-A3B-EXL3"
+bpw = 6.25
+kv_cache_dtype = "q6"
+context_length = 65536
+tool_format = "auto"
+verify_on_stop = true
+
+[models.hermes_4_14b]
+name = "Hermes-4-14B"
+role = "compatibility_fixture"
+model_dir = "models/Hermes-4-14B-EXL3"
+bpw = 6.0
+kv_cache_dtype = "fp16"
+context_length = 16384
+tool_format = "hermes"
+
+[models.qwen3_5_4b]
+name = "Qwen3.5-4B"
+role = "background_tasker"
+model_dir = "models/Qwen3.5-4B-EXL3"
+bpw = 8.0
+kv_cache_dtype = "q8"
+context_length = 16384
+tool_format = "auto"
