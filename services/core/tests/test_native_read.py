@@ -35,15 +35,33 @@ async def test_filesystem_read_tool_file_not_found(tmp_path: Path):
 
 @pytest.mark.asyncio
 async def test_filesystem_read_tool_oversized_file(tmp_path: Path, monkeypatch):
+    import os
     tool = FilesystemReadTool()
     test_file = tmp_path / "big.bin"
     test_file.write_text("data")
 
-    # Simulate file exceeding 10MB limit
-    class MockStat:
-        st_size = MAX_FILE_SIZE_BYTES + 1024
+    # Get standard stat for this real file, but override st_size
+    real_stat = os.stat(test_file)
+    target_path_str = str(test_file.absolute())
+    orig_stat = Path.stat
 
-    monkeypatch.setattr(Path, "stat", lambda self: MockStat())
+    def custom_stat(self, *args, **kwargs):
+        if str(self.absolute()) == target_path_str:
+            return os.stat_result((
+                real_stat.st_mode,
+                real_stat.st_ino,
+                real_stat.st_dev,
+                real_stat.st_nlink,
+                real_stat.st_uid,
+                real_stat.st_gid,
+                MAX_FILE_SIZE_BYTES + 1024,
+                real_stat.st_atime,
+                real_stat.st_mtime,
+                real_stat.st_ctime,
+            ))
+        return orig_stat(self, *args, **kwargs)
+
+    monkeypatch.setattr(Path, "stat", custom_stat)
 
     res = await tool.execute("call-3", {"path": str(test_file)})
     assert res.success is False
@@ -64,7 +82,7 @@ async def test_filesystem_list_tool_filtering_and_recursive(tmp_path: Path):
     # Non-recursive, ignores .git by default
     res = await tool.execute("call-4", {"path": str(tmp_path), "recursive": False})
     assert res.success is True
-    assert "[DIR] src" in res.output
+    assert "[DIR]  src" in res.output
     assert "[FILE] README.md" in res.output
     assert ".git" not in res.output
 

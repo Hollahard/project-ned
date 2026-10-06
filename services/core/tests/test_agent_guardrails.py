@@ -24,6 +24,7 @@ class LoopbackTool(Tool):
     description = "A tool that always fails for testing consecutive failure guardrails."
     risk_level = 0
     requires_approval = False
+    parameters_schema = {"type": "object", "properties": {}}
 
     async def execute(self, call_id: str, arguments: dict) -> ToolResult:
         return ToolResult(

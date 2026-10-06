@@ -115,8 +115,8 @@ class FilesystemListTool(Tool):
                 for item in sorted(dir_path.iterdir()):
                     if not show_hidden and item.name in IGNORED_NAMES:
                         continue
-                    prefix = "[DIR] " if item.is_dir() else "[FILE]"
-                    entries.append(f"{prefix} {item.name}")
+                    prefix = "[DIR]  " if item.is_dir() else "[FILE] "
+                    entries.append(f"{prefix}{item.name}")
             else:
                 base_depth = len(dir_path.resolve().parts)
                 for root, dirs, files in os.walk(dir_path):
