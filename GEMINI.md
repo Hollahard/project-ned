@@ -15,3 +15,9 @@
 ## 3. Security & Capability Tokens
 - **Native OS Modals**: Approvals for high-risk tools must use native Win32 system modal dialogs (`MB_SYSTEMMODAL`, `MB_DEFBUTTON2`). Web UI cannot bypass or auto-approve.
 - **One-Shot Capability Tokens**: Tokens issued upon native OS approvals are strictly single-use, bounded by HMAC-SHA256, and bound to deterministic JSON-serialized arguments (`sort_keys=True`, no extra whitespace).
+
+## 4. Testing & Mocking Invariants
+- **Isolated Path & Stat Mocking**: When patching `pathlib.Path.stat` or filesystem introspection methods, never replace them globally with dummy objects lacking `st_mode`. Ensure mocks strictly filter on the specific target test path or return complete `os.stat_result` structures so pytest internal cache providers (`_ensure_cache_dir_and_supporting_files`) do not crash with `INTERNALERROR`.
+- **Tool Contract Completeness**: Mock tools inheriting from `Tool` must define `parameters_schema` (minimum `{"type": "object", "properties": {}}`) to satisfy schema validation in dispatch and agent guardrail tests.
+- **Hung Process Cleanup**: If a test run exits abnormally or is interrupted, always verify and terminate orphaned `pytest.exe` or `python.exe` processes before launching subsequent test runs.
+
