@@ -103,3 +103,53 @@ async def mint_approval_token(request: Request, payload: MintApprovalPayload) ->
         "args_hash": args_hash,
         "tool_name": payload.tool_name,
     }
+
+
+class LoadModelPayload(BaseModel):
+    name: str
+    model_dir: str = ""
+    context_length: int = 32768
+    kv_cache_dtype: str = "q6"
+
+
+@router.get("/models")
+async def list_models(request: Request) -> list:
+    backend = request.app.state.inference_backend
+    models = await backend.list_models()
+    return [m.model_dump() for m in models]
+
+
+@router.post("/models/load")
+async def load_model(request: Request, payload: LoadModelPayload) -> dict:
+    backend = request.app.state.inference_backend
+    profile = ModelProfile(
+        name=payload.name,
+        model_dir=payload.model_dir,
+        context_length=payload.context_length,
+        kv_cache_dtype=payload.kv_cache_dtype,
+    )
+    try:
+        await backend.load_model(profile)
+        return {"status": "ok", "loaded_model": payload.name}
+    except Exception as exc:
+        raise HTTPException(status_code=500, detail=str(exc))
+
+
+@router.post("/models/unload")
+async def unload_model(request: Request) -> dict:
+    backend = request.app.state.inference_backend
+    try:
+        await backend.unload_model()
+        return {"status": "ok", "message": "Model unloaded"}
+    except Exception as exc:
+        raise HTTPException(status_code=500, detail=str(exc))
+
+
+@router.get("/runtime/status")
+async def runtime_status(request: Request) -> dict:
+    backend = request.app.state.inference_backend
+    health = await backend.health()
+    return {
+        "status": "online",
+        "inference": health.model_dump(),
+    }

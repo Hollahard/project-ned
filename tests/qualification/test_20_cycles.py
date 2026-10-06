@@ -19,4 +19,5 @@ async def main():
             print(f"Cycle {i}/20 PASSED in {round(time.time() - t0, 2)}s")
         print("ALL 20 LOAD/UNLOAD STRESS CYCLES COMPLETED SUCCESSFULLY!")
 
-asyncio.run(main())
+if __name__ == "__main__":
+    asyncio.run(main())

@@ -26,6 +26,7 @@ class SecuritySettings(BaseSettings):
     approval_secret: str = Field(default="dev-insecure-secret-change-in-prod", description="HMAC secret for one-shot tokens")
     powershell_constrained_language: bool = True
     approval_level: int = 1
+    bearer_token: str = Field(default="", description="Per-launch bearer token for Core API")
 
 
 class StorageSettings(BaseSettings):

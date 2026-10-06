@@ -134,49 +134,56 @@ class TabbyBackend(InferenceBackend):
         if request.tools:
             payload["tools"] = request.tools
 
-        async with self._client.stream("POST", "/v1/chat/completions", json=payload, timeout=httpx.Timeout(connect=5.0, read=300.0, write=5.0, pool=5.0)) as response:
-            if response.status_code != 200:
-                err_text = await response.aread()
-                yield InferenceEvent(
-                    type=InferenceEventType.ERROR,
-                    content=f"Inference error {response.status_code}: {err_text.decode('utf-8', errors='replace')}",
-                )
-                return
+        try:
+            async with self._client.stream("POST", "/v1/chat/completions", json=payload, timeout=httpx.Timeout(connect=5.0, read=300.0, write=5.0, pool=5.0)) as response:
+                if response.status_code != 200:
+                    err_text = await response.aread()
+                    yield InferenceEvent(
+                        type=InferenceEventType.ERROR,
+                        content=f"Inference error {response.status_code}: {err_text.decode('utf-8', errors='replace')}",
+                    )
+                    return
 
-            async for line in response.aiter_lines():
-                if not line or not line.startswith("data: "):
-                    continue
-                data_str = line[len("data: "):].strip()
-                if data_str == "[DONE]":
-                    break
-                try:
-                    chunk = json.loads(data_str)
-                    choices = chunk.get("choices", [])
-                    if not choices:
+                async for line in response.aiter_lines():
+                    if not line or not line.startswith("data: "):
                         continue
-                    delta = choices[0].get("delta", {})
-                    finish_reason = choices[0].get("finish_reason")
+                    data_str = line[len("data: "):].strip()
+                    if data_str == "[DONE]":
+                        break
+                    try:
+                        chunk = json.loads(data_str)
+                        choices = chunk.get("choices", [])
+                        if not choices:
+                            continue
+                        delta = choices[0].get("delta", {})
+                        finish_reason = choices[0].get("finish_reason")
 
-                    if "content" in delta and delta["content"]:
-                        yield InferenceEvent(
-                            type=InferenceEventType.TOKEN_DELTA,
-                            content=delta["content"],
-                        )
-
-                    if "tool_calls" in delta and delta["tool_calls"]:
-                        for tc in delta["tool_calls"]:
+                        if "content" in delta and delta["content"]:
                             yield InferenceEvent(
-                                type=InferenceEventType.TOOL_CALL,
-                                tool_call=tc,
+                                type=InferenceEventType.TOKEN_DELTA,
+                                content=delta["content"],
                             )
 
-                    if finish_reason:
-                        yield InferenceEvent(
-                            type=InferenceEventType.FINISH,
-                            finish_reason=finish_reason,
-                        )
-                except json.JSONDecodeError:
-                    continue
+                        if "tool_calls" in delta and delta["tool_calls"]:
+                            for tc in delta["tool_calls"]:
+                                yield InferenceEvent(
+                                    type=InferenceEventType.TOOL_CALL,
+                                    tool_call=tc,
+                                )
+
+                        if finish_reason:
+                            yield InferenceEvent(
+                                type=InferenceEventType.FINISH,
+                                finish_reason=finish_reason,
+                            )
+                    except json.JSONDecodeError:
+                        continue
+        except Exception as exc:
+            logger.error("Inference server error: %s", exc)
+            yield InferenceEvent(
+                type=InferenceEventType.ERROR,
+                content=f"Inference backend unavailable: {exc}",
+            )
 
     async def close(self) -> None:
         await self._client.aclose()

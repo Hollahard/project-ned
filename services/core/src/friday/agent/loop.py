@@ -1,4 +1,4 @@
-"""Multi-step agent loop with guardrails and strict policy enforcement."""
+"""Multi-step agent loop with guardrails, cancellation, and strict policy enforcement."""
 
 import asyncio
 import json
@@ -66,6 +66,7 @@ class AgentLoop:
         conversation_history: List[ChatMessage],
         model_name: str = "default",
         budget: AgentTurnBudget | None = None,
+        cancel_event: asyncio.Event | None = None,
     ) -> AsyncIterator[dict]:
         """Execute one complete turn of the agent loop, yielding streaming events."""
         turn_id = str(uuid.uuid4())
@@ -92,159 +93,187 @@ class AgentLoop:
         messages.extend(conversation_history)
         messages.append(ChatMessage(role="user", content=user_prompt))
 
-        while True:
-            budget.check_limits()
-            budget.iteration += 1
-
-            tool_schemas = self.tools.get_schemas()
-            request = ChatRequest(
-                model=model_name,
-                messages=messages,
-                tools=tool_schemas if tool_schemas else None,
-            )
-
-            assistant_content = ""
-            tool_calls = []
-
-            async for event in self.inference.generate(request):
-                if event.type == InferenceEventType.TOKEN_DELTA:
-                    assistant_content += event.content
+        assistant_content = ""
+        try:
+            while True:
+                if cancel_event and cancel_event.is_set():
                     yield {
-                        "type": "assistant.delta",
+                        "type": "turn.canceled",
                         "session_id": session_id,
                         "turn_id": turn_id,
-                        "payload": {"content": event.content},
-                    }
-                elif event.type == InferenceEventType.REASONING_DELTA:
-                    yield {
-                        "type": "reasoning.delta",
-                        "session_id": session_id,
-                        "turn_id": turn_id,
-                        "payload": {"reasoning": event.content},
-                    }
-                elif event.type == InferenceEventType.TOOL_CALL:
-                    if event.tool_call:
-                        tool_calls.append(event.tool_call)
-                elif event.type == InferenceEventType.ERROR:
-                    yield {
-                        "type": "error",
-                        "session_id": session_id,
-                        "turn_id": turn_id,
-                        "payload": {"error": event.content},
+                        "payload": {"partial_answer": assistant_content},
                     }
                     return
 
-            # Append the assistant's response to the context
-            messages.append(
-                ChatMessage(
-                    role="assistant",
-                    content=assistant_content,
-                    tool_calls=tool_calls if tool_calls else None,
+                budget.check_limits()
+                budget.iteration += 1
+
+                tool_schemas = self.tools.get_schemas()
+                request = ChatRequest(
+                    model=model_name,
+                    messages=messages,
+                    tools=tool_schemas if tool_schemas else None,
                 )
-            )
 
-            # If no tool calls were requested, turn is complete!
-            if not tool_calls:
-                yield {
-                    "type": "turn.completed",
-                    "session_id": session_id,
-                    "turn_id": turn_id,
-                    "payload": {"final_answer": assistant_content},
-                }
-                break
+                assistant_content = ""
+                tool_calls = []
 
-            # Handle proposed tool calls
-            for tc in tool_calls:
-                fn_info = tc.get("function", {})
-                call_id = tc.get("id", str(uuid.uuid4()))
-                name = fn_info.get("name", "")
-                raw_args = fn_info.get("arguments", {})
-                if isinstance(raw_args, str):
-                    try:
-                        args = json.loads(raw_args)
-                    except json.JSONDecodeError:
-                        args = {}
-                else:
-                    args = raw_args
-
-                yield {
-                    "type": "tool.requested",
-                    "session_id": session_id,
-                    "turn_id": turn_id,
-                    "payload": {"call_id": call_id, "tool": name, "arguments": args},
-                }
-
-                tool_instance = self.tools.get(name)
-                if not tool_instance:
-                    res = ToolResult(
-                        tool_name=name,
-                        call_id=call_id,
-                        success=False,
-                        output="",
-                        error=f"Tool not found: {name}",
-                    )
-                else:
-                    decision = self.policy.evaluate(tool_instance, args)
-                    if decision.requires_approval:
+                async for event in self.inference.generate(request):
+                    if cancel_event and cancel_event.is_set():
                         yield {
-                            "type": "approval.required",
+                            "type": "turn.canceled",
                             "session_id": session_id,
                             "turn_id": turn_id,
-                            "payload": {
-                                "call_id": call_id,
-                                "tool": name,
-                                "reason": decision.reason,
-                                "canonical_args": decision.canonical_args,
-                            },
+                            "payload": {"partial_answer": assistant_content},
                         }
-                        # In headless/unapproved runs without approval token, halt tool exec
-                        res = ToolResult(
-                            tool_name=name,
-                            call_id=call_id,
-                            success=False,
-                            output="",
-                            error=f"Approval required: {decision.reason}",
-                        )
-                    elif not decision.allowed:
-                        res = ToolResult(
-                            tool_name=name,
-                            call_id=call_id,
-                            success=False,
-                            output="",
-                            error=f"Policy rejected: {decision.reason}",
-                        )
-                    else:
+                        return
+
+                    if event.type == InferenceEventType.TOKEN_DELTA:
+                        assistant_content += event.content
                         yield {
-                            "type": "tool.started",
+                            "type": "assistant.delta",
                             "session_id": session_id,
                             "turn_id": turn_id,
-                            "payload": {"call_id": call_id, "tool": name},
+                            "payload": {"content": event.content},
                         }
-                        res = await tool_instance.execute(call_id, args)
+                    elif event.type == InferenceEventType.REASONING_DELTA:
+                        yield {
+                            "type": "reasoning.delta",
+                            "session_id": session_id,
+                            "turn_id": turn_id,
+                            "payload": {"reasoning": event.content},
+                        }
+                    elif event.type == InferenceEventType.TOOL_CALL:
+                        if event.tool_call:
+                            tool_calls.append(event.tool_call)
+                    elif event.type == InferenceEventType.ERROR:
+                        yield {
+                            "type": "error",
+                            "session_id": session_id,
+                            "turn_id": turn_id,
+                            "payload": {"error": event.content},
+                        }
+                        return
 
-                if res.success:
-                    budget.consecutive_failures = 0
-                else:
-                    budget.consecutive_failures += 1
-
-                yield {
-                    "type": "tool.completed",
-                    "session_id": session_id,
-                    "turn_id": turn_id,
-                    "payload": {
-                        "call_id": call_id,
-                        "tool": name,
-                        "success": res.success,
-                        "output": res.output,
-                        "error": res.error,
-                    },
-                }
-
-                # Feed tool result back as untrusted tool role
+                # Append the assistant's response to the context
                 messages.append(
                     ChatMessage(
-                        role="tool",
-                        content=res.output if res.success else f"Error: {res.error}",
-                        tool_call_id=call_id,
+                        role="assistant",
+                        content=assistant_content,
+                        tool_calls=tool_calls if tool_calls else None,
                     )
                 )
+
+                # If no tool calls were requested, turn is complete!
+                if not tool_calls:
+                    yield {
+                        "type": "turn.completed",
+                        "session_id": session_id,
+                        "turn_id": turn_id,
+                        "payload": {"final_answer": assistant_content},
+                    }
+                    break
+
+                # Handle proposed tool calls
+                for tc in tool_calls:
+                    fn_info = tc.get("function", {})
+                    call_id = tc.get("id", str(uuid.uuid4()))
+                    name = fn_info.get("name", "")
+                    raw_args = fn_info.get("arguments", {})
+                    if isinstance(raw_args, str):
+                        try:
+                            args = json.loads(raw_args)
+                        except json.JSONDecodeError:
+                            args = {}
+                    else:
+                        args = raw_args
+
+                    yield {
+                        "type": "tool.requested",
+                        "session_id": session_id,
+                        "turn_id": turn_id,
+                        "payload": {"call_id": call_id, "tool": name, "arguments": args},
+                    }
+
+                    tool_instance = self.tools.get(name)
+                    if not tool_instance:
+                        res = ToolResult(
+                            tool_name=name,
+                            call_id=call_id,
+                            success=False,
+                            output="",
+                            error=f"Tool not found: {name}",
+                        )
+                    else:
+                        decision = self.policy.evaluate(tool_instance, args)
+                        if decision.requires_approval:
+                            yield {
+                                "type": "approval.required",
+                                "session_id": session_id,
+                                "turn_id": turn_id,
+                                "payload": {
+                                    "call_id": call_id,
+                                    "tool": name,
+                                    "reason": decision.reason,
+                                    "canonical_args": decision.canonical_args,
+                                },
+                            }
+                            # In headless/unapproved runs without approval token, halt tool exec
+                            res = ToolResult(
+                                tool_name=name,
+                                call_id=call_id,
+                                success=False,
+                                output="",
+                                error=f"Approval required: {decision.reason}",
+                            )
+                        elif not decision.allowed:
+                            res = ToolResult(
+                                tool_name=name,
+                                call_id=call_id,
+                                success=False,
+                                output="",
+                                error=f"Policy rejected: {decision.reason}",
+                            )
+                        else:
+                            yield {
+                                "type": "tool.started",
+                                "session_id": session_id,
+                                "turn_id": turn_id,
+                                "payload": {"call_id": call_id, "tool": name},
+                            }
+                            res = await tool_instance.execute(call_id, args)
+
+                    if res.success:
+                        budget.consecutive_failures = 0
+                    else:
+                        budget.consecutive_failures += 1
+
+                    yield {
+                        "type": "tool.completed",
+                        "session_id": session_id,
+                        "turn_id": turn_id,
+                        "payload": {
+                            "call_id": call_id,
+                            "tool": name,
+                            "success": res.success,
+                            "output": res.output,
+                            "error": res.error,
+                        },
+                    }
+
+                    # Feed tool result back as untrusted tool role
+                    messages.append(
+                        ChatMessage(
+                            role="tool",
+                            content=res.output if res.success else f"Error: {res.error}",
+                            tool_call_id=call_id,
+                        )
+                    )
+        except asyncio.CancelledError:
+            yield {
+                "type": "turn.canceled",
+                "session_id": session_id,
+                "turn_id": turn_id,
+                "payload": {"partial_answer": assistant_content},
+            }
+            return

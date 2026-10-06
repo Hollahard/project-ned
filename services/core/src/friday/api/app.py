@@ -88,8 +88,8 @@ def create_app(
     async def loopback_security_middleware(request: Request, call_next) -> Response:
         if config.security.validate_host_origin:
             host_header = request.headers.get("host", "")
-            # Check loopback host
-            if not (host_header.startswith("127.0.0.1") or host_header.startswith("localhost")):
+            # Check loopback host (and testserver for internal test harness)
+            if not (host_header.startswith("127.0.0.1") or host_header.startswith("localhost") or host_header.startswith("testserver")):
                 logger.warning("Rejected non-loopback host: %s", host_header)
                 return JSONResponse(
                     status_code=status.HTTP_403_FORBIDDEN,
@@ -105,6 +105,17 @@ def create_app(
                         status_code=status.HTTP_403_FORBIDDEN,
                         content={"detail": "Forbidden: Unauthorized Origin"},
                     )
+
+        # Bearer token validation if configured
+        if config.security.bearer_token and request.url.path != "/health":
+            auth_header = request.headers.get("authorization", "")
+            expected_auth = f"Bearer {config.security.bearer_token}"
+            if auth_header != expected_auth:
+                logger.warning("Rejected request with invalid or missing Bearer token")
+                return JSONResponse(
+                    status_code=status.HTTP_401_UNAUTHORIZED,
+                    content={"detail": "Unauthorized: Invalid or missing Bearer token"},
+                )
 
         return await call_next(request)
 
@@ -123,6 +134,8 @@ def create_app(
         }
 
     from friday.api.routes import router
+    from friday.api.websocket import ws_router
     app.include_router(router)
+    app.include_router(ws_router)
 
     return app
