@@ -42,7 +42,7 @@ class FilesystemReadTool(Tool):
             )
 
         try:
-            file_size = path.stat().st_size
+            file_size = os.path.getsize(path)
             if file_size > MAX_FILE_SIZE_BYTES:
                 return ToolResult(
                     tool_name=self.name,

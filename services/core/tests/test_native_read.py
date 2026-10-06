@@ -40,28 +40,7 @@ async def test_filesystem_read_tool_oversized_file(tmp_path: Path, monkeypatch):
     test_file = tmp_path / "big.bin"
     test_file.write_text("data")
 
-    # Get standard stat for this real file, but override st_size
-    real_stat = os.stat(test_file)
-    target_path_str = str(test_file.absolute())
-    orig_stat = Path.stat
-
-    def custom_stat(self, *args, **kwargs):
-        if str(self.absolute()) == target_path_str:
-            return os.stat_result((
-                real_stat.st_mode,
-                real_stat.st_ino,
-                real_stat.st_dev,
-                real_stat.st_nlink,
-                real_stat.st_uid,
-                real_stat.st_gid,
-                MAX_FILE_SIZE_BYTES + 1024,
-                real_stat.st_atime,
-                real_stat.st_mtime,
-                real_stat.st_ctime,
-            ))
-        return orig_stat(self, *args, **kwargs)
-
-    monkeypatch.setattr(Path, "stat", custom_stat)
+    monkeypatch.setattr(os.path, "getsize", lambda p: MAX_FILE_SIZE_BYTES + 1024)
 
     res = await tool.execute("call-3", {"path": str(test_file)})
     assert res.success is False
