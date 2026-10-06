@@ -20,12 +20,17 @@ from friday.tools.registry import ToolRegistry
 logger = logging.getLogger(__name__)
 
 
+class AgentBudgetExceededError(RuntimeError):
+    """Raised when an agent turn exceeds iterations, timeout, or consecutive failures."""
+    pass
+
+
 class AgentTurnBudget:
     def __init__(
         self,
-        max_iterations: int = 20,
-        max_wall_clock_seconds: int = 900,
-        max_consecutive_tool_failures: int = 5,
+        max_iterations: int = 15,
+        max_wall_clock_seconds: int = 180,
+        max_consecutive_tool_failures: int = 3,
     ) -> None:
         self.max_iterations = max_iterations
         self.max_wall_clock_seconds = max_wall_clock_seconds
@@ -37,12 +42,16 @@ class AgentTurnBudget:
     def check_limits(self) -> None:
         elapsed = time.time() - self.start_time
         if elapsed > self.max_wall_clock_seconds:
-            raise TimeoutError(f"Turn exceeded max wall-clock time ({self.max_wall_clock_seconds}s)")
+            raise AgentBudgetExceededError(
+                f"Turn exceeded maximum wall-clock timeout ({self.max_wall_clock_seconds}s)"
+            )
         if self.iteration >= self.max_iterations:
-            raise RuntimeError(f"Turn exceeded max iterations ({self.max_iterations})")
+            raise AgentBudgetExceededError(
+                f"Turn exceeded maximum iterations limit ({self.max_iterations})"
+            )
         if self.consecutive_failures >= self.max_consecutive_tool_failures:
-            raise RuntimeError(
-                f"Turn aborted after {self.max_consecutive_tool_failures} consecutive tool failures"
+            raise AgentBudgetExceededError(
+                f"Turn aborted: maximum consecutive tool failures reached ({self.max_consecutive_tool_failures})"
             )
 
 
@@ -58,6 +67,19 @@ class AgentLoop:
         self.inference = inference
         self.tools = tools
         self.policy = policy
+        self._active_cancels: dict[str, asyncio.Event] = {}
+
+    def cancel_turn(self, session_id: str) -> bool:
+        """Cancel an in-flight turn for a specific session."""
+        if session_id in self._active_cancels:
+            self._active_cancels[session_id].set()
+            return True
+        return False
+
+    def cancel_current_turn(self) -> None:
+        """Cancel all in-flight turns across sessions (e.g. for Gaming Mode)."""
+        for event in list(self._active_cancels.values()):
+            event.set()
 
     async def run_turn(
         self,
@@ -71,6 +93,8 @@ class AgentLoop:
         """Execute one complete turn of the agent loop, yielding streaming events."""
         turn_id = str(uuid.uuid4())
         budget = budget or AgentTurnBudget()
+        turn_cancel = cancel_event or asyncio.Event()
+        self._active_cancels[session_id] = turn_cancel
 
         yield {
             "type": "turn.started",
@@ -96,7 +120,7 @@ class AgentLoop:
         assistant_content = ""
         try:
             while True:
-                if cancel_event and cancel_event.is_set():
+                if turn_cancel.is_set():
                     yield {
                         "type": "turn.canceled",
                         "session_id": session_id,
@@ -119,7 +143,7 @@ class AgentLoop:
                 tool_calls = []
 
                 async for event in self.inference.generate(request):
-                    if cancel_event and cancel_event.is_set():
+                    if turn_cancel.is_set():
                         yield {
                             "type": "turn.canceled",
                             "session_id": session_id,
@@ -269,6 +293,15 @@ class AgentLoop:
                             tool_call_id=call_id,
                         )
                     )
+        except AgentBudgetExceededError as exc:
+            logger.warning("Turn aborted by agent loop guardrail: %s", exc)
+            yield {
+                "type": "turn.failed",
+                "session_id": session_id,
+                "turn_id": turn_id,
+                "payload": {"error": str(exc), "partial_answer": assistant_content},
+            }
+            return
         except asyncio.CancelledError:
             yield {
                 "type": "turn.canceled",
@@ -277,3 +310,5 @@ class AgentLoop:
                 "payload": {"partial_answer": assistant_content},
             }
             return
+        finally:
+            self._active_cancels.pop(session_id, None)
