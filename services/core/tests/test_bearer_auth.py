@@ -10,7 +10,7 @@ from friday.inference.mock import MockInferenceBackend
 
 
 @pytest.fixture
-def auth_app(tmp_path: Path):
+async def auth_app(tmp_path: Path):
     db_file = tmp_path / "test_state.db"
     config = FridayConfig(
         server=ServerSettings(host="127.0.0.1", port=8200),
@@ -18,7 +18,10 @@ def auth_app(tmp_path: Path):
         security=SecuritySettings(bearer_token="secret-per-launch-token-xyz"),
     )
     mock_inference = MockInferenceBackend()
-    return create_app(config=config, inference=mock_inference)
+    app = create_app(config=config, inference=mock_inference)
+    yield app
+    await app.state.db_manager.close()
+
 
 
 @pytest.mark.asyncio

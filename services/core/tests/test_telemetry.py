@@ -38,14 +38,17 @@ def test_telemetry_provider_mock_nvml_unavailable():
 
 
 @pytest.fixture
-def test_app(tmp_path: Path):
+async def test_app(tmp_path: Path):
     db_file = tmp_path / "test_state.db"
     config = FridayConfig(
         server=ServerSettings(host="127.0.0.1", port=8200),
         storage=StorageSettings(database_path=str(db_file)),
     )
     mock_inference = MockInferenceBackend()
-    return create_app(config=config, inference=mock_inference)
+    app = create_app(config=config, inference=mock_inference)
+    yield app
+    await app.state.db_manager.close()
+
 
 
 @pytest.mark.asyncio
