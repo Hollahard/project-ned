@@ -1,0 +1,98 @@
+2026-10-06 01:08:41,816 [INFO] --> Checking TabbyAPI health at http://127.0.0.1:5000...
+2026-10-06 01:08:41,844 [INFO] HTTP Request: GET http://127.0.0.1:5000/health "HTTP/1.1 200 OK"
+2026-10-06 01:08:41,845 [INFO] Health OK: {'status': 'healthy', 'issues': []}
+2026-10-06 01:08:41,845 [INFO] --> Querying available models from TabbyAPI...
+2026-10-06 01:08:41,848 [INFO] HTTP Request: GET http://127.0.0.1:5000/v1/models "HTTP/1.1 200 OK"
+2026-10-06 01:08:41,849 [INFO] Found 3 models in TabbyAPI: ['Mistral-Small-3.1-24B-Instruct-2503-exl3', 'Qwen3-30B-A3B-Instruct-2507', 'Qwen3.5-35B-A3B-exl3-clean']
+2026-10-06 01:08:41,849 [INFO] --> Testing error handling on nonexistent model...
+2026-10-06 01:08:41,852 [INFO] HTTP Request: POST http://127.0.0.1:5000/v1/model/load "HTTP/1.1 400 Bad Request"
+2026-10-06 01:08:41,852 [INFO] Clean error received as expected: HTTP 400
+2026-10-06 01:08:41,853 [INFO] --> Loading model 'Mistral-Small-3.1-24B-Instruct-2503-exl3' (max_seq_len=4096)...
+2026-10-06 01:08:41,966 [INFO] HTTP Request: POST http://127.0.0.1:5000/v1/model/load "HTTP/1.1 200 OK"
+2026-10-06 01:09:01,796 [INFO] Model 'Mistral-Small-3.1-24B-Instruct-2503-exl3' loaded in 19.94s (final event: {"model_type":"model","module":43,"modules":43,"status":"finished"})
+2026-10-06 01:09:01,796 [INFO] --> Testing streaming generation with prompt...
+2026-10-06 01:09:01,813 [INFO] HTTP Request: POST http://127.0.0.1:5000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-10-06 01:09:10,408 [INFO] Generation result: 'The capital of France is Paris.' | TTFT: 8.538s | Total: 8.61s | Tokens: 7 (~94.5 t/s)
+2026-10-06 01:09:10,408 [INFO] --> Testing tool calling support...
+2026-10-06 01:09:14,409 [INFO] HTTP Request: POST http://127.0.0.1:5000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-10-06 01:09:14,410 [INFO] Tool calling response message: {'role': 'assistant', 'content': "I'm sorry, but I don't have real-time capabilities or tools to check the current weather in Tokyo. You can easily find this information by using a weather website, app, or a quick search on the web.", 'reasoning_content': None, 'tool_calls': None, 'tool_call_id': None}
+2026-10-06 01:09:14,410 [INFO] Model returned direct text (non-tool format): I'm sorry, but I don't have real-time capabilities or tools to check the current weather in Tokyo. You can easily find this information by using a weather website, app, or a quick search on the web.
+2026-10-06 01:09:14,410 [INFO] --> Unloading model to release VRAM...
+2026-10-06 01:09:14,564 [INFO] HTTP Request: POST http://127.0.0.1:5000/v1/model/unload "HTTP/1.1 200 OK"
+2026-10-06 01:09:14,565 [INFO] Model unloaded in 0.15s. VRAM released.
+2026-10-06 01:09:14,565 [INFO] --> Testing model swap to second model: Qwen3-30B-A3B-Instruct-2507
+2026-10-06 01:09:14,565 [INFO] --> Loading model 'Qwen3-30B-A3B-Instruct-2507' (max_seq_len=4096)...
+2026-10-06 01:09:14,567 [INFO] HTTP Request: POST http://127.0.0.1:5000/v1/model/load "HTTP/1.1 200 OK"
+2026-10-06 01:09:22,444 [INFO] Model 'Qwen3-30B-A3B-Instruct-2507' loaded in 7.88s (final event: {"model_type":"model","module":51,"modules":51,"status":"finished"})
+2026-10-06 01:09:22,444 [INFO] --> Unloading model to release VRAM...
+2026-10-06 01:09:22,713 [INFO] HTTP Request: POST http://127.0.0.1:5000/v1/model/unload "HTTP/1.1 200 OK"
+2026-10-06 01:09:22,715 [INFO] Model unloaded in 0.27s. VRAM released.
+2026-10-06 01:09:22,715 [INFO] --> Running 5 load/unload stress cycles on Mistral-Small-3.1-24B-Instruct-2503-exl3...
+2026-10-06 01:09:22,715 [INFO] --> Loading model 'Mistral-Small-3.1-24B-Instruct-2503-exl3' (max_seq_len=2048)...
+2026-10-06 01:09:22,718 [INFO] HTTP Request: POST http://127.0.0.1:5000/v1/model/load "HTTP/1.1 200 OK"
+2026-10-06 01:09:26,895 [INFO] Model 'Mistral-Small-3.1-24B-Instruct-2503-exl3' loaded in 4.18s (final event: {"model_type":"model","module":43,"modules":43,"status":"finished"})
+2026-10-06 01:09:26,895 [INFO] --> Unloading model to release VRAM...
+2026-10-06 01:09:27,045 [INFO] HTTP Request: POST http://127.0.0.1:5000/v1/model/unload "HTTP/1.1 200 OK"
+2026-10-06 01:09:27,046 [INFO] Model unloaded in 0.15s. VRAM released.
+2026-10-06 01:09:27,046 [INFO] Cycle 1/5 completed in 4.33s
+2026-10-06 01:09:27,046 [INFO] --> Loading model 'Mistral-Small-3.1-24B-Instruct-2503-exl3' (max_seq_len=2048)...
+2026-10-06 01:09:27,048 [INFO] HTTP Request: POST http://127.0.0.1:5000/v1/model/load "HTTP/1.1 200 OK"
+2026-10-06 01:09:29,425 [INFO] Model 'Mistral-Small-3.1-24B-Instruct-2503-exl3' loaded in 2.38s (final event: {"model_type":"model","module":43,"modules":43,"status":"finished"})
+2026-10-06 01:09:29,425 [INFO] --> Unloading model to release VRAM...
+2026-10-06 01:09:29,583 [INFO] HTTP Request: POST http://127.0.0.1:5000/v1/model/unload "HTTP/1.1 200 OK"
+2026-10-06 01:09:29,584 [INFO] Model unloaded in 0.16s. VRAM released.
+2026-10-06 01:09:29,584 [INFO] Cycle 2/5 completed in 2.54s
+2026-10-06 01:09:29,584 [INFO] --> Loading model 'Mistral-Small-3.1-24B-Instruct-2503-exl3' (max_seq_len=2048)...
+2026-10-06 01:09:29,586 [INFO] HTTP Request: POST http://127.0.0.1:5000/v1/model/load "HTTP/1.1 200 OK"
+2026-10-06 01:09:31,998 [INFO] Model 'Mistral-Small-3.1-24B-Instruct-2503-exl3' loaded in 2.41s (final event: {"model_type":"model","module":43,"modules":43,"status":"finished"})
+2026-10-06 01:09:31,998 [INFO] --> Unloading model to release VRAM...
+2026-10-06 01:09:32,139 [INFO] HTTP Request: POST http://127.0.0.1:5000/v1/model/unload "HTTP/1.1 200 OK"
+2026-10-06 01:09:32,140 [INFO] Model unloaded in 0.14s. VRAM released.
+2026-10-06 01:09:32,140 [INFO] Cycle 3/5 completed in 2.56s
+2026-10-06 01:09:32,140 [INFO] --> Loading model 'Mistral-Small-3.1-24B-Instruct-2503-exl3' (max_seq_len=2048)...
+2026-10-06 01:09:32,142 [INFO] HTTP Request: POST http://127.0.0.1:5000/v1/model/load "HTTP/1.1 200 OK"
+2026-10-06 01:09:34,492 [INFO] Model 'Mistral-Small-3.1-24B-Instruct-2503-exl3' loaded in 2.35s (final event: {"model_type":"model","module":43,"modules":43,"status":"finished"})
+2026-10-06 01:09:34,492 [INFO] --> Unloading model to release VRAM...
+2026-10-06 01:09:34,646 [INFO] HTTP Request: POST http://127.0.0.1:5000/v1/model/unload "HTTP/1.1 200 OK"
+2026-10-06 01:09:34,647 [INFO] Model unloaded in 0.16s. VRAM released.
+2026-10-06 01:09:34,647 [INFO] Cycle 4/5 completed in 2.51s
+2026-10-06 01:09:34,647 [INFO] --> Loading model 'Mistral-Small-3.1-24B-Instruct-2503-exl3' (max_seq_len=2048)...
+2026-10-06 01:09:34,650 [INFO] HTTP Request: POST http://127.0.0.1:5000/v1/model/load "HTTP/1.1 200 OK"
+2026-10-06 01:09:37,107 [INFO] Model 'Mistral-Small-3.1-24B-Instruct-2503-exl3' loaded in 2.46s (final event: {"model_type":"model","module":43,"modules":43,"status":"finished"})
+2026-10-06 01:09:37,107 [INFO] --> Unloading model to release VRAM...
+2026-10-06 01:09:37,248 [INFO] HTTP Request: POST http://127.0.0.1:5000/v1/model/unload "HTTP/1.1 200 OK"
+2026-10-06 01:09:37,249 [INFO] Model unloaded in 0.14s. VRAM released.
+2026-10-06 01:09:37,249 [INFO] Cycle 5/5 completed in 2.60s
+2026-10-06 01:09:37,249 [INFO] 
+==========================================
+2026-10-06 01:09:37,249 [INFO] PHASE 1 INFERENCE QUALIFICATION COMPLETE!
+2026-10-06 01:09:37,249 [INFO] Results Summary:
+{
+  "health": "healthy",
+  "available_models": [
+    "Mistral-Small-3.1-24B-Instruct-2503-exl3",
+    "Qwen3-30B-A3B-Instruct-2507",
+    "Qwen3.5-35B-A3B-exl3-clean"
+  ],
+  "error_handling": "PASSED",
+  "primary_model": "Mistral-Small-3.1-24B-Instruct-2503-exl3",
+  "load_time_sec": 19.94,
+  "generation": {
+    "reply": "The capital of France is Paris.",
+    "ttft": 8.537904977798462,
+    "total_time": 8.611953020095825,
+    "tokens": 7,
+    "tps": 94.53322171421212
+  },
+  "tool_calling": "PASSED",
+  "unload_primary": "PASSED",
+  "second_model": "Qwen3-30B-A3B-Instruct-2507",
+  "swap_load_time_sec": 7.88,
+  "unload_second": "PASSED",
+  "stress_cycles": {
+    "count": 5,
+    "avg_cycle_sec": 2.91,
+    "status": "PASSED"
+  }
+}
+2026-10-06 01:09:37,249 [INFO] ==========================================

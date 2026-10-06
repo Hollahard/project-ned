@@ -10,8 +10,11 @@ ipv6_enabled = false
 host = "127.0.0.1"
 port = 5000
 auto_start = true
-# Qualified pinned commit for TabbyAPI
-pinned_commit = "main"
+# Qualified pinned commit and runtime for TabbyAPI (Blackwell sm_120 / RTX 5090)
+pinned_commit = "2fd6cc76203a66e13042daf7d76e5898b21c1ad8"
+torch_version = "2.11.0+cu130"
+exllamav3_version = "1.5.4+cu132.torch2.11.0"
+default_model_dir = "C:/PyDev/LLM_PC/models"
 
 [storage]
 database_path = "state.db"

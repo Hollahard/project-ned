@@ -14,6 +14,10 @@ build/
 .mypy_cache/
 .coverage
 htmlcov/
+*.txt.tmp
+*_out.txt
+*_run.txt
+pytest_run.txt
 
 # Node & Desktop
 node_modules/
