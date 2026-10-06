@@ -4,6 +4,7 @@ import logging
 from pathlib import Path
 from pydantic_settings import BaseSettings, SettingsConfigDict
 from pydantic import Field
+from friday.mcp.config import MCPConfig
 
 logger = logging.getLogger(__name__)
 
@@ -49,6 +50,7 @@ class FridayConfig(BaseSettings):
     security: SecuritySettings = Field(default_factory=SecuritySettings)
     storage: StorageSettings = Field(default_factory=StorageSettings)
     agent: AgentSettings = Field(default_factory=AgentSettings)
+    mcp: MCPConfig = Field(default_factory=MCPConfig)
     workspace_root: Path = Field(default_factory=lambda: Path.cwd())
 
 

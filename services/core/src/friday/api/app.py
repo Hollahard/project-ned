@@ -27,6 +27,7 @@ from friday.inference.mock import MockInferenceBackend
 from friday.inference.telemetry import TelemetryProvider
 from friday.inference.gaming_mode import GamingModeController
 from friday.agent.loop import AgentLoop
+from friday.mcp import MCPHost
 
 logger = logging.getLogger(__name__)
 
@@ -72,12 +73,19 @@ def create_app(
         connection_manager=ws_manager,
     )
 
+    mcp_host = MCPHost(safe_roots=[config.workspace_root])
+
     @asynccontextmanager
     async def lifespan(app: FastAPI) -> AsyncGenerator[None, None]:
         logger.info("Initializing Friday Core storage and components...")
         await db_manager.initialize()
+        if getattr(config, "mcp", None) and config.mcp.servers:
+            mcp_host.load_config(config.mcp)
+            await mcp_host.start_all()
+            mcp_host.sync_to_registry(tool_registry)
         yield
-        logger.info("Shutting down Friday Core storage...")
+        logger.info("Shutting down Friday Core storage and MCP host...")
+        await mcp_host.stop_all()
         await db_manager.close()
 
     app = FastAPI(
@@ -98,6 +106,7 @@ def create_app(
     app.state.agent_loop = agent_loop
     app.state.telemetry_provider = telemetry_provider
     app.state.gaming_mode_controller = gaming_mode_controller
+    app.state.mcp_host = mcp_host
 
     # Security middleware: Reject non-loopback Host / Origin headers
     @app.middleware("http")
@@ -153,5 +162,9 @@ def create_app(
     from friday.api.websocket import ws_router
     app.include_router(router)
     app.include_router(ws_router)
+
+    @app.get("/api/v1/mcp/status")
+    async def get_mcp_status() -> dict:
+        return app.state.mcp_host.get_status()
 
     return app
