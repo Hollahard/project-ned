@@ -39,6 +39,23 @@ CREATE TABLE IF NOT EXISTS events (
     created_at REAL NOT NULL
 );
 
+CREATE TABLE IF NOT EXISTS settings (
+    key TEXT PRIMARY KEY,
+    value TEXT NOT NULL,
+    updated_at REAL NOT NULL
+);
+
+CREATE TABLE IF NOT EXISTS model_profiles (
+    id TEXT PRIMARY KEY,
+    name TEXT NOT NULL,
+    context_window INTEGER NOT NULL DEFAULT 32768,
+    max_tokens INTEGER NOT NULL DEFAULT 4096,
+    temperature REAL NOT NULL DEFAULT 0.7,
+    top_p REAL NOT NULL DEFAULT 0.9,
+    resident INTEGER NOT NULL DEFAULT 1,
+    created_at REAL NOT NULL
+);
+
 -- Virtual table for FTS5 full text search
 CREATE VIRTUAL TABLE IF NOT EXISTS messages_fts USING fts5(
     content,

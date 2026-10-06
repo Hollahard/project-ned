@@ -9,6 +9,7 @@ from pydantic import BaseModel, Field
 
 from friday.inference.protocol import ChatMessage
 from friday.storage.db import DatabaseManager
+from friday.sessions.budget import ContextBudget
 
 logger = logging.getLogger(__name__)
 
@@ -25,8 +26,11 @@ class Session(BaseModel):
 class SessionManager:
     """Provides transactional session creation, message storage, and history querying."""
 
-    def __init__(self, db_manager: DatabaseManager) -> None:
+    def __init__(
+        self, db_manager: DatabaseManager, context_budget: ContextBudget | None = None
+    ) -> None:
         self.db_manager = db_manager
+        self.context_budget = context_budget or ContextBudget()
 
     async def create_session(
         self,
@@ -140,4 +144,106 @@ class SessionManager:
     async def delete_session(self, session_id: str) -> None:
         db = await self.db_manager.get_connection()
         await db.execute("DELETE FROM sessions WHERE id = ?", (session_id,))
+        await db.commit()
+
+    async def get_compacted_history(
+        self,
+        session_id: str,
+        budget_tokens: int | None = None,
+        limit: int = 100,
+    ) -> List[ChatMessage]:
+        """Fetch history and compact it to fit within context budget."""
+        raw_history = await self.get_history(session_id, limit=limit)
+        return self.context_budget.compact_history(raw_history, budget_tokens=budget_tokens)
+
+    async def search_messages(self, query: str, limit: int = 20) -> List[dict]:
+        """Search message content using SQLite FTS5."""
+        db = await self.db_manager.get_connection()
+        async with db.execute(
+            """
+            SELECT m.id, m.session_id, m.role, m.content, m.created_at
+            FROM messages_fts f
+            JOIN messages m ON f.rowid = m.rowid
+            WHERE messages_fts MATCH ?
+            ORDER BY rank
+            LIMIT ?
+            """,
+            (query, limit),
+        ) as cursor:
+            rows = await cursor.fetchall()
+            return [
+                {
+                    "id": r[0],
+                    "session_id": r[1],
+                    "role": r[2],
+                    "content": r[3],
+                    "created_at": r[4],
+                }
+                for r in rows
+            ]
+
+    async def get_setting(self, key: str) -> str | None:
+        db = await self.db_manager.get_connection()
+        async with db.execute("SELECT value FROM settings WHERE key = ?", (key,)) as cursor:
+            row = await cursor.fetchone()
+            return row[0] if row else None
+
+    async def set_setting(self, key: str, value: str) -> None:
+        db = await self.db_manager.get_connection()
+        now = time.time()
+        await db.execute(
+            """
+            INSERT INTO settings (key, value, updated_at) VALUES (?, ?, ?)
+            ON CONFLICT(key) DO UPDATE SET value = excluded.value, updated_at = excluded.updated_at
+            """,
+            (key, value, now),
+        )
+        await db.commit()
+
+    async def list_model_profiles(self) -> List[dict]:
+        db = await self.db_manager.get_connection()
+        async with db.execute(
+            "SELECT id, name, context_window, max_tokens, temperature, top_p, resident, created_at FROM model_profiles"
+        ) as cursor:
+            rows = await cursor.fetchall()
+            return [
+                {
+                    "id": r[0],
+                    "name": r[1],
+                    "context_window": r[2],
+                    "max_tokens": r[3],
+                    "temperature": r[4],
+                    "top_p": r[5],
+                    "resident": bool(r[6]),
+                    "created_at": r[7],
+                }
+                for r in rows
+            ]
+
+    async def save_model_profile(self, profile: dict) -> None:
+        db = await self.db_manager.get_connection()
+        now = time.time()
+        await db.execute(
+            """
+            INSERT INTO model_profiles (id, name, context_window, max_tokens, temperature, top_p, resident, created_at)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+            ON CONFLICT(id) DO UPDATE SET
+                name = excluded.name,
+                context_window = excluded.context_window,
+                max_tokens = excluded.max_tokens,
+                temperature = excluded.temperature,
+                top_p = excluded.top_p,
+                resident = excluded.resident
+            """,
+            (
+                profile["id"],
+                profile.get("name", profile["id"]),
+                profile.get("context_window", 32768),
+                profile.get("max_tokens", 4096),
+                profile.get("temperature", 0.7),
+                profile.get("top_p", 0.9),
+                1 if profile.get("resident", True) else 0,
+                now,
+            ),
+        )
         await db.commit()
