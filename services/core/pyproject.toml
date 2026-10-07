@@ -45,6 +45,7 @@ markers = [
     "gpu: marks tests as requiring GPU and TabbyAPI inference (deselect with '-m \"not gpu\"')",
     "integration: marks tests as integration tests",
     "security: marks tests as security and policy validation tests",
+    "soak: marks tests as endurance and continuous soak tests",
 ]
 
 [tool.ruff]

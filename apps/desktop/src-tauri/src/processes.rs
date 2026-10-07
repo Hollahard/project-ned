@@ -16,10 +16,12 @@ use std::ptr::{null, null_mut};
 use std::sync::{Arc, Mutex};
 use tracing::{info, warn};
 
-use windows_sys::Win32::Foundation::{CloseHandle, HANDLE, INVALID_HANDLE_VALUE};
+use windows_sys::Win32::Foundation::{CloseHandle, BOOL, HANDLE, INVALID_HANDLE_VALUE};
 use windows_sys::Win32::System::JobObjects::{
-    AssignProcessToJobObject, CreateJobObjectW, SetInformationJobObject, TerminateJobObject,
-    JobObjectExtendedLimitInformation, JOBOBJECT_EXTENDED_LIMIT_INFORMATION,
+    AssignProcessToJobObject, CreateJobObjectW, IsProcessInJob,
+    JobObjectBasicAccountingInformation, JobObjectExtendedLimitInformation,
+    QueryInformationJobObject, SetInformationJobObject, TerminateJobObject,
+    JOBOBJECT_BASIC_ACCOUNTING_INFORMATION, JOBOBJECT_EXTENDED_LIMIT_INFORMATION,
     JOB_OBJECT_LIMIT_KILL_ON_JOB_CLOSE,
 };
 
@@ -92,6 +94,45 @@ impl JobObject {
         }
         info!("Assigned child PID {} to Job Object", child.id());
         Ok(())
+    }
+
+    /// Assert whether a child process is contained within this Job Object using native Win32 IsProcessInJob.
+    pub fn contains_process(&self, child: &Child) -> Result<bool, ProcessError> {
+        let raw_handle = child.as_raw_handle() as HANDLE;
+        let mut in_job: BOOL = 0;
+        let ret = unsafe { IsProcessInJob(raw_handle, self.handle, &mut in_job) };
+        if ret == 0 {
+            let err = unsafe { windows_sys::Win32::Foundation::GetLastError() };
+            return Err(ProcessError::AssignProcess {
+                pid: child.id(),
+                code: err,
+            });
+        }
+        Ok(in_job != 0)
+    }
+
+    /// Query the current count of active processes running inside this Job Object.
+    pub fn query_active_process_count(&self) -> Result<u32, ProcessError> {
+        let mut acct_info: JOBOBJECT_BASIC_ACCOUNTING_INFORMATION = unsafe { std::mem::zeroed() };
+        let ret = unsafe {
+            QueryInformationJobObject(
+                self.handle,
+                JobObjectBasicAccountingInformation,
+                &mut acct_info as *mut _ as *mut c_void,
+                std::mem::size_of::<JOBOBJECT_BASIC_ACCOUNTING_INFORMATION>() as u32,
+                null_mut(),
+            )
+        };
+        if ret == 0 {
+            let err = unsafe { windows_sys::Win32::Foundation::GetLastError() };
+            return Err(ProcessError::JobObjectConfigure(err));
+        }
+        Ok(acct_info.ActiveProcesses)
+    }
+
+    /// Return raw HANDLE for testing assertions.
+    pub fn handle(&self) -> HANDLE {
+        self.handle
     }
 
     /// Terminate all processes in this Job Object immediately.

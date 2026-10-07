@@ -33,6 +33,7 @@ Cargo.lock
 state.db
 state.db-wal
 state.db-shm
+.soak_workspace/
 logs/
 cache/
 models/

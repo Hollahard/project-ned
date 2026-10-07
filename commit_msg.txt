@@ -1,0 +1,12 @@
+feat(soak): implement Phase 16 continuous soak and long-run endurance harness
+
+- Implement fast soak endurance regression suite in tests/soak/test_soak_endurance.py
+  (50 turns with mid-turn cancellation, FTS5 memory churn, scheduler frozen snapshots,
+  depth-1 subagent delegation, risk >= 2 auto-denial, tracemalloc drift bounds).
+- Implement standalone endurance runner in tests/soak/run_8hr_soak.py with 15m, 1h,
+  and 8h modes, Win32 minute telemetry sampling, and scripted fault injections.
+- Add desktop supervisor soak contract in apps/desktop/src-tauri/tests/test_supervisor_soak.rs
+  verifying zero handle leaks, Rust Job Object membership, and sidecar exit reaping.
+- Export JobObject membership query functions in apps/desktop/src-tauri/src/processes.rs.
+- Record qualification metrics in docs/benchmarks/soak_test_report.md and walkthrough.md.
+- Verify full stack passes: pytest (191 tests), cargo test (13 tests), npm test (13 tests).
