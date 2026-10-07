@@ -67,14 +67,17 @@ def create_app(
         approval_level=config.security.approval_level,
     )
 
-    # Initialize Langfuse observability tracer
+    # Initialize telemetry coordinator and Langfuse observability tracer
     langfuse_tracer = None
+    telemetry_manager = None
     try:
         from friday.telemetry.langfuse import LangfuseTracer
+        from friday.telemetry.manager import TelemetryManager
         tracer_enabled = getattr(getattr(config, "observability", None), "langfuse_enabled", True)
         langfuse_tracer = LangfuseTracer(enabled=tracer_enabled)
+        telemetry_manager = TelemetryManager(langfuse_sink=langfuse_tracer)
     except Exception as exc:
-        logger.debug("Langfuse tracer initialization skipped: %s", exc)
+        logger.debug("Telemetry manager initialization skipped: %s", exc)
 
     inference_backend = inference or MockInferenceBackend()
     agent_loop = AgentLoop(
@@ -82,6 +85,7 @@ def create_app(
         tools=tool_registry,
         policy=policy_engine,
         tracer=langfuse_tracer,
+        telemetry=telemetry_manager,
     )
     from friday.api.websocket import manager as ws_manager
     telemetry_provider = TelemetryProvider()

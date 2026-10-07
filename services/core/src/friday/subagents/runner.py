@@ -13,12 +13,15 @@ Invariants:
 from __future__ import annotations
 
 import asyncio
+from contextlib import nullcontext
 import json
 import logging
 import sys
 import time
 from typing import Any, Callable, Dict, List, Optional, Set
 import uuid
+
+from friday.telemetry.langfuse import LangfuseTracer
 
 from friday.inference.protocol import (
     ChatMessage,
@@ -136,11 +139,13 @@ class SubagentTurnRunner:
         tools: ToolRegistry,
         db: SubagentDatabaseManager,
         model_name: str = "default",
+        tracer: Optional[LangfuseTracer] = None,
     ) -> None:
         self.inference = inference
         self.tools = tools
         self.db = db
         self.model_name = model_name
+        self.tracer = tracer
 
     async def execute_subagent(
         self,
@@ -198,6 +203,17 @@ class SubagentTurnRunner:
             ChatMessage(role="user", content=spec.task_prompt),
         ]
 
+        agent_ctx = (
+            self.tracer.trace_subagent(
+                role=spec.role,
+                task_prompt=spec.task_prompt,
+                metadata={"workspace_root": spec.workspace_root, "run_id": actual_run_id},
+            )
+            if self.tracer
+            else nullcontext()
+        )
+        agent_obs = agent_ctx.__enter__()
+
         try:
             while iteration < spec.iteration_budget:
                 iteration += 1
@@ -231,29 +247,46 @@ class SubagentTurnRunner:
 
                 # Stream model generation with timeout
                 remaining_time = max(0.1, deadline_monotonic - time.monotonic())
-                try:
-                    async with asyncio.timeout(remaining_time):
-                        async for event in self.inference.generate(request):
-                            if child_cancel_event.is_set():
-                                terminal_state = SubagentRunState.CANCELLED
-                                break
+                with (
+                    self.tracer.trace_generation(
+                        name="subagent.generate",
+                        model=self.model_name,
+                        input_messages=[{"role": m.role, "content": m.content} for m in messages],
+                    )
+                    if self.tracer
+                    else nullcontext()
+                ) as gen_obs:
+                    try:
+                        async with asyncio.timeout(remaining_time):
+                            async for event in self.inference.generate(request):
+                                if child_cancel_event.is_set():
+                                    terminal_state = SubagentRunState.CANCELLED
+                                    break
 
-                            if event.type == InferenceEventType.TOKEN_DELTA:
-                                assistant_content += event.content
-                            elif event.type == InferenceEventType.TOOL_CALL:
-                                if event.tool_call:
-                                    tool_calls.append(event.tool_call)
-                            elif event.type == InferenceEventType.USAGE:
-                                tokens_used = event.prompt_tokens + event.completion_tokens
-                                guard.record_tokens(tokens_used)
-                            elif event.type == InferenceEventType.ERROR:
-                                terminal_state = SubagentRunState.FAILED
-                                error_msg = event.content
-                                break
-                except (asyncio.TimeoutError, TimeoutError):
-                    terminal_state = SubagentRunState.TIMEOUT
-                    error_msg = f"Subagent watchdog timeout after {spec.duration_seconds_budget}s."
-                    break
+                                if event.type == InferenceEventType.TOKEN_DELTA:
+                                    assistant_content += event.content
+                                elif event.type == InferenceEventType.TOOL_CALL:
+                                    if event.tool_call:
+                                        tool_calls.append(event.tool_call)
+                                elif event.type == InferenceEventType.USAGE:
+                                    tokens_used = event.prompt_tokens + event.completion_tokens
+                                    guard.record_tokens(tokens_used)
+                                elif event.type == InferenceEventType.ERROR:
+                                    terminal_state = SubagentRunState.FAILED
+                                    error_msg = event.content
+                                    break
+                    except (asyncio.TimeoutError, TimeoutError):
+                        terminal_state = SubagentRunState.TIMEOUT
+                        error_msg = f"Subagent watchdog timeout after {spec.duration_seconds_budget}s."
+                        break
+
+                    if gen_obs and hasattr(gen_obs, "update"):
+                        gen_obs.update(
+                            output={
+                                "assistant_content": assistant_content,
+                                "tool_calls": tool_calls,
+                            }
+                        )
 
                 if (
                     child_cancel_event.is_set()
@@ -328,7 +361,25 @@ class SubagentTurnRunner:
                         continue
 
                     # Execute tool inside isolated environment
-                    tool_result = await tool_instance.execute(call_id, args)
+                    with (
+                        self.tracer.trace_tool_execution(
+                            tool_name=name,
+                            call_id=call_id,
+                            arguments=args if isinstance(args, dict) else {},
+                        )
+                        if self.tracer
+                        else nullcontext()
+                    ) as tool_obs:
+                        tool_result = await tool_instance.execute(call_id, args)
+                        if tool_obs and hasattr(tool_obs, "update"):
+                            tool_obs.update(
+                                output={
+                                    "success": tool_result.success,
+                                    "output": tool_result.output[:500] if tool_result.output else "",
+                                    "error": tool_result.error,
+                                }
+                            )
+
                     messages.append(
                         ChatMessage(
                             role="tool",
@@ -377,6 +428,19 @@ class SubagentTurnRunner:
                 )
             except Exception as exc:
                 logger.error("Failed to mark run %s complete in database: %s", actual_run_id, exc)
+
+            if agent_obs and hasattr(agent_obs, "update"):
+                agent_obs.update(
+                    output={
+                        "state": terminal_state.value,
+                        "summary": assistant_content,
+                        "error": error_msg,
+                        "tokens_consumed": guard.tokens_consumed,
+                        "tool_calls_count": guard.tool_calls_count,
+                    }
+                )
+
+            agent_ctx.__exit__(None, None, None)
 
         return SubagentResult(
             run_id=actual_run_id,

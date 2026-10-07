@@ -14,6 +14,7 @@ from friday.inference.protocol import (
     InferenceEventType,
 )
 from friday.telemetry.langfuse import LangfuseTracer
+from friday.telemetry.manager import ActiveTurnTrace, TelemetryManager
 from friday.tools.base import ToolResult
 from friday.tools.policy import PolicyEngine
 from friday.tools.registry import ToolRegistry
@@ -80,11 +81,13 @@ class AgentLoop:
         tools: ToolRegistry,
         policy: PolicyEngine,
         tracer: LangfuseTracer | None = None,
+        telemetry: TelemetryManager | None = None,
     ) -> None:
         self.inference = inference
         self.tools = tools
         self.policy = policy
         self.tracer = tracer or LangfuseTracer(enabled=False)
+        self.telemetry = telemetry or TelemetryManager(langfuse_sink=self.tracer)
         self._active_cancels: dict[str, asyncio.Event] = {}
 
     def cancel_turn(self, session_id: str) -> bool:
@@ -140,6 +143,19 @@ class AgentLoop:
         verification_executed_in_turn = False
         verify_on_stop_prompted = False
 
+        active_turn_trace: ActiveTurnTrace | None = None
+        if self.telemetry:
+            active_turn_trace = ActiveTurnTrace(
+                trace_id=turn_id,
+                session_id=session_id,
+                user_prompt=user_prompt,
+                local_sink=self.telemetry.local_sink,
+                langfuse_sink=self.tracer,
+                gpu_provider=self.telemetry.gpu_provider,
+                tags=["friday-desktop", model_name],
+                metadata={"model": model_name},
+            )
+
         with self.tracer.trace_agent_turn(
             session_id=session_id,
             turn_id=turn_id,
@@ -149,6 +165,8 @@ class AgentLoop:
             try:
                 while True:
                     if turn_cancel.is_set():
+                        if active_turn_trace:
+                            await active_turn_trace.complete(final_answer=assistant_content, error="Turn canceled")
                         yield {
                             "type": "turn.canceled",
                             "session_id": session_id,
@@ -168,6 +186,9 @@ class AgentLoop:
                     )
 
                     assistant_content = ""
+                    reasoning_content = ""
+                    prompt_tokens = 0
+                    completion_tokens = 0
                     tool_calls = []
 
                     with self.tracer.trace_generation(
@@ -177,6 +198,8 @@ class AgentLoop:
                     ) as gen_obs:
                         async for event in self.inference.generate(request):
                             if turn_cancel.is_set():
+                                if active_turn_trace:
+                                    await active_turn_trace.complete(final_answer=assistant_content, error="Turn canceled")
                                 yield {
                                     "type": "turn.canceled",
                                     "session_id": session_id,
@@ -194,18 +217,33 @@ class AgentLoop:
                                     "payload": {"content": event.content},
                                 }
                             elif event.type == InferenceEventType.REASONING_DELTA:
+                                reasoning_content += event.content
                                 yield {
                                     "type": "reasoning.delta",
                                     "session_id": session_id,
                                     "turn_id": turn_id,
                                     "payload": {"reasoning": event.content},
                                 }
+                            elif event.type == InferenceEventType.USAGE:
+                                prompt_tokens += event.prompt_tokens
+                                completion_tokens += event.completion_tokens
                             elif event.type == InferenceEventType.TOOL_CALL:
                                 if event.tool_call:
                                     tool_calls.append(event.tool_call)
                             elif event.type == InferenceEventType.ERROR:
                                 if gen_obs and hasattr(gen_obs, "update"):
                                     gen_obs.update(output={"error": event.content})
+                                if active_turn_trace:
+                                    active_turn_trace.record_generation(
+                                        model=model_name,
+                                        input_messages=[{"role": m.role, "content": m.content} for m in messages],
+                                        output_text=assistant_content,
+                                        prompt_tokens=prompt_tokens,
+                                        completion_tokens=completion_tokens,
+                                        thinking=reasoning_content if reasoning_content else None,
+                                        metadata={"error": event.content},
+                                    )
+                                    await active_turn_trace.complete(final_answer=assistant_content, error=event.content)
                                 yield {
                                     "type": "error",
                                     "session_id": session_id,
@@ -215,11 +253,30 @@ class AgentLoop:
                                 return
 
                         if gen_obs and hasattr(gen_obs, "update"):
-                            gen_obs.update(
-                                output={
+                            update_kwargs = {
+                                "output": {
                                     "assistant_content": assistant_content,
                                     "tool_calls": tool_calls,
                                 }
+                            }
+                            if reasoning_content:
+                                update_kwargs["metadata"] = {"thinking": reasoning_content}
+                            if prompt_tokens or completion_tokens:
+                                update_kwargs["usage_details"] = {
+                                    "prompt_tokens": prompt_tokens,
+                                    "completion_tokens": completion_tokens,
+                                    "total_tokens": prompt_tokens + completion_tokens,
+                                }
+                            gen_obs.update(**update_kwargs)
+
+                        if active_turn_trace:
+                            active_turn_trace.record_generation(
+                                model=model_name,
+                                input_messages=[{"role": m.role, "content": m.content} for m in messages],
+                                output_text=assistant_content,
+                                prompt_tokens=prompt_tokens,
+                                completion_tokens=completion_tokens,
+                                thinking=reasoning_content if reasoning_content else None,
                             )
 
                     # Append the assistant's response to the context
@@ -260,6 +317,9 @@ class AgentLoop:
                                     "verified": verification_executed_in_turn or not files_modified_in_turn,
                                 }
                             )
+
+                        if active_turn_trace:
+                            await active_turn_trace.complete(final_answer=assistant_content)
 
                         yield {
                             "type": "turn.completed",
@@ -355,6 +415,27 @@ class AgentLoop:
                                     }
                                 )
 
+                            if active_turn_trace:
+                                if name == "subagent.run" and res.metadata:
+                                    active_turn_trace.record_subagent_run(
+                                        role=res.metadata.get("role", "subagent"),
+                                        task_prompt=args.get("task_prompt", "") if isinstance(args, dict) else "",
+                                        summary=res.output,
+                                        tokens_consumed=res.metadata.get("tokens_consumed", 0),
+                                        tool_calls_count=res.metadata.get("tool_calls_count", 0),
+                                        error=res.error,
+                                        metadata=res.metadata,
+                                    )
+                                else:
+                                    active_turn_trace.record_tool_call(
+                                        tool_name=name,
+                                        arguments=args if isinstance(args, dict) else {},
+                                        output=res.output,
+                                        error=res.error,
+                                        risk_level=getattr(tool_instance, "risk_level", 0),
+                                        call_id=call_id,
+                                    )
+
                         if res.success:
                             budget.consecutive_failures = 0
                             if name == "filesystem.write":
@@ -390,6 +471,8 @@ class AgentLoop:
             except AgentBudgetExceededError as exc:
                 if turn_obs and hasattr(turn_obs, "update"):
                     turn_obs.update(output={"error": str(exc), "status": "budget_exceeded"})
+                if active_turn_trace:
+                    await active_turn_trace.complete(final_answer=assistant_content, error=str(exc))
                 logger.warning("Turn aborted by agent loop guardrail: %s", exc)
                 yield {
                     "type": "turn.failed",
@@ -401,6 +484,8 @@ class AgentLoop:
             except asyncio.CancelledError:
                 if turn_obs and hasattr(turn_obs, "update"):
                     turn_obs.update(output={"status": "canceled"})
+                if active_turn_trace:
+                    await active_turn_trace.complete(final_answer=assistant_content, error="Turn canceled")
                 yield {
                     "type": "turn.canceled",
                     "session_id": session_id,

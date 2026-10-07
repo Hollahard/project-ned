@@ -44,6 +44,10 @@ class AgentSettings(BaseSettings):
 
 class ObservabilitySettings(BaseSettings):
     langfuse_enabled: bool = True
+    langfuse_public_key: str = Field(default="", description="Langfuse public API key")
+    langfuse_secret_key: str = Field(default="", description="Langfuse secret API key")
+    langfuse_base_url: str = Field(default="https://us.cloud.langfuse.com", description="Langfuse host URL")
+    traces_dir: str = "logs/traces"
 
 
 class FridayConfig(BaseSettings):

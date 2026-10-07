@@ -44,6 +44,8 @@ runtime/
 .env.*
 !.env.example
 secrets/
+langFUSE.txt
+*langfuse*.txt
 
 # IDE & OS
 .vscode/

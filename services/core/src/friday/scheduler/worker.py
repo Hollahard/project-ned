@@ -13,10 +13,15 @@ Invariants:
 
 import asyncio
 import logging
+from contextlib import nullcontext
 from pathlib import Path
 import time
 from typing import Any, Callable, Dict, Optional
 import uuid
+
+from friday.telemetry.langfuse import LangfuseTracer
+from friday.telemetry.manager import TelemetryManager
+from friday.telemetry.tracer import TraceRecord
 
 from friday.scheduler.cron import CronCalendarAdapter
 from friday.scheduler.db import SchedulerDatabaseManager
@@ -128,6 +133,8 @@ class SchedulerWorker:
         heartbeat_interval_seconds: float = 10.0,
         admission_grace_seconds: int = 60,
         turn_runner: Optional[Callable[[ScheduledJob, JobRun, ScheduledExecutionGuard, asyncio.Event], Any]] = None,
+        tracer: Optional[LangfuseTracer] = None,
+        telemetry: Optional[TelemetryManager] = None,
     ) -> None:
         self.db_manager = db_manager
         self.instance_id = instance_id or f"worker-{uuid.uuid4().hex[:8]}"
@@ -136,6 +143,8 @@ class SchedulerWorker:
         self.heartbeat_interval_seconds = heartbeat_interval_seconds
         self.admission_grace_seconds = admission_grace_seconds
         self.turn_runner = turn_runner
+        self.tracer = tracer
+        self.telemetry = telemetry
 
         self._running = False
         self._loop_task: Optional[asyncio.Task] = None
@@ -247,6 +256,21 @@ class SchedulerWorker:
         error_summary: Optional[str] = None
         outcome_certain = True
 
+        trace_ctx = (
+            self.tracer.trace_turn(
+                name="scheduled-job",
+                session_id=None,
+                user_id="scheduler",
+                user_message=job.description or job.title,
+                tags=["scheduled", job.schedule_type.value],
+                metadata={"job_id": job.id, "run_id": run.id},
+                as_type="agent",
+            )
+            if self.tracer
+            else nullcontext()
+        )
+        job_obs = trace_ctx.__enter__()
+
         try:
             # Set up Windows Job Cage for process containment
             try:
@@ -343,7 +367,7 @@ class SchedulerWorker:
                 )
 
             # Finalize run in database
-            await self.db_manager.complete_run(
+            completed_run = await self.db_manager.complete_run(
                 run_id=run.id,
                 owner_instance=self.instance_id,
                 ownership_generation=run.ownership_generation,
@@ -355,3 +379,32 @@ class SchedulerWorker:
                 next_run_at_utc=next_run_at_utc,
             )
             logger.info("Run %s finalized with state %s", run.id, final_state.value)
+
+            if job_obs and hasattr(job_obs, "update"):
+                job_obs.update(
+                    output={
+                        "state": final_state.value,
+                        "summary": output_summary,
+                        "error": error_summary,
+                        "consumed_tokens": consumed_tokens,
+                    }
+                )
+            trace_ctx.__exit__(None, None, None)
+
+            if self.telemetry:
+                try:
+                    record = TraceRecord(
+                        id=run.id,
+                        session_id=None,
+                        user_id="scheduler",
+                        name="scheduled-job",
+                        start_time_utc=run.started_at_utc or "",
+                        end_time_utc=completed_run.completed_at_utc if completed_run else None,
+                        input={"job_title": job.title, "description": job.description},
+                        output=output_summary if not error_summary else f"Error: {error_summary}",
+                        tags=["scheduled", job.schedule_type.value],
+                        metadata={"job_id": job.id, "run_id": run.id, "final_state": final_state.value},
+                    )
+                    await self.telemetry.local_sink.write_trace(record)
+                except Exception as e:
+                    logger.debug("Could not write scheduled trace to local sink: %s", e)
