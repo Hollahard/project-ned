@@ -14,6 +14,7 @@ from friday.tools.native_read import (
 from friday.tools.filesystem_write import FilesystemWriteTool, FilesystemRollbackTool
 from friday.tools.terminal_exec import TerminalExecTool
 from friday.tools.memory import MemorySearchTool, MemorySaveTool, MemoryDeleteTool
+from friday.tools.subagent import SubagentRunTool, SubagentListTool, SubagentCancelTool
 
 __all__ = [
     "Tool",
@@ -32,5 +33,7 @@ __all__ = [
     "MemorySearchTool",
     "MemorySaveTool",
     "MemoryDeleteTool",
+    "SubagentRunTool",
+    "SubagentListTool",
+    "SubagentCancelTool",
 ]
-
