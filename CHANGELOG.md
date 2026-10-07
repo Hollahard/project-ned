@@ -50,25 +50,31 @@ Project Friday v1.0.0 delivers a sovereign, offline-first AI desktop agent platf
 - NTFS boundary enforcement using native `GetFinalPathNameByHandleW` to reject directory traversal and junction attacks.
 - Read-only filesystem tools (`filesystem.read`, `filesystem.list`) and Git tools (`git.status`, `git.diff`).
 
-#### Phase 7: Persistent Workspace Memory & FTS5 (`7567f8f`)
-- 4-tier memory architecture (Episodic, Semantic, Working, Procedural).
-- SQLite WAL mode storage with FTS5 virtual tables and automatic trigger synchronization.
-- Hybrid BM25 full-text keyword search and relevance scoring strictly scoped to workspace roots.
+#### Phase 7: Write Tools, Terminal Exec & PowerShell AST Defense (`7567f8f`)
+- `filesystem.write`, `filesystem.patch`, `filesystem.delete` native write tools with policy-gated approval.
+- `terminal.exec` with PowerShell Constrained Language Mode and AST parser.
+- AST validation blocks `-EncodedCommand`, `-ExecutionPolicy Bypass`, reflection, scriptblocks, and pipeline chaining.
+- Verify-on-stop rule: last write in a turn is confirmed before the agent loop concludes.
+- Git checkpoint before first write in a turn; file snapshot for non-repo targets.
 
-#### Phase 8: External Skills Runtime & Sandbox Isolation (`b88acf6`)
-- Dynamic agent skill loading and discovery from `.agents/skills/`.
-- Isolated skill process execution within a dedicated Win32 Job Object sandbox cage.
-- Scrubbed child process environment stripping parent secrets and API tokens.
-
-#### Phase 9: Model Context Protocol (MCP) Host Integration (`b924d0e`)
-- Native JSON-RPC 2.0 stdio MCP client and server host.
+#### Phase 8: MCP Host, Job Object Client & Tool Adapter (`b88acf6`)
+- Native JSON-RPC 2.0 stdio MCP client wrapping external plugins behind the tool policy engine.
+- MCP child processes run inside the Friday Job Object — no MCP server escapes the process cage.
 - Per-server namespace prefixing (`mcp.<server>.<tool>`) and automatic health checks.
 - Dynamic tool discovery and schema adapter for seamless agent loop integration.
+- MCP is an extension host — not the implementation of filesystem, terminal, git, or memory.
 
-#### Phase 10: Model Context Management & Compaction (`8a76c16`)
-- Sliding window conversation management with strict token budget enforcement.
-- Dynamic compaction summarizing older conversation history when context exceeds budget.
-- Inert data tagging ensuring compacted historical context cannot override active policy or developer prompts.
+#### Phase 9: 4-Tier Memory, FTS5 Scoped Joins & Injection Defense (`b924d0e`)
+- 4-tier persistent memory architecture: Working, Episodic, Semantic, Procedural — all SQLite WAL + FTS5.
+- Scoped FTS5 joins prevent cross-session memory bleed.
+- Injection defense: web pages, tool results, MCP output, and retrieved memory injected as `user`/`tool` role — never into the system prompt.
+- Memory writes that change approval posture, credentials, or paths require explicit native approval.
+
+#### Phase 10: Inert Data Gating (10A) & Sandbox Host (10B) (`8a76c16`)
+- Inert data gating: untrusted content (files, web pages, MCP output) sandboxed before injection; cannot promote untrusted content into policy.
+- Workspace `SKILL.md` is never auto-loaded — skill create/update requires native dialog approval and diff review.
+- A skill cannot grant tools or roots the creating session did not already have.
+- Sandbox host isolates skill execution environment from the core agent process.
 
 #### Phase 11: Sovereign Task Scheduler (`5eb9688`)
 - Offline cron, interval, and one-shot scheduled job execution.
@@ -110,3 +116,29 @@ Project Friday v1.0.0 delivers a sovereign, offline-first AI desktop agent platf
 - All high-risk actions require Win32 native system modal approvals; Web UI cannot bypass or auto-approve.
 - Capability tokens are single-use, bounded by HMAC-SHA256, and bound to deterministic canonical argument hashes.
 - Path operations strictly enforce NTFS boundary containment via `GetFinalPathNameByHandleW`.
+
+### Known Limitations
+- **Secrets at rest**: Langfuse and local credentials reside in `.env` (gitignored). Windows DPAPI / Credential Manager integration is targeted for v1.1.
+- **Interactive fault injections**: `host_sleep_resume` and `host_lock_unlock` fault injections require an interactive desktop session and are marked `SKIPPED` in headless CI runs.
+- **Single resident model**: Gaming Mode operates via cancellation and VRAM release rather than concurrent model swap. Dual-model residency is unsupported in v1.
+- **Cloud fallback**: Per-turn cloud inference opt-in is enforced by policy but has no v1 UI surface. Silent failover is blocked by design.
+
+---
+
+## [Unreleased] — v1.1 Backlog
+
+### Planned
+- **DPAPI / Credential Manager**: Migrate secrets from `.env` to Windows DPAPI or Credential Manager at rest.
+- **AppContainer Process Containment**: Next-level isolation beyond Job Objects for MCP servers and skill sandboxes.
+- **Role-Model Hot-Swap UI**: In-app model switching without restart; load/unload race resolution.
+- **Cloud Inference Opt-In UI**: Per-turn cloud fallback surface with explicit user consent flow.
+- **Interactive Fault Injection**: Automated `host_sleep_resume` and `host_lock_unlock` soak coverage.
+- **Messaging Gateways**: Email and Slack integration (explicit post-v1 scope boundary).
+- **Computer Use**: GUI automation via screen capture and structured click (post-v1).
+- **Voice I/O**: Speech input/output integration (post-v1).
+- **Browser Automation**: Web agent capability (post-v1).
+
+---
+
+[1.0.0]: https://github.com/Hollahard/project-ned/releases/tag/v1.0.0
+[Unreleased]: https://github.com/Hollahard/project-ned/compare/v1.0.0...HEAD
