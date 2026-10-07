@@ -1,0 +1,2724 @@
+{
+  "baseline_commit": "649d6c0391029f35959cfbc240eb3534a6667cf5",
+  "captured_utc": "2026-10-07T21:33:36.698892+00:00",
+  "gateway_contract_sha256": "3ae1199a7ad1c6afc8f6b714aa294a2108e9c34f825fa7174b252f5e0e663064",
+  "static_only": true,
+  "methods": [
+    "agents.list",
+    "approval.pending",
+    "approval.received",
+    "approval.respond",
+    "billing.auto_reload",
+    "billing.charge",
+    "billing.charge_status",
+    "billing.state",
+    "billing.step_up",
+    "bot_relay.deliver",
+    "bot_relay.outbox.drain",
+    "bot_relay.reply",
+    "bot_relay.roster.sync",
+    "browser.controller.detach",
+    "browser.controller.heartbeat",
+    "browser.controller.register",
+    "browser.controller.result",
+    "browser.manage",
+    "clarify.lock",
+    "cli.exec",
+    "client.capabilities",
+    "clipboard.paste",
+    "command.dispatch",
+    "command.resolve",
+    "commands.catalog",
+    "complete.path",
+    "complete.slash",
+    "config.get",
+    "config.set",
+    "config.show",
+    "connection.respond",
+    "connectors.accounts",
+    "connectors.accounts.remove",
+    "connectors.catalog",
+    "connectors.connect",
+    "connectors.list",
+    "connectors.operation.status",
+    "connectors.operation.wake",
+    "connectors.policy.get",
+    "connectors.policy.set",
+    "connectors.tools",
+    "cron.manage",
+    "delegation.pause",
+    "delegation.status",
+    "diagnostics.share_nous",
+    "display.install",
+    "display.lease.acquire",
+    "display.lease.release",
+    "display.observe",
+    "display.start",
+    "display.status",
+    "display.stop",
+    "display.switchSandboxImage",
+    "display.thumbnail",
+    "file.attach",
+    "free_tier.ack_notice",
+    "free_tier.challenge_result",
+    "free_tier.provision",
+    "free_tier.status",
+    "gateway.capabilities",
+    "groups.approve",
+    "groups.capabilities",
+    "groups.create",
+    "groups.demote",
+    "groups.disband",
+    "groups.list",
+    "groups.log",
+    "groups.peer.invite",
+    "groups.peer.register",
+    "groups.peer.revoke",
+    "groups.promote",
+    "groups.rename",
+    "groups.replica_state",
+    "groups.replicate",
+    "groups.retry",
+    "groups.send",
+    "groups.state",
+    "groups.stop",
+    "handoff.fail",
+    "handoff.request",
+    "handoff.state",
+    "i18n.catalog",
+    "i18n.languages",
+    "image.attach",
+    "image.attach_bytes",
+    "image.detach",
+    "image.generate",
+    "input.detect_drop",
+    "insights.get",
+    "learning.delete",
+    "learning.detail",
+    "learning.edit",
+    "learning.frames",
+    "llm.oneshot",
+    "mcp.catalog",
+    "mcp.servers.add",
+    "mcp.servers.list",
+    "mcp.servers.oauth.callback",
+    "mcp.servers.oauth.cancel",
+    "mcp.servers.oauth.poll",
+    "mcp.servers.oauth.start",
+    "mcp.servers.remove",
+    "mcp.servers.set_api_key",
+    "mcp.servers.status",
+    "mcp.servers.test",
+    "message.react",
+    "model.disconnect",
+    "model.options",
+    "model.save_key",
+    "onboarding.ensure_setup_profile",
+    "onboarding.reset_setup_profile",
+    "paste.collapse",
+    "pdf.attach",
+    "pet.cancel",
+    "pet.cells",
+    "pet.disable",
+    "pet.export",
+    "pet.gallery",
+    "pet.generate",
+    "pet.generate.status",
+    "pet.hatch",
+    "pet.info",
+    "pet.info.meta",
+    "pet.remove",
+    "pet.rename",
+    "pet.scale",
+    "pet.select",
+    "pet.thumb",
+    "ping",
+    "plugins.list",
+    "plugins.manage",
+    "preview.restart",
+    "process.kill",
+    "process.list",
+    "process.stop",
+    "profiles.configure",
+    "profiles.create",
+    "profiles.describe",
+    "profiles.get_asset",
+    "profiles.list",
+    "profiles.remember_onboarding",
+    "profiles.set_asset",
+    "project.facts",
+    "projects.add_folder",
+    "projects.archive",
+    "projects.create",
+    "projects.delete",
+    "projects.discover_repos",
+    "projects.for_cwd",
+    "projects.get",
+    "projects.list",
+    "projects.project_sessions",
+    "projects.record_repos",
+    "projects.remove_folder",
+    "projects.set_active",
+    "projects.set_primary",
+    "projects.tree",
+    "projects.update",
+    "prompt.background",
+    "prompt.btw",
+    "prompt.submit",
+    "reload.env",
+    "reload.mcp",
+    "request.answer",
+    "rollback.diff",
+    "rollback.list",
+    "rollback.restore",
+    "session.activate",
+    "session.active_list",
+    "session.archive",
+    "session.branch",
+    "session.branch_stored",
+    "session.branch_whole",
+    "session.close",
+    "session.compress",
+    "session.context_breakdown",
+    "session.control",
+    "session.control.read",
+    "session.create",
+    "session.cwd.set",
+    "session.delete",
+    "session.events.since",
+    "session.events.stats",
+    "session.foreign.import",
+    "session.foreign.list",
+    "session.foreign.preview",
+    "session.history",
+    "session.interrupt",
+    "session.list",
+    "session.most_recent",
+    "session.redirect",
+    "session.resume",
+    "session.save",
+    "session.set_hidden",
+    "session.status",
+    "session.steer",
+    "session.title",
+    "session.undo",
+    "session.usage",
+    "session.workspace.move",
+    "setup.runtime_check",
+    "setup.status",
+    "shared_metrics.desktop_daily",
+    "shared_metrics.desktop_dislike",
+    "shared_metrics.desktop_feature_use",
+    "shared_metrics.desktop_friction",
+    "shared_metrics.desktop_onboarding",
+    "shared_metrics.set",
+    "shared_metrics.slash_command",
+    "shared_metrics.startup_latency",
+    "shared_metrics.status",
+    "shared_metrics.update_run",
+    "shell.exec",
+    "skills.manage",
+    "skills.reload",
+    "slash.exec",
+    "spawn_tree.list",
+    "spawn_tree.load",
+    "spawn_tree.save",
+    "subagent.interrupt",
+    "subagent.list",
+    "subagent.steer",
+    "subagent.tail",
+    "subscription.change",
+    "subscription.preview",
+    "subscription.resume",
+    "subscription.state",
+    "subscription.upgrade",
+    "system.battery",
+    "terminal.resize",
+    "tools.configure",
+    "tools.list",
+    "tools.show",
+    "toolsets.list",
+    "usage.bars",
+    "vault.add",
+    "vault.list",
+    "vault.lock",
+    "vault.remove",
+    "vault.source.set",
+    "vault.sources",
+    "vault.unlock",
+    "verification.status",
+    "voice.record",
+    "voice.toggle",
+    "voice.tts",
+    "wake.feed",
+    "wake.pause",
+    "wake.resume",
+    "wake.start",
+    "wake.status",
+    "wake.stop"
+  ],
+  "server_requests": [
+    "approval",
+    "clarify",
+    "display.install.sudo",
+    "preview.act",
+    "preview.read",
+    "secret",
+    "sudo",
+    "terminal.read",
+    "tour",
+    "vault.code",
+    "vault.save_login",
+    "vault.unlock_prompt",
+    "window.read"
+  ],
+  "notifications": [
+    "agent.terminal.output",
+    "approval.cancelled",
+    "background.complete",
+    "billing.step_up.verification",
+    "bot_relay.outbox.pending",
+    "browser.controller.cancel",
+    "browser.controller.command",
+    "browser.progress",
+    "btw.complete",
+    "connection.request",
+    "connection.update",
+    "cron.changed",
+    "display.install.done",
+    "display.install.log",
+    "display.lease",
+    "display.status",
+    "error",
+    "free_tier.challenge",
+    "gateway.ready",
+    "layout.apply",
+    "message.complete",
+    "message.delta",
+    "message.interim",
+    "message.reaction",
+    "message.start",
+    "moa.aggregating",
+    "moa.phase",
+    "moa.progress",
+    "moa.reference",
+    "notice",
+    "notification.clear",
+    "notification.show",
+    "pairing.changed",
+    "pane.reveal",
+    "pet.changed",
+    "pet.generate.progress",
+    "pet.hatch.progress",
+    "platforms.changed",
+    "preview.close",
+    "preview.open",
+    "preview.restart.complete",
+    "preview.restart.progress",
+    "projects.changed",
+    "reaction",
+    "reasoning.available",
+    "reasoning.delta",
+    "request.cancel",
+    "review.summary",
+    "session.control.update",
+    "session.info",
+    "session.reclaimed",
+    "session.resume_progress",
+    "session.title",
+    "session.usage",
+    "sessions.changed",
+    "setup.ready",
+    "skin.changed",
+    "status.update",
+    "subagent.complete",
+    "subagent.progress",
+    "subagent.spawn_requested",
+    "subagent.start",
+    "subagent.thinking",
+    "subagent.tool",
+    "terminal.close",
+    "thinking.delta",
+    "tip.show",
+    "todo.updated",
+    "tool.complete",
+    "tool.generating",
+    "tool.output_risk",
+    "tool.start",
+    "voice.interrupted",
+    "voice.partial",
+    "voice.status",
+    "voice.transcript",
+    "wake.detected"
+  ],
+  "preload_literal_channels": [
+    {
+      "channel": "hermes:active-work",
+      "occurrences": [
+        {
+          "line": 386,
+          "action": "send"
+        }
+      ]
+    },
+    {
+      "channel": "hermes:agents:roster",
+      "occurrences": [
+        {
+          "line": 54,
+          "action": "invoke"
+        }
+      ]
+    },
+    {
+      "channel": "hermes:ambient:claim",
+      "occurrences": [
+        {
+          "line": 74,
+          "action": "invoke"
+        }
+      ]
+    },
+    {
+      "channel": "hermes:api",
+      "occurrences": [
+        {
+          "line": 342,
+          "action": "invoke"
+        }
+      ]
+    },
+    {
+      "channel": "hermes:app:relaunch",
+      "occurrences": [
+        {
+          "line": 657,
+          "action": "invoke"
+        }
+      ]
+    },
+    {
+      "channel": "hermes:backend-exit",
+      "occurrences": [
+        {
+          "line": 591,
+          "action": "on"
+        }
+      ]
+    },
+    {
+      "channel": "hermes:backend:recycle",
+      "occurrences": [
+        {
+          "line": 640,
+          "action": "invoke"
+        }
+      ]
+    },
+    {
+      "channel": "hermes:backend:touch",
+      "occurrences": [
+        {
+          "line": 46,
+          "action": "invoke"
+        }
+      ]
+    },
+    {
+      "channel": "hermes:boot-progress",
+      "occurrences": [
+        {
+          "line": 628,
+          "action": "on"
+        }
+      ]
+    },
+    {
+      "channel": "hermes:boot-progress:get",
+      "occurrences": [
+        {
+          "line": 275,
+          "action": "invoke"
+        }
+      ]
+    },
+    {
+      "channel": "hermes:bootstrap:cancel",
+      "occurrences": [
+        {
+          "line": 649,
+          "action": "invoke"
+        }
+      ]
+    },
+    {
+      "channel": "hermes:bootstrap:continue-local",
+      "occurrences": [
+        {
+          "line": 639,
+          "action": "invoke"
+        }
+      ]
+    },
+    {
+      "channel": "hermes:bootstrap:event",
+      "occurrences": [
+        {
+          "line": 652,
+          "action": "on"
+        }
+      ]
+    },
+    {
+      "channel": "hermes:bootstrap:get",
+      "occurrences": [
+        {
+          "line": 637,
+          "action": "invoke"
+        }
+      ]
+    },
+    {
+      "channel": "hermes:bootstrap:repair",
+      "occurrences": [
+        {
+          "line": 648,
+          "action": "invoke"
+        }
+      ]
+    },
+    {
+      "channel": "hermes:bootstrap:reset",
+      "occurrences": [
+        {
+          "line": 641,
+          "action": "invoke"
+        }
+      ]
+    },
+    {
+      "channel": "hermes:browser-popout:closed",
+      "occurrences": [
+        {
+          "line": 70,
+          "action": "on"
+        }
+      ]
+    },
+    {
+      "channel": "hermes:capturePreview",
+      "occurrences": [
+        {
+          "line": 372,
+          "action": "invoke"
+        }
+      ]
+    },
+    {
+      "channel": "hermes:chat-onboarding:grow",
+      "occurrences": [
+        {
+          "line": 92,
+          "action": "send"
+        }
+      ]
+    },
+    {
+      "channel": "hermes:chat-onboarding:solo-boot",
+      "occurrences": [
+        {
+          "line": 93,
+          "action": "send"
+        }
+      ]
+    },
+    {
+      "channel": "hermes:close-preview-requested",
+      "occurrences": [
+        {
+          "line": 521,
+          "action": "on"
+        }
+      ]
+    },
+    {
+      "channel": "hermes:cloud:agent-sign-in",
+      "occurrences": [
+        {
+          "line": 324,
+          "action": "invoke"
+        }
+      ]
+    },
+    {
+      "channel": "hermes:cloud:discover",
+      "occurrences": [
+        {
+          "line": 323,
+          "action": "invoke"
+        }
+      ]
+    },
+    {
+      "channel": "hermes:cloud:login",
+      "occurrences": [
+        {
+          "line": 321,
+          "action": "invoke"
+        }
+      ]
+    },
+    {
+      "channel": "hermes:cloud:logout",
+      "occurrences": [
+        {
+          "line": 322,
+          "action": "invoke"
+        }
+      ]
+    },
+    {
+      "channel": "hermes:cloud:status",
+      "occurrences": [
+        {
+          "line": 320,
+          "action": "invoke"
+        }
+      ]
+    },
+    {
+      "channel": "hermes:connection",
+      "occurrences": [
+        {
+          "line": 39,
+          "action": "invoke"
+        }
+      ]
+    },
+    {
+      "channel": "hermes:connection-config:apply",
+      "occurrences": [
+        {
+          "line": 278,
+          "action": "invoke"
+        }
+      ]
+    },
+    {
+      "channel": "hermes:connection-config:get",
+      "occurrences": [
+        {
+          "line": 276,
+          "action": "invoke"
+        }
+      ]
+    },
+    {
+      "channel": "hermes:connection-config:oauth-login",
+      "occurrences": [
+        {
+          "line": 315,
+          "action": "invoke"
+        }
+      ]
+    },
+    {
+      "channel": "hermes:connection-config:oauth-logout",
+      "occurrences": [
+        {
+          "line": 316,
+          "action": "invoke"
+        }
+      ]
+    },
+    {
+      "channel": "hermes:connection-config:probe",
+      "occurrences": [
+        {
+          "line": 309,
+          "action": "invoke"
+        }
+      ]
+    },
+    {
+      "channel": "hermes:connection-config:save",
+      "occurrences": [
+        {
+          "line": 277,
+          "action": "invoke"
+        }
+      ]
+    },
+    {
+      "channel": "hermes:connection-config:test",
+      "occurrences": [
+        {
+          "line": 279,
+          "action": "invoke"
+        }
+      ]
+    },
+    {
+      "channel": "hermes:connection:active-route",
+      "occurrences": [
+        {
+          "line": 428,
+          "action": "send"
+        }
+      ]
+    },
+    {
+      "channel": "hermes:connection:applied",
+      "occurrences": [
+        {
+          "line": 608,
+          "action": "on"
+        }
+      ]
+    },
+    {
+      "channel": "hermes:connection:for",
+      "occurrences": [
+        {
+          "line": 43,
+          "action": "invoke"
+        }
+      ]
+    },
+    {
+      "channel": "hermes:connection:revalidate",
+      "occurrences": [
+        {
+          "line": 45,
+          "action": "invoke"
+        }
+      ]
+    },
+    {
+      "channel": "hermes:connections:changed",
+      "occurrences": [
+        {
+          "line": 302,
+          "action": "on"
+        }
+      ]
+    },
+    {
+      "channel": "hermes:connections:list",
+      "occurrences": [
+        {
+          "line": 286,
+          "action": "invoke"
+        }
+      ]
+    },
+    {
+      "channel": "hermes:connections:remove",
+      "occurrences": [
+        {
+          "line": 288,
+          "action": "invoke"
+        }
+      ]
+    },
+    {
+      "channel": "hermes:connections:save",
+      "occurrences": [
+        {
+          "line": 287,
+          "action": "invoke"
+        }
+      ]
+    },
+    {
+      "channel": "hermes:connections:set-last-used",
+      "occurrences": [
+        {
+          "line": 291,
+          "action": "invoke"
+        }
+      ]
+    },
+    {
+      "channel": "hermes:connections:set-launch-mode",
+      "occurrences": [
+        {
+          "line": 290,
+          "action": "invoke"
+        }
+      ]
+    },
+    {
+      "channel": "hermes:connections:set-primary",
+      "occurrences": [
+        {
+          "line": 289,
+          "action": "invoke"
+        }
+      ]
+    },
+    {
+      "channel": "hermes:connections:test",
+      "occurrences": [
+        {
+          "line": 292,
+          "action": "invoke"
+        }
+      ]
+    },
+    {
+      "channel": "hermes:connections:update-all",
+      "occurrences": [
+        {
+          "line": 296,
+          "action": "invoke"
+        }
+      ]
+    },
+    {
+      "channel": "hermes:connections:update-managed",
+      "occurrences": [
+        {
+          "line": 293,
+          "action": "invoke"
+        }
+      ]
+    },
+    {
+      "channel": "hermes:context-menu-spellcheck",
+      "occurrences": [
+        {
+          "line": 367,
+          "action": "on"
+        }
+      ]
+    },
+    {
+      "channel": "hermes:context-menu:copy-image",
+      "occurrences": [
+        {
+          "line": 362,
+          "action": "invoke"
+        }
+      ]
+    },
+    {
+      "channel": "hermes:context-menu:edit",
+      "occurrences": [
+        {
+          "line": 361,
+          "action": "invoke"
+        }
+      ]
+    },
+    {
+      "channel": "hermes:context-menu:guest-add-word",
+      "occurrences": [
+        {
+          "line": 364,
+          "action": "invoke"
+        }
+      ]
+    },
+    {
+      "channel": "hermes:context-menu:spellcheck",
+      "occurrences": [
+        {
+          "line": 363,
+          "action": "invoke"
+        }
+      ]
+    },
+    {
+      "channel": "hermes:data-url-read-max:get",
+      "occurrences": [
+        {
+          "line": 350,
+          "action": "invoke"
+        }
+      ]
+    },
+    {
+      "channel": "hermes:data-url-read-max:set",
+      "occurrences": [
+        {
+          "line": 351,
+          "action": "invoke"
+        }
+      ]
+    },
+    {
+      "channel": "hermes:deep-link",
+      "occurrences": [
+        {
+          "line": 545,
+          "action": "on"
+        }
+      ]
+    },
+    {
+      "channel": "hermes:deep-link-ready",
+      "occurrences": [
+        {
+          "line": 549,
+          "action": "invoke"
+        }
+      ]
+    },
+    {
+      "channel": "hermes:desktop-metrics:crash:ack",
+      "occurrences": [
+        {
+          "line": 688,
+          "action": "invoke"
+        }
+      ]
+    },
+    {
+      "channel": "hermes:desktop-metrics:crash:take",
+      "occurrences": [
+        {
+          "line": 687,
+          "action": "invoke"
+        }
+      ]
+    },
+    {
+      "channel": "hermes:desktop-metrics:set-enabled",
+      "occurrences": [
+        {
+          "line": 686,
+          "action": "invoke"
+        }
+      ]
+    },
+    {
+      "channel": "hermes:devtools:disable-f12",
+      "occurrences": [
+        {
+          "line": 401,
+          "action": "send"
+        }
+      ]
+    },
+    {
+      "channel": "hermes:embed-host:origin",
+      "occurrences": [
+        {
+          "line": 41,
+          "action": "invoke"
+        }
+      ]
+    },
+    {
+      "channel": "hermes:external-open-failed",
+      "occurrences": [
+        {
+          "line": 579,
+          "action": "on"
+        }
+      ]
+    },
+    {
+      "channel": "hermes:f12-shortcut",
+      "occurrences": [
+        {
+          "line": 405,
+          "action": "on"
+        }
+      ]
+    },
+    {
+      "channel": "hermes:f12ShortcutActive",
+      "occurrences": [
+        {
+          "line": 402,
+          "action": "send"
+        }
+      ]
+    },
+    {
+      "channel": "hermes:feature-flags",
+      "occurrences": [
+        {
+          "line": 19,
+          "action": "sendSync"
+        }
+      ]
+    },
+    {
+      "channel": "hermes:fetchLinkTitle",
+      "occurrences": [
+        {
+          "line": 429,
+          "action": "invoke"
+        }
+      ]
+    },
+    {
+      "channel": "hermes:find-in-page",
+      "occurrences": [
+        {
+          "line": 700,
+          "action": "invoke"
+        }
+      ]
+    },
+    {
+      "channel": "hermes:focus-session",
+      "occurrences": [
+        {
+          "line": 561,
+          "action": "on"
+        }
+      ]
+    },
+    {
+      "channel": "hermes:found-in-page",
+      "occurrences": [
+        {
+          "line": 704,
+          "action": "on"
+        }
+      ]
+    },
+    {
+      "channel": "hermes:freeTierChallenge:run",
+      "occurrences": [
+        {
+          "line": 416,
+          "action": "invoke"
+        }
+      ]
+    },
+    {
+      "channel": "hermes:fs:desktopPluginsRoot",
+      "occurrences": [
+        {
+          "line": 463,
+          "action": "invoke"
+        }
+      ]
+    },
+    {
+      "channel": "hermes:fs:gitRoot",
+      "occurrences": [
+        {
+          "line": 460,
+          "action": "invoke"
+        }
+      ]
+    },
+    {
+      "channel": "hermes:fs:logsRoot",
+      "occurrences": [
+        {
+          "line": 465,
+          "action": "invoke"
+        }
+      ]
+    },
+    {
+      "channel": "hermes:fs:openDir",
+      "occurrences": [
+        {
+          "line": 462,
+          "action": "invoke"
+        }
+      ]
+    },
+    {
+      "channel": "hermes:fs:readDir",
+      "occurrences": [
+        {
+          "line": 459,
+          "action": "invoke"
+        }
+      ]
+    },
+    {
+      "channel": "hermes:fs:reconcileDesktopPlugins",
+      "occurrences": [
+        {
+          "line": 464,
+          "action": "invoke"
+        }
+      ]
+    },
+    {
+      "channel": "hermes:fs:rename",
+      "occurrences": [
+        {
+          "line": 466,
+          "action": "invoke"
+        }
+      ]
+    },
+    {
+      "channel": "hermes:fs:reveal",
+      "occurrences": [
+        {
+          "line": 461,
+          "action": "invoke"
+        }
+      ]
+    },
+    {
+      "channel": "hermes:fs:trash",
+      "occurrences": [
+        {
+          "line": 468,
+          "action": "invoke"
+        }
+      ]
+    },
+    {
+      "channel": "hermes:fs:writeText",
+      "occurrences": [
+        {
+          "line": 467,
+          "action": "invoke"
+        }
+      ]
+    },
+    {
+      "channel": "hermes:gateway:ws-url",
+      "occurrences": [
+        {
+          "line": 49,
+          "action": "invoke"
+        }
+      ]
+    },
+    {
+      "channel": "hermes:gateway:ws-url-for",
+      "occurrences": [
+        {
+          "line": 52,
+          "action": "invoke"
+        }
+      ]
+    },
+    {
+      "channel": "hermes:get-remote-display-reason",
+      "occurrences": [
+        {
+          "line": 659,
+          "action": "invoke"
+        }
+      ]
+    },
+    {
+      "channel": "hermes:git:baseBranchList",
+      "occurrences": [
+        {
+          "line": 476,
+          "action": "invoke"
+        }
+      ]
+    },
+    {
+      "channel": "hermes:git:branchList",
+      "occurrences": [
+        {
+          "line": 475,
+          "action": "invoke"
+        }
+      ]
+    },
+    {
+      "channel": "hermes:git:branchSwitch",
+      "occurrences": [
+        {
+          "line": 474,
+          "action": "invoke"
+        }
+      ]
+    },
+    {
+      "channel": "hermes:git:fileDiff",
+      "occurrences": [
+        {
+          "line": 478,
+          "action": "invoke"
+        }
+      ]
+    },
+    {
+      "channel": "hermes:git:repoStatus",
+      "occurrences": [
+        {
+          "line": 477,
+          "action": "invoke"
+        }
+      ]
+    },
+    {
+      "channel": "hermes:git:review:commit",
+      "occurrences": [
+        {
+          "line": 488,
+          "action": "invoke"
+        }
+      ]
+    },
+    {
+      "channel": "hermes:git:review:commitContext",
+      "occurrences": [
+        {
+          "line": 489,
+          "action": "invoke"
+        }
+      ]
+    },
+    {
+      "channel": "hermes:git:review:createPr",
+      "occurrences": [
+        {
+          "line": 494,
+          "action": "invoke"
+        }
+      ]
+    },
+    {
+      "channel": "hermes:git:review:diff",
+      "occurrences": [
+        {
+          "line": 483,
+          "action": "invoke"
+        }
+      ]
+    },
+    {
+      "channel": "hermes:git:review:list",
+      "occurrences": [
+        {
+          "line": 481,
+          "action": "invoke"
+        }
+      ]
+    },
+    {
+      "channel": "hermes:git:review:prList",
+      "occurrences": [
+        {
+          "line": 493,
+          "action": "invoke"
+        }
+      ]
+    },
+    {
+      "channel": "hermes:git:review:push",
+      "occurrences": [
+        {
+          "line": 490,
+          "action": "invoke"
+        }
+      ]
+    },
+    {
+      "channel": "hermes:git:review:revParse",
+      "occurrences": [
+        {
+          "line": 487,
+          "action": "invoke"
+        }
+      ]
+    },
+    {
+      "channel": "hermes:git:review:revert",
+      "occurrences": [
+        {
+          "line": 486,
+          "action": "invoke"
+        }
+      ]
+    },
+    {
+      "channel": "hermes:git:review:shipInfo",
+      "occurrences": [
+        {
+          "line": 491,
+          "action": "invoke"
+        }
+      ]
+    },
+    {
+      "channel": "hermes:git:review:stage",
+      "occurrences": [
+        {
+          "line": 484,
+          "action": "invoke"
+        }
+      ]
+    },
+    {
+      "channel": "hermes:git:review:unstage",
+      "occurrences": [
+        {
+          "line": 485,
+          "action": "invoke"
+        }
+      ]
+    },
+    {
+      "channel": "hermes:git:scanRepos",
+      "occurrences": [
+        {
+          "line": 479,
+          "action": "invoke"
+        }
+      ]
+    },
+    {
+      "channel": "hermes:git:worktreeAdd",
+      "occurrences": [
+        {
+          "line": 471,
+          "action": "invoke"
+        }
+      ]
+    },
+    {
+      "channel": "hermes:git:worktreeList",
+      "occurrences": [
+        {
+          "line": 470,
+          "action": "invoke"
+        }
+      ]
+    },
+    {
+      "channel": "hermes:git:worktreeRemove",
+      "occurrences": [
+        {
+          "line": 473,
+          "action": "invoke"
+        }
+      ]
+    },
+    {
+      "channel": "hermes:hud-modifier:permission",
+      "occurrences": [
+        {
+          "line": 186,
+          "action": "invoke"
+        }
+      ]
+    },
+    {
+      "channel": "hermes:hud-modifier:settings:get",
+      "occurrences": [
+        {
+          "line": 184,
+          "action": "invoke"
+        }
+      ]
+    },
+    {
+      "channel": "hermes:hud-modifier:settings:set",
+      "occurrences": [
+        {
+          "line": 185,
+          "action": "invoke"
+        }
+      ]
+    },
+    {
+      "channel": "hermes:hud-modifier:status",
+      "occurrences": [
+        {
+          "line": 189,
+          "action": "on"
+        }
+      ]
+    },
+    {
+      "channel": "hermes:hud:begin-move",
+      "occurrences": [
+        {
+          "line": 138,
+          "action": "send"
+        }
+      ]
+    },
+    {
+      "channel": "hermes:hud:changed",
+      "occurrences": [
+        {
+          "line": 159,
+          "action": "on"
+        }
+      ]
+    },
+    {
+      "channel": "hermes:hud:close",
+      "occurrences": [
+        {
+          "line": 136,
+          "action": "invoke"
+        }
+      ]
+    },
+    {
+      "channel": "hermes:hud:cursor",
+      "occurrences": [
+        {
+          "line": 169,
+          "action": "on"
+        }
+      ]
+    },
+    {
+      "channel": "hermes:hud:end-move",
+      "occurrences": [
+        {
+          "line": 139,
+          "action": "send"
+        }
+      ]
+    },
+    {
+      "channel": "hermes:hud:frost",
+      "occurrences": [
+        {
+          "line": 147,
+          "action": "invoke"
+        }
+      ]
+    },
+    {
+      "channel": "hermes:hud:game-overlay",
+      "occurrences": [
+        {
+          "line": 178,
+          "action": "on"
+        }
+      ]
+    },
+    {
+      "channel": "hermes:hud:goto",
+      "occurrences": [
+        {
+          "line": 153,
+          "action": "on"
+        }
+      ]
+    },
+    {
+      "channel": "hermes:hud:ignore-mouse",
+      "occurrences": [
+        {
+          "line": 137,
+          "action": "send"
+        }
+      ]
+    },
+    {
+      "channel": "hermes:hud:move-by",
+      "occurrences": [
+        {
+          "line": 140,
+          "action": "send"
+        }
+      ]
+    },
+    {
+      "channel": "hermes:hud:open",
+      "occurrences": [
+        {
+          "line": 135,
+          "action": "invoke"
+        }
+      ]
+    },
+    {
+      "channel": "hermes:hud:reset-layout",
+      "occurrences": [
+        {
+          "line": 143,
+          "action": "invoke"
+        }
+      ]
+    },
+    {
+      "channel": "hermes:hud:session",
+      "occurrences": [
+        {
+          "line": 150,
+          "action": "send"
+        }
+      ]
+    },
+    {
+      "channel": "hermes:hud:set-bounds",
+      "occurrences": [
+        {
+          "line": 142,
+          "action": "send"
+        }
+      ]
+    },
+    {
+      "channel": "hermes:hud:windowing",
+      "occurrences": [
+        {
+          "line": 15,
+          "action": "sendSync"
+        }
+      ]
+    },
+    {
+      "channel": "hermes:hud:workspace-transfer",
+      "occurrences": [
+        {
+          "line": 141,
+          "action": "send"
+        }
+      ]
+    },
+    {
+      "channel": "hermes:keep-awake",
+      "occurrences": [
+        {
+          "line": 390,
+          "action": "send"
+        }
+      ]
+    },
+    {
+      "channel": "hermes:local-backend:probe",
+      "occurrences": [
+        {
+          "line": 638,
+          "action": "invoke"
+        }
+      ]
+    },
+    {
+      "channel": "hermes:logs:recent",
+      "occurrences": [
+        {
+          "line": 454,
+          "action": "invoke"
+        }
+      ]
+    },
+    {
+      "channel": "hermes:logs:renderer-error",
+      "occurrences": [
+        {
+          "line": 457,
+          "action": "send"
+        }
+      ]
+    },
+    {
+      "channel": "hermes:logs:renderer-line",
+      "occurrences": [
+        {
+          "line": 458,
+          "action": "send"
+        }
+      ]
+    },
+    {
+      "channel": "hermes:logs:reveal",
+      "occurrences": [
+        {
+          "line": 453,
+          "action": "invoke"
+        }
+      ]
+    },
+    {
+      "channel": "hermes:machine:profile",
+      "occurrences": [
+        {
+          "line": 658,
+          "action": "invoke"
+        }
+      ]
+    },
+    {
+      "channel": "hermes:mcp-oauth:cancel",
+      "occurrences": [
+        {
+          "line": 424,
+          "action": "invoke"
+        }
+      ]
+    },
+    {
+      "channel": "hermes:mcp-oauth:listen",
+      "occurrences": [
+        {
+          "line": 422,
+          "action": "invoke"
+        }
+      ]
+    },
+    {
+      "channel": "hermes:mcp-oauth:wait",
+      "occurrences": [
+        {
+          "line": 423,
+          "action": "invoke"
+        }
+      ]
+    },
+    {
+      "channel": "hermes:minimize-to-tray:changed",
+      "occurrences": [
+        {
+          "line": 396,
+          "action": "on"
+        }
+      ]
+    },
+    {
+      "channel": "hermes:minimize-to-tray:get",
+      "occurrences": [
+        {
+          "line": 392,
+          "action": "invoke"
+        }
+      ]
+    },
+    {
+      "channel": "hermes:minimize-to-tray:set",
+      "occurrences": [
+        {
+          "line": 393,
+          "action": "invoke"
+        }
+      ]
+    },
+    {
+      "channel": "hermes:native-theme",
+      "occurrences": [
+        {
+          "line": 388,
+          "action": "send"
+        }
+      ]
+    },
+    {
+      "channel": "hermes:normalizePreviewTarget",
+      "occurrences": [
+        {
+          "line": 382,
+          "action": "invoke"
+        }
+      ]
+    },
+    {
+      "channel": "hermes:notification-action",
+      "occurrences": [
+        {
+          "line": 567,
+          "action": "on"
+        }
+      ]
+    },
+    {
+      "channel": "hermes:notification-activate",
+      "occurrences": [
+        {
+          "line": 573,
+          "action": "on"
+        }
+      ]
+    },
+    {
+      "channel": "hermes:notify",
+      "occurrences": [
+        {
+          "line": 343,
+          "action": "invoke"
+        }
+      ]
+    },
+    {
+      "channel": "hermes:open-find-bar",
+      "occurrences": [
+        {
+          "line": 713,
+          "action": "on"
+        }
+      ]
+    },
+    {
+      "channel": "hermes:open-folder-requested",
+      "occurrences": [
+        {
+          "line": 533,
+          "action": "on"
+        }
+      ]
+    },
+    {
+      "channel": "hermes:open-updates",
+      "occurrences": [
+        {
+          "line": 539,
+          "action": "on"
+        }
+      ]
+    },
+    {
+      "channel": "hermes:openExternal",
+      "occurrences": [
+        {
+          "line": 412,
+          "action": "invoke"
+        }
+      ]
+    },
+    {
+      "channel": "hermes:openPreviewInBrowser",
+      "occurrences": [
+        {
+          "line": 426,
+          "action": "invoke"
+        }
+      ]
+    },
+    {
+      "channel": "hermes:pet-overlay:close",
+      "occurrences": [
+        {
+          "line": 99,
+          "action": "invoke"
+        }
+      ]
+    },
+    {
+      "channel": "hermes:pet-overlay:control",
+      "occurrences": [
+        {
+          "line": 107,
+          "action": "send"
+        },
+        {
+          "line": 118,
+          "action": "on"
+        }
+      ]
+    },
+    {
+      "channel": "hermes:pet-overlay:ignore-mouse",
+      "occurrences": [
+        {
+          "line": 101,
+          "action": "send"
+        }
+      ]
+    },
+    {
+      "channel": "hermes:pet-overlay:open",
+      "occurrences": [
+        {
+          "line": 98,
+          "action": "invoke"
+        }
+      ]
+    },
+    {
+      "channel": "hermes:pet-overlay:set-bounds",
+      "occurrences": [
+        {
+          "line": 100,
+          "action": "send"
+        }
+      ]
+    },
+    {
+      "channel": "hermes:pet-overlay:set-focusable",
+      "occurrences": [
+        {
+          "line": 103,
+          "action": "send"
+        }
+      ]
+    },
+    {
+      "channel": "hermes:pet-overlay:state",
+      "occurrences": [
+        {
+          "line": 105,
+          "action": "send"
+        },
+        {
+          "line": 111,
+          "action": "on"
+        }
+      ]
+    },
+    {
+      "channel": "hermes:plugin-profile-routes",
+      "occurrences": [
+        {
+          "line": 44,
+          "action": "invoke"
+        }
+      ]
+    },
+    {
+      "channel": "hermes:plugin:installDesktop",
+      "occurrences": [
+        {
+          "line": 551,
+          "action": "invoke"
+        }
+      ]
+    },
+    {
+      "channel": "hermes:plugin:probe",
+      "occurrences": [
+        {
+          "line": 550,
+          "action": "invoke"
+        }
+      ]
+    },
+    {
+      "channel": "hermes:plugin:removeDesktop",
+      "occurrences": [
+        {
+          "line": 552,
+          "action": "invoke"
+        }
+      ]
+    },
+    {
+      "channel": "hermes:pool-limits:get",
+      "occurrences": [
+        {
+          "line": 47,
+          "action": "invoke"
+        }
+      ]
+    },
+    {
+      "channel": "hermes:pool-limits:set",
+      "occurrences": [
+        {
+          "line": 48,
+          "action": "invoke"
+        }
+      ]
+    },
+    {
+      "channel": "hermes:pool:retiring",
+      "occurrences": [
+        {
+          "line": 600,
+          "action": "on"
+        }
+      ]
+    },
+    {
+      "channel": "hermes:power-battery",
+      "occurrences": [
+        {
+          "line": 622,
+          "action": "on"
+        }
+      ]
+    },
+    {
+      "channel": "hermes:power-battery:get",
+      "occurrences": [
+        {
+          "line": 619,
+          "action": "invoke"
+        }
+      ]
+    },
+    {
+      "channel": "hermes:power-resume",
+      "occurrences": [
+        {
+          "line": 614,
+          "action": "on"
+        }
+      ]
+    },
+    {
+      "channel": "hermes:preview-file-changed",
+      "occurrences": [
+        {
+          "line": 585,
+          "action": "on"
+        }
+      ]
+    },
+    {
+      "channel": "hermes:preview-guest-hidden",
+      "occurrences": [
+        {
+          "line": 411,
+          "action": "send"
+        }
+      ]
+    },
+    {
+      "channel": "hermes:preview-nav",
+      "occurrences": [
+        {
+          "line": 527,
+          "action": "on"
+        }
+      ]
+    },
+    {
+      "channel": "hermes:preview:reach",
+      "occurrences": [
+        {
+          "line": 427,
+          "action": "invoke"
+        }
+      ]
+    },
+    {
+      "channel": "hermes:previewShortcutActive",
+      "occurrences": [
+        {
+          "line": 409,
+          "action": "send"
+        }
+      ]
+    },
+    {
+      "channel": "hermes:profile:default:changed",
+      "occurrences": [
+        {
+          "line": 331,
+          "action": "on"
+        }
+      ]
+    },
+    {
+      "channel": "hermes:profile:default:get",
+      "occurrences": [
+        {
+          "line": 327,
+          "action": "invoke"
+        }
+      ]
+    },
+    {
+      "channel": "hermes:profile:default:set",
+      "occurrences": [
+        {
+          "line": 328,
+          "action": "invoke"
+        }
+      ]
+    },
+    {
+      "channel": "hermes:profile:get",
+      "occurrences": [
+        {
+          "line": 335,
+          "action": "invoke"
+        }
+      ]
+    },
+    {
+      "channel": "hermes:profile:remember",
+      "occurrences": [
+        {
+          "line": 336,
+          "action": "invoke"
+        }
+      ]
+    },
+    {
+      "channel": "hermes:profile:set",
+      "occurrences": [
+        {
+          "line": 337,
+          "action": "invoke"
+        }
+      ]
+    },
+    {
+      "channel": "hermes:quick-entry:ack",
+      "occurrences": [
+        {
+          "line": 238,
+          "action": "send"
+        }
+      ]
+    },
+    {
+      "channel": "hermes:quick-entry:dismiss",
+      "occurrences": [
+        {
+          "line": 239,
+          "action": "send"
+        }
+      ]
+    },
+    {
+      "channel": "hermes:quick-entry:late-result",
+      "occurrences": [
+        {
+          "line": 270,
+          "action": "on"
+        }
+      ]
+    },
+    {
+      "channel": "hermes:quick-entry:settings:get",
+      "occurrences": [
+        {
+          "line": 233,
+          "action": "invoke"
+        }
+      ]
+    },
+    {
+      "channel": "hermes:quick-entry:settings:set",
+      "occurrences": [
+        {
+          "line": 234,
+          "action": "invoke"
+        }
+      ]
+    },
+    {
+      "channel": "hermes:quick-entry:shown",
+      "occurrences": [
+        {
+          "line": 261,
+          "action": "on"
+        }
+      ]
+    },
+    {
+      "channel": "hermes:quick-entry:state",
+      "occurrences": [
+        {
+          "line": 243,
+          "action": "send"
+        },
+        {
+          "line": 247,
+          "action": "on"
+        }
+      ]
+    },
+    {
+      "channel": "hermes:quick-entry:submit",
+      "occurrences": [
+        {
+          "line": 236,
+          "action": "invoke"
+        },
+        {
+          "line": 254,
+          "action": "on"
+        }
+      ]
+    },
+    {
+      "channel": "hermes:readClipboard",
+      "occurrences": [
+        {
+          "line": 358,
+          "action": "invoke"
+        }
+      ]
+    },
+    {
+      "channel": "hermes:readFileDataUrl",
+      "occurrences": [
+        {
+          "line": 347,
+          "action": "invoke"
+        }
+      ]
+    },
+    {
+      "channel": "hermes:readFileDataUrlForAttach",
+      "occurrences": [
+        {
+          "line": 348,
+          "action": "invoke"
+        }
+      ]
+    },
+    {
+      "channel": "hermes:readFileText",
+      "occurrences": [
+        {
+          "line": 353,
+          "action": "invoke"
+        }
+      ]
+    },
+    {
+      "channel": "hermes:readPluginSource",
+      "occurrences": [
+        {
+          "line": 354,
+          "action": "invoke"
+        }
+      ]
+    },
+    {
+      "channel": "hermes:requestMicrophoneAccess",
+      "occurrences": [
+        {
+          "line": 345,
+          "action": "invoke"
+        }
+      ]
+    },
+    {
+      "channel": "hermes:resolveFavicon",
+      "occurrences": [
+        {
+          "line": 430,
+          "action": "invoke"
+        }
+      ]
+    },
+    {
+      "channel": "hermes:saveClipboardImage",
+      "occurrences": [
+        {
+          "line": 374,
+          "action": "invoke"
+        }
+      ]
+    },
+    {
+      "channel": "hermes:saveGatewayFile",
+      "occurrences": [
+        {
+          "line": 359,
+          "action": "invoke"
+        }
+      ]
+    },
+    {
+      "channel": "hermes:saveImageBuffer",
+      "occurrences": [
+        {
+          "line": 371,
+          "action": "invoke"
+        }
+      ]
+    },
+    {
+      "channel": "hermes:saveImageFromUrl",
+      "occurrences": [
+        {
+          "line": 360,
+          "action": "invoke"
+        }
+      ]
+    },
+    {
+      "channel": "hermes:savePastedText",
+      "occurrences": [
+        {
+          "line": 373,
+          "action": "invoke"
+        }
+      ]
+    },
+    {
+      "channel": "hermes:screenshot:capture",
+      "occurrences": [
+        {
+          "line": 201,
+          "action": "invoke"
+        }
+      ]
+    },
+    {
+      "channel": "hermes:screenshot:permission",
+      "occurrences": [
+        {
+          "line": 200,
+          "action": "invoke"
+        }
+      ]
+    },
+    {
+      "channel": "hermes:screenshot:settings:get",
+      "occurrences": [
+        {
+          "line": 198,
+          "action": "invoke"
+        }
+      ]
+    },
+    {
+      "channel": "hermes:screenshot:settings:set",
+      "occurrences": [
+        {
+          "line": 199,
+          "action": "invoke"
+        }
+      ]
+    },
+    {
+      "channel": "hermes:screenshot:status",
+      "occurrences": [
+        {
+          "line": 204,
+          "action": "on"
+        }
+      ]
+    },
+    {
+      "channel": "hermes:screenshot:subscribe",
+      "occurrences": [
+        {
+          "line": 213,
+          "action": "send"
+        },
+        {
+          "line": 222,
+          "action": "send"
+        }
+      ]
+    },
+    {
+      "channel": "hermes:secret-storage:get",
+      "occurrences": [
+        {
+          "line": 282,
+          "action": "invoke"
+        }
+      ]
+    },
+    {
+      "channel": "hermes:secret-storage:set",
+      "occurrences": [
+        {
+          "line": 283,
+          "action": "invoke"
+        }
+      ]
+    },
+    {
+      "channel": "hermes:selectPaths",
+      "occurrences": [
+        {
+          "line": 355,
+          "action": "invoke"
+        }
+      ]
+    },
+    {
+      "channel": "hermes:selectSavePath",
+      "occurrences": [
+        {
+          "line": 356,
+          "action": "invoke"
+        }
+      ]
+    },
+    {
+      "channel": "hermes:setting:defaultProjectDir:get",
+      "occurrences": [
+        {
+          "line": 433,
+          "action": "invoke"
+        }
+      ]
+    },
+    {
+      "channel": "hermes:setting:defaultProjectDir:pick",
+      "occurrences": [
+        {
+          "line": 435,
+          "action": "invoke"
+        }
+      ]
+    },
+    {
+      "channel": "hermes:setting:defaultProjectDir:set",
+      "occurrences": [
+        {
+          "line": 434,
+          "action": "invoke"
+        }
+      ]
+    },
+    {
+      "channel": "hermes:skin:local",
+      "occurrences": [
+        {
+          "line": 24,
+          "action": "sendSync"
+        }
+      ]
+    },
+    {
+      "channel": "hermes:ssh-config:hosts",
+      "occurrences": [
+        {
+          "line": 307,
+          "action": "invoke"
+        }
+      ]
+    },
+    {
+      "channel": "hermes:ssh-config:resolve",
+      "occurrences": [
+        {
+          "line": 308,
+          "action": "invoke"
+        }
+      ]
+    },
+    {
+      "channel": "hermes:startup-latency:claim",
+      "occurrences": [
+        {
+          "line": 344,
+          "action": "invoke"
+        }
+      ]
+    },
+    {
+      "channel": "hermes:stop-find-in-page",
+      "occurrences": [
+        {
+          "line": 701,
+          "action": "invoke"
+        }
+      ]
+    },
+    {
+      "channel": "hermes:stopPreviewFileWatch",
+      "occurrences": [
+        {
+          "line": 385,
+          "action": "invoke"
+        }
+      ]
+    },
+    {
+      "channel": "hermes:terminal:attach",
+      "occurrences": [
+        {
+          "line": 498,
+          "action": "invoke"
+        }
+      ]
+    },
+    {
+      "channel": "hermes:terminal:cwd",
+      "occurrences": [
+        {
+          "line": 499,
+          "action": "invoke"
+        }
+      ]
+    },
+    {
+      "channel": "hermes:terminal:dispose",
+      "occurrences": [
+        {
+          "line": 500,
+          "action": "invoke"
+        }
+      ]
+    },
+    {
+      "channel": "hermes:terminal:resize",
+      "occurrences": [
+        {
+          "line": 501,
+          "action": "invoke"
+        }
+      ]
+    },
+    {
+      "channel": "hermes:terminal:start",
+      "occurrences": [
+        {
+          "line": 502,
+          "action": "invoke"
+        }
+      ]
+    },
+    {
+      "channel": "hermes:terminal:write",
+      "occurrences": [
+        {
+          "line": 503,
+          "action": "invoke"
+        }
+      ]
+    },
+    {
+      "channel": "hermes:titlebar-theme",
+      "occurrences": [
+        {
+          "line": 387,
+          "action": "send"
+        }
+      ]
+    },
+    {
+      "channel": "hermes:translucency",
+      "occurrences": [
+        {
+          "line": 389,
+          "action": "send"
+        }
+      ]
+    },
+    {
+      "channel": "hermes:translucency:support",
+      "occurrences": [
+        {
+          "line": 14,
+          "action": "sendSync"
+        }
+      ]
+    },
+    {
+      "channel": "hermes:uninstall:openAppsSettings",
+      "occurrences": [
+        {
+          "line": 663,
+          "action": "invoke"
+        }
+      ]
+    },
+    {
+      "channel": "hermes:uninstall:run",
+      "occurrences": [
+        {
+          "line": 662,
+          "action": "invoke"
+        }
+      ]
+    },
+    {
+      "channel": "hermes:uninstall:summary",
+      "occurrences": [
+        {
+          "line": 661,
+          "action": "invoke"
+        }
+      ]
+    },
+    {
+      "channel": "hermes:update-hold:quit",
+      "occurrences": [
+        {
+          "line": 644,
+          "action": "invoke"
+        }
+      ]
+    },
+    {
+      "channel": "hermes:update-hold:recheck",
+      "occurrences": [
+        {
+          "line": 643,
+          "action": "invoke"
+        }
+      ]
+    },
+    {
+      "channel": "hermes:update-hold:start-anyway",
+      "occurrences": [
+        {
+          "line": 646,
+          "action": "invoke"
+        }
+      ]
+    },
+    {
+      "channel": "hermes:updates:apply",
+      "occurrences": [
+        {
+          "line": 667,
+          "action": "invoke"
+        }
+      ]
+    },
+    {
+      "channel": "hermes:updates:branch:get",
+      "occurrences": [
+        {
+          "line": 668,
+          "action": "invoke"
+        }
+      ]
+    },
+    {
+      "channel": "hermes:updates:branch:set",
+      "occurrences": [
+        {
+          "line": 669,
+          "action": "invoke"
+        }
+      ]
+    },
+    {
+      "channel": "hermes:updates:check",
+      "occurrences": [
+        {
+          "line": 666,
+          "action": "invoke"
+        }
+      ]
+    },
+    {
+      "channel": "hermes:updates:metric:ack",
+      "occurrences": [
+        {
+          "line": 677,
+          "action": "invoke"
+        }
+      ]
+    },
+    {
+      "channel": "hermes:updates:metric:pending",
+      "occurrences": [
+        {
+          "line": 680,
+          "action": "on"
+        }
+      ]
+    },
+    {
+      "channel": "hermes:updates:metric:take",
+      "occurrences": [
+        {
+          "line": 676,
+          "action": "invoke"
+        }
+      ]
+    },
+    {
+      "channel": "hermes:updates:progress",
+      "occurrences": [
+        {
+          "line": 672,
+          "action": "on"
+        }
+      ]
+    },
+    {
+      "channel": "hermes:version",
+      "occurrences": [
+        {
+          "line": 656,
+          "action": "invoke"
+        }
+      ]
+    },
+    {
+      "channel": "hermes:vscode-theme:fetch",
+      "occurrences": [
+        {
+          "line": 691,
+          "action": "invoke"
+        }
+      ]
+    },
+    {
+      "channel": "hermes:vscode-theme:search",
+      "occurrences": [
+        {
+          "line": 692,
+          "action": "invoke"
+        }
+      ]
+    },
+    {
+      "channel": "hermes:wake-indicator:get",
+      "occurrences": [
+        {
+          "line": 82,
+          "action": "invoke"
+        }
+      ]
+    },
+    {
+      "channel": "hermes:wake-indicator:set",
+      "occurrences": [
+        {
+          "line": 83,
+          "action": "send"
+        }
+      ]
+    },
+    {
+      "channel": "hermes:wake-indicator:state",
+      "occurrences": [
+        {
+          "line": 86,
+          "action": "on"
+        }
+      ]
+    },
+    {
+      "channel": "hermes:watchDirectory",
+      "occurrences": [
+        {
+          "line": 384,
+          "action": "invoke"
+        }
+      ]
+    },
+    {
+      "channel": "hermes:watchPreviewFile",
+      "occurrences": [
+        {
+          "line": 383,
+          "action": "invoke"
+        }
+      ]
+    },
+    {
+      "channel": "hermes:window-control",
+      "occurrences": [
+        {
+          "line": 77,
+          "action": "send"
+        },
+        {
+          "line": 78,
+          "action": "send"
+        },
+        {
+          "line": 79,
+          "action": "send"
+        }
+      ]
+    },
+    {
+      "channel": "hermes:window-state-changed",
+      "occurrences": [
+        {
+          "line": 555,
+          "action": "on"
+        }
+      ]
+    },
+    {
+      "channel": "hermes:window:openBrowser",
+      "occurrences": [
+        {
+          "line": 58,
+          "action": "invoke"
+        }
+      ]
+    },
+    {
+      "channel": "hermes:window:openInTerminal",
+      "occurrences": [
+        {
+          "line": 56,
+          "action": "invoke"
+        }
+      ]
+    },
+    {
+      "channel": "hermes:window:openInstance",
+      "occurrences": [
+        {
+          "line": 57,
+          "action": "invoke"
+        }
+      ]
+    },
+    {
+      "channel": "hermes:window:openSession",
+      "occurrences": [
+        {
+          "line": 55,
+          "action": "invoke"
+        }
+      ]
+    },
+    {
+      "channel": "hermes:window:readBelow",
+      "occurrences": [
+        {
+          "line": 346,
+          "action": "invoke"
+        }
+      ]
+    },
+    {
+      "channel": "hermes:window:relay",
+      "occurrences": [
+        {
+          "line": 60,
+          "action": "send"
+        },
+        {
+          "line": 63,
+          "action": "on"
+        }
+      ]
+    },
+    {
+      "channel": "hermes:workspace:sanitize",
+      "occurrences": [
+        {
+          "line": 431,
+          "action": "invoke"
+        }
+      ]
+    },
+    {
+      "channel": "hermes:writeClipboard",
+      "occurrences": [
+        {
+          "line": 357,
+          "action": "invoke"
+        }
+      ]
+    },
+    {
+      "channel": "hermes:zoom:changed",
+      "occurrences": [
+        {
+          "line": 448,
+          "action": "on"
+        }
+      ]
+    },
+    {
+      "channel": "hermes:zoom:get",
+      "occurrences": [
+        {
+          "line": 439,
+          "action": "invoke"
+        }
+      ]
+    },
+    {
+      "channel": "hermes:zoom:set-percent",
+      "occurrences": [
+        {
+          "line": 443,
+          "action": "send"
+        }
+      ]
+    }
+  ],
+  "limitations": [
+    "Literal scan omits dynamically formed channels and is not semantic coverage.",
+    "OpenRPC artifact declarations are not a live runtime census.",
+    "Argument and return shapes remain in the pinned generated OpenRPC and global.d.ts source."
+  ]
+}

@@ -1,0 +1,343 @@
+{
+  "baseline_commit": "649d6c0391029f35959cfbc240eb3534a6667cf5",
+  "root": "G:\\Personal_Assistant\\hermes\\hermes-agent",
+  "captured_utc": "2026-10-07T21:33:36.698892+00:00",
+  "files": [
+    {
+      "path": "run_agent.py",
+      "sha256": "d16d052db063a84154b90565f4676a5d3dbc837d41c09c9f25b852180dca70a0",
+      "bytes": 87290,
+      "lines": 1559
+    },
+    {
+      "path": "agent/conversation_loop.py",
+      "sha256": "f1cf0fa240880e217e3a826a38c04e500ea0ed0fd5db944f25ece8d9570b95d3",
+      "bytes": 93484,
+      "lines": 1838
+    },
+    {
+      "path": "agent/turn_facade.py",
+      "sha256": "5797b456f1ac86fb099c4f20c39a2652b63c72d0c9098c9e72ad66cd47ee63ae",
+      "bytes": 11793,
+      "lines": 222
+    },
+    {
+      "path": "agent/turn_facade_lease.py",
+      "sha256": "b2cee5e664a6a8380fef1b212a6e54722ae14f6586cffb2a243e3066830f6e55",
+      "bytes": 20637,
+      "lines": 425
+    },
+    {
+      "path": "agent/turn_context.py",
+      "sha256": "1db15cc5ee39ab3dafe9f646680f8468dd2bd6401bf4123e891697bf8206efba",
+      "bytes": 68110,
+      "lines": 1330
+    },
+    {
+      "path": "agent/memory_provider.py",
+      "sha256": "a4e44a293013fff831ac136ab77c556541cd18817f53bd662e97090cd80bd5a6",
+      "bytes": 10503,
+      "lines": 206
+    },
+    {
+      "path": "agent/memory_manager.py",
+      "sha256": "c96003a78dc28154392542f23ee72159c4989b016ddeb028182b246efeb50337",
+      "bytes": 49606,
+      "lines": 976
+    },
+    {
+      "path": "agent/agent_init.py",
+      "sha256": "f65104648b441c652435a31112baec2b2850461fe6d356c03fb1b39bce5a4158",
+      "bytes": 131946,
+      "lines": 2496
+    },
+    {
+      "path": "agent/secret_scope.py",
+      "sha256": "5f2584dc93be49ef7e4de23f9f92a4abd05aa42aab8fc2fac40f54f9f8b9c664",
+      "bytes": 22138,
+      "lines": 453
+    },
+    {
+      "path": "model_tools.py",
+      "sha256": "2e8bbd44480a50b35f1d129d5e84d7ea0dfdb6cdba50655c431fe3418467050e",
+      "bytes": 50232,
+      "lines": 992
+    },
+    {
+      "path": "tools/registry.py",
+      "sha256": "597777c40320f90f5ca62f10d74a3112061193d2c712b752fd9d7300350f3c4b",
+      "bytes": 51608,
+      "lines": 1043
+    },
+    {
+      "path": "providers/base.py",
+      "sha256": "5824709fb57b9401a72650f7fcd9763d4124ee1c531bb444b7e504fd4501d19e",
+      "bytes": 21225,
+      "lines": 435
+    },
+    {
+      "path": "providers/__init__.py",
+      "sha256": "3c5013938b0a8b186199d9a096b4e0c698b6bd12cf5623bc2ffa0673b5067645",
+      "bytes": 30506,
+      "lines": 707
+    },
+    {
+      "path": "hermes_cli/runtime_provider.py",
+      "sha256": "c3c1374ff74abc85c798c0b3d18bcf0ecc3b44f051a832563462260c3430b663",
+      "bytes": 72514,
+      "lines": 1151
+    },
+    {
+      "path": "hermes_state.py",
+      "sha256": "686f24ff0e6638ef3050b9587d2e1b782ca168e67904f239b123c10a2017b2da",
+      "bytes": 94036,
+      "lines": 1718
+    },
+    {
+      "path": "hermes_state_common.py",
+      "sha256": "f16691e09097de5737208b5d26523e6015989794e544e572ec3f20b40507f814",
+      "bytes": 64810,
+      "lines": 1328
+    },
+    {
+      "path": "tui_gateway/contracts/base.py",
+      "sha256": "494996d9882ea8d3abf39013108ddc2472c17b5b09722ddfd4fdca9d6db259cf",
+      "bytes": 2285,
+      "lines": 55
+    },
+    {
+      "path": "tui_gateway/contracts/registry.py",
+      "sha256": "b7e0f2e346e7d844d79cb35713f5e6a69b51a20fe772637c2171ae757a86006c",
+      "bytes": 6919,
+      "lines": 173
+    },
+    {
+      "path": "tui_gateway/server_requests.py",
+      "sha256": "c8472ca3a2137de6dc66e8b6fd28c67eb7ea8081e78a8d4d4c34afc07804468b",
+      "bytes": 17238,
+      "lines": 366
+    },
+    {
+      "path": "tui_gateway/event_replay.py",
+      "sha256": "1d0e6de6bec2955dc514d1609e0ac9f688537c376816f019dfea7a73a11270ff",
+      "bytes": 8459,
+      "lines": 178
+    },
+    {
+      "path": "tui_gateway/methods_session.py",
+      "sha256": "4929e1621444054927d8024a03c3ce7a3fc92377268af651bb37a16e86af46c4",
+      "bytes": 130774,
+      "lines": 2368
+    },
+    {
+      "path": "tui_gateway/model_switch.py",
+      "sha256": "8140c4c362df12c3a63642247f9c8ce1d6b526769937a88162c87d923664f4b2",
+      "bytes": 27912,
+      "lines": 515
+    },
+    {
+      "path": "apps/shared/src/gateway-contract.openrpc.json",
+      "sha256": "3ae1199a7ad1c6afc8f6b714aa294a2108e9c34f825fa7174b252f5e0e663064",
+      "bytes": 1002699,
+      "lines": 40834
+    },
+    {
+      "path": "apps/shared/src/json-rpc-channel.ts",
+      "sha256": "5f2a753e862572f7e1721aa670d70b294073321dd8e4913d01b7d48b6150fa7a",
+      "bytes": 21632,
+      "lines": 613
+    },
+    {
+      "path": "apps/shared/src/json-rpc-gateway.ts",
+      "sha256": "c70142d979b55d54072265e2d08004aa7e8cd601978118de9396ee80d9c4e9cc",
+      "bytes": 25628,
+      "lines": 741
+    },
+    {
+      "path": "apps/desktop/package.json",
+      "sha256": "545811bd20e6c6cd38d155a8d565dca763a0439c64de9114c705e326e2a65e8b",
+      "bytes": 9057,
+      "lines": 198
+    },
+    {
+      "path": "apps/desktop/electron/preload.ts",
+      "sha256": "65ecfaacba573ffb48212f415129d8b79114131bba7272ccaf0fcb33d4cc705b",
+      "bytes": 39683,
+      "lines": 717
+    },
+    {
+      "path": "apps/desktop/src/global.d.ts",
+      "sha256": "efeb2753162cfac0df4143139585a54fd67b08776f8fe08f52ef061b049f6c7b",
+      "bytes": 76053,
+      "lines": 1731
+    },
+    {
+      "path": "apps/desktop/src/app/routes.ts",
+      "sha256": "037f10823e2567ec9c5bb84ca395607a14b7b9dd515e09d7df9ac421b57afc28",
+      "bytes": 12413,
+      "lines": 318
+    },
+    {
+      "path": "apps/desktop/src/contrib/registry.ts",
+      "sha256": "fbae365ca1e4e5a0f75a9ab45f6496f1b66dd67a915284e65ebb32d0e688efbb",
+      "bytes": 5128,
+      "lines": 162
+    },
+    {
+      "path": "apps/desktop/electron/feature-flags.ts",
+      "sha256": "f10c62388f986653cb6a1d6a5d1d445dc5291727abb0b494618806c395e3537f",
+      "bytes": 947,
+      "lines": 25
+    },
+    {
+      "path": "apps/desktop/src/api/local-models.ts",
+      "sha256": "2c270fe483af68bf6828a386c0db76a02d10847a68a4b69064c1f60d7ca03c6d",
+      "bytes": 6496,
+      "lines": 208
+    },
+    {
+      "path": "apps/desktop/src/app/settings/local-models-settings.tsx",
+      "sha256": "bb7c3955a1afd82dce1fb9c06ff4c31f91512514ef6934c334fcc53bd8feb9c2",
+      "bytes": 5169,
+      "lines": 129
+    },
+    {
+      "path": "hermes_cli/web_routers/local_models.py",
+      "sha256": "25e1c3b2cb4f167274f205415f32b674c9683cc569164628f9f8fea3e88f75a1",
+      "bytes": 47331,
+      "lines": 1000
+    },
+    {
+      "path": "hermes_cli/local_runtime/supervisor.py",
+      "sha256": "4908e44abf8a1f4af37808adb1be303c743a286096ce9e5dcb10ad68c297f5fe",
+      "bytes": 22031,
+      "lines": 479
+    },
+    {
+      "path": "apps/desktop/src/app/chat/right-rail/preview-pane.tsx",
+      "sha256": "dd8ca390ba6488e5fe1a4553ce0eca8e49e8f17fb902adfb609952ab0439c849",
+      "bytes": 55776,
+      "lines": 1606
+    },
+    {
+      "path": "apps/desktop/electron/window-open-policy.ts",
+      "sha256": "daca07884dc318a56598ddb3cd20fa8a48beafa5d82a7fda2b0057fdb5f21217",
+      "bytes": 4149,
+      "lines": 106
+    },
+    {
+      "path": "apps/desktop/electron/preview-guest-preload.ts",
+      "sha256": "ebd717d9e4c867a036f8775f4f9ad2a4d022616fbe5bc06545ac98ab54e6040e",
+      "bytes": 2406,
+      "lines": 66
+    },
+    {
+      "path": "apps/desktop/electron/backend-command.ts",
+      "sha256": "e16903460cc12edbfe7a5853987d418dd4c9406824fd45d6eea5f8626f36d0cc",
+      "bytes": 2646,
+      "lines": 62
+    },
+    {
+      "path": "apps/desktop/electron/backend-ready.ts",
+      "sha256": "4d6e5fa05b03a964b2f64f241a2d416c9d292b9e909b2ea1019241fdb33816e8",
+      "bytes": 11438,
+      "lines": 319
+    },
+    {
+      "path": "apps/desktop/electron/backend-child.ts",
+      "sha256": "f1c86124763c87bed75c416a860de921037da34422a1ecdd0c2b90b4e8fdfe49",
+      "bytes": 4747,
+      "lines": 145
+    },
+    {
+      "path": "apps/desktop/electron/terminal-ipc.ts",
+      "sha256": "0f04bbc5b8db25341b0bb3fdb55500aea1d24e785b442e78d1d7e5d2d89d03a6",
+      "bytes": 14378,
+      "lines": 425
+    },
+    {
+      "path": "apps/desktop/electron-builder.config.cjs",
+      "sha256": "7a4ac8e3482bcd96dfc316e9b3c2c914e79c20de8db6a0d9b11cd817bb20b316",
+      "bytes": 15425,
+      "lines": 350
+    },
+    {
+      "path": "apps/desktop/electron/updater/state-db-preflight.ts",
+      "sha256": "50a604e3530219ebf6234692d84d3033faee9e7e18424e3d78a96db6c7930f24",
+      "bytes": 2416,
+      "lines": 62
+    },
+    {
+      "path": "LICENSE",
+      "sha256": "e29dfaf6905a8d396a58ea4bd84ad27057756bbd9599b5bec0971ae34d2a2118",
+      "bytes": 1091,
+      "lines": 21
+    },
+    {
+      "path": "tools/transcription_tools.py",
+      "sha256": "6056eda9ce3f0af9f8bdaf31f7928dc958563a66cdc2ee3b5f7157e3bd89c284",
+      "bytes": 32062,
+      "lines": 602
+    },
+    {
+      "path": "tools/transcription_local.py",
+      "sha256": "d82aa4183bff0d2b27a6a5e8b615857bb77412dc398c6940c7c906c063dd9f98",
+      "bytes": 17713,
+      "lines": 344
+    },
+    {
+      "path": "tools/stt_lease.py",
+      "sha256": "31917c57f1fc44ece6235dc6b75a582e489f3131031e0584b9bb6db8952d54bd",
+      "bytes": 6228,
+      "lines": 132
+    },
+    {
+      "path": "tools/tts_tool_local.py",
+      "sha256": "a7f9fc14dc27a2f8b12001223f8aeccd47752f0e46178c3abaec10d72052b9c2",
+      "bytes": 9524,
+      "lines": 194
+    },
+    {
+      "path": "tools/tts_tool_lifecycle.py",
+      "sha256": "cb04ea07f5a2471ac22ecc936b6e33cd9d874ce601205cc0eb4f7180b3f471fe",
+      "bytes": 10507,
+      "lines": 232
+    },
+    {
+      "path": "tools/neutts_synth.py",
+      "sha256": "b618b1dca838650fc00d79f3eb7ed3b4f10c1388b970e2c8081dc59544e7f5df",
+      "bytes": 3225,
+      "lines": 77
+    },
+    {
+      "path": "hermes_cli/cli_session_mixin.py",
+      "sha256": "48dd9c0751bb1ee644db2379aff641c51f0bcda7b84394a36d60a86b9d6156ad",
+      "bytes": 59842,
+      "lines": 1194
+    },
+    {
+      "path": "hermes_cli/web_routers/sessions.py",
+      "sha256": "603ba47a61463dd3446c5172d4dfa8a1a08677fa23cb23770956b3e10455a2f9",
+      "bytes": 47677,
+      "lines": 973
+    },
+    {
+      "path": "hermes_state_sessions.py",
+      "sha256": "f1bfa82b4010b054001a8344f1b00a6b25694ae4cd439f8c8355f8a74f0fe084",
+      "bytes": 104428,
+      "lines": 1946
+    },
+    {
+      "path": "apps/desktop/electron/host-backend-singleton.ts",
+      "sha256": "671726ec67d6d037b3126f1d0d8962ff5e46cbd5c6f96dca1cbddcbc1b2f2dd3",
+      "bytes": 3919,
+      "lines": 90
+    },
+    {
+      "path": "apps/desktop/electron/backend-ownership.ts",
+      "sha256": "c7dfdd0df01448cfb74eaed6e78d330823f7cd170b4e20266f28bf17dcbe04f6",
+      "bytes": 10616,
+      "lines": 355
+    }
+  ]
+}
