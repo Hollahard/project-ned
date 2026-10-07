@@ -67,11 +67,21 @@ def create_app(
         approval_level=config.security.approval_level,
     )
 
+    # Initialize Langfuse observability tracer
+    langfuse_tracer = None
+    try:
+        from friday.telemetry.langfuse import LangfuseTracer
+        tracer_enabled = getattr(getattr(config, "observability", None), "langfuse_enabled", True)
+        langfuse_tracer = LangfuseTracer(enabled=tracer_enabled)
+    except Exception as exc:
+        logger.debug("Langfuse tracer initialization skipped: %s", exc)
+
     inference_backend = inference or MockInferenceBackend()
     agent_loop = AgentLoop(
         inference=inference_backend,
         tools=tool_registry,
         policy=policy_engine,
+        tracer=langfuse_tracer,
     )
     from friday.api.websocket import manager as ws_manager
     telemetry_provider = TelemetryProvider()
@@ -92,6 +102,8 @@ def create_app(
             mcp_host.sync_to_registry(tool_registry)
         yield
         logger.info("Shutting down Friday Core storage and MCP host...")
+        if langfuse_tracer:
+            langfuse_tracer.flush()
         await mcp_host.stop_all()
         await db_manager.close()
 
@@ -115,6 +127,7 @@ def create_app(
     app.state.gaming_mode_controller = gaming_mode_controller
     app.state.mcp_host = mcp_host
     app.state.memory_coordinator = memory_coordinator
+    app.state.langfuse_tracer = langfuse_tracer
 
     # Security middleware: Reject non-loopback Host / Origin headers
     @app.middleware("http")

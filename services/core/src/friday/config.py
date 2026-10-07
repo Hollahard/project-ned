@@ -42,6 +42,10 @@ class AgentSettings(BaseSettings):
     default_context_budget: int = 32768
 
 
+class ObservabilitySettings(BaseSettings):
+    langfuse_enabled: bool = True
+
+
 class FridayConfig(BaseSettings):
     model_config = SettingsConfigDict(env_prefix="FRIDAY_", extra="ignore")
 
@@ -51,6 +55,7 @@ class FridayConfig(BaseSettings):
     storage: StorageSettings = Field(default_factory=StorageSettings)
     agent: AgentSettings = Field(default_factory=AgentSettings)
     mcp: MCPConfig = Field(default_factory=MCPConfig)
+    observability: ObservabilitySettings = Field(default_factory=ObservabilitySettings)
     workspace_root: Path = Field(default_factory=lambda: Path.cwd())
 
 
