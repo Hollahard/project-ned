@@ -1,8 +1,0 @@
-release: tag v1.0.0 sovereign desktop agent harness for RTX 5090
-
-- Complete all 16 architectural implementation phases (Phases 1–16).
-- Add CHANGELOG.md following Keep a Changelog and SemVer 2.0.0.
-- Add RELEASE_NOTES.md with architectural overview and PRR matrix.
-- Add docs/adr/README.md indexing ADR-0001 and ADR-0002.
-- Verify 100% test pass: 220 pytest, 15 cargo test, 13 npm test.
-- Qualified on NVIDIA GeForce RTX 5090 Blackwell on Windows 11.
