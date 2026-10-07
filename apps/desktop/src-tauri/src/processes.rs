@@ -135,6 +135,11 @@ impl JobObject {
         self.handle
     }
 
+    /// Return raw Win32 HANDLE for querying job object information and limits.
+    pub fn raw_handle(&self) -> HANDLE {
+        self.handle
+    }
+
     /// Terminate all processes in this Job Object immediately.
     pub fn terminate(&self, exit_code: u32) {
         if !self.handle.is_null() && self.handle != INVALID_HANDLE_VALUE {
@@ -143,6 +148,12 @@ impl JobObject {
             }
             info!("Terminated all processes in Job Object with exit code {}", exit_code);
         }
+    }
+}
+
+impl std::os::windows::io::AsRawHandle for JobObject {
+    fn as_raw_handle(&self) -> std::os::windows::io::RawHandle {
+        self.handle as _
     }
 }
 

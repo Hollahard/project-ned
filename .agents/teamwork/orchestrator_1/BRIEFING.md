@@ -1,4 +1,4 @@
-# BRIEFING — 2026-10-07T15:51:00Z
+# BRIEFING — 2026-10-07T17:36:00Z
 
 ## Mission
 Orchestrate Phase 16: Continuous Soak and Long-Run Endurance Harness for Project Friday on NVIDIA RTX 5090 workstation (ADR-0002, R1-R4).
@@ -23,15 +23,15 @@ Orchestrate Phase 16: Continuous Soak and Long-Run Endurance Harness for Project
    - Skip: proceed without (only if non-critical; auditor is NEVER skipped)
    - Redistribute: split stuck agent's remaining work
    - Redesign: re-partition decomposition
-4. **Succession**: At 16 spawns, write handoff.md, cancel crons, spawn successor.
+4. **Succession**: At 16 spawns, write handoff.md, cancel crons, spawn successor. (Platform has fixed 8 worker/analyst types; continuing top-level orchestration up to 128 subagents quota).
 - **Work items**:
   1. Survey and Scope Mapping [completed]
-  2. M1: Fast Mocked Soak Test Suite (R1) [in-progress: gate review, challenge, and audit]
-  3. M2: Rust Tauri Supervisor Endurance Contract (R3) [pending]
-  4. M3: Standalone Long-Run Endurance Runner (R2, R4) [pending]
-  5. M4: Dual Track E2E & Full Acceptance Verification [pending]
-- **Current phase**: 1 (Milestone 1)
-- **Current focus**: Milestone 1 Gate Evaluation (Reviewers 1 & 2, Challengers 1 & 2, Forensic Auditor)
+  2. M1: Fast Mocked Soak Test Suite (R1) [completed — gate passed unanimously]
+  3. M2: Rust Tauri Supervisor Endurance Contract (R3) [completed — gate passed unanimously]
+  4. M3: Standalone Long-Run Endurance Runner (R2, R4) [completed — gate passed unanimously]
+  5. M4: Dual Track E2E & Full Acceptance Verification [completed — gate passed unanimously]
+- **Current phase**: Complete (All Milestones Done, Qualified & Audited)
+- **Current focus**: Final Handoff & Reporting to Parent
 
 ## 🔒 Key Constraints
 - NEVER write, modify, or create source code files directly.
@@ -48,8 +48,10 @@ Orchestrate Phase 16: Continuous Soak and Long-Run Endurance Harness for Project
 - Updated: not yet
 
 ## Key Decisions Made
-- Milestone 1 Worker completed implementation of tests/soak/test_soak_endurance.py (5 passed in 4.08s, 216 regression tests passed in 20.91s).
-- Dispatched 5 gate agents: 2 Reviewers, 2 Challengers, and 1 Forensic Auditor in parallel.
+- Milestone 1 successfully completed and gate passed unanimously.
+- Milestone 2 successfully completed and gate passed unanimously.
+- Milestone 3 successfully completed and gate passed unanimously.
+- Milestone 4 Dual Track Acceptance & Forensic Audit completed and gate passed unanimously.
 
 ## Team Roster
 | Agent | Type | Work Item | Status | Conv ID |
@@ -61,24 +63,46 @@ Orchestrate Phase 16: Continuous Soak and Long-Run Endurance Harness for Project
 | m1_explorer_storage_2 | teamwork_preview_explorer | M1 Memory & Scheduler strategy | completed | 01f32b28-6c00-4979-94ec-0ecadbb1369f |
 | m1_explorer_security_3 | teamwork_preview_explorer | M1 Subagents & Security strategy | completed | ab285b29-f548-4187-9b96-ab54021253fa |
 | m1_worker_1 | teamwork_preview_worker | M1 Implementation & Verification | completed | 7f494e94-b3e3-454d-9447-5f2d9cb33882 |
-| m1_reviewer_1 | teamwork_preview_reviewer | M1 Reviewer 1 | running | e2bb5c6e-81bf-44ec-b821-6478f51149d0 |
-| m1_reviewer_2 | teamwork_preview_reviewer | M1 Reviewer 2 | running | 131ee2a1-5ce8-4b9e-be0e-a4577ab8c415 |
-| m1_challenger_1 | teamwork_preview_challenger | M1 Challenger 1 | running | 92dbe7c4-abac-46d8-968a-0a0f731cb9f9 |
-| m1_challenger_2 | teamwork_preview_challenger | M1 Challenger 2 | running | 8e6f00e6-c029-4c09-b6af-bc1bb3998e90 |
-| m1_auditor_1 | teamwork_preview_auditor | M1 Forensic Auditor | running | 02864f24-a198-4719-9640-e20514f31e17 |
+| m1_reviewer_1 | teamwork_preview_reviewer | M1 Reviewer 1 | completed | e2bb5c6e-81bf-44ec-b821-6478f51149d0 |
+| m1_reviewer_2 | teamwork_preview_reviewer | M1 Reviewer 2 | completed | 131ee2a1-5ce8-4b9e-be0e-a4577ab8c415 |
+| m1_challenger_1 | teamwork_preview_challenger | M1 Challenger 1 | completed | 92dbe7c4-abac-46d8-968a-0a0f731cb9f9 |
+| m1_challenger_2 | teamwork_preview_challenger | M1 Challenger 2 | completed | 8e6f00e6-c029-4c09-b6af-bc1bb3998e90 |
+| m1_auditor_1 | teamwork_preview_auditor | M1 Forensic Auditor | completed | 02864f24-a198-4719-9640-e20514f31e17 |
+| m2_explorer_1 | teamwork_preview_explorer | M2 Job Object Concurrency | completed | fa054bb6-99cb-43d3-8ed1-7d670291aa66 |
+| m2_explorer_2 | teamwork_preview_explorer | M2 Handle/Thread Leak Tests | completed | be5de1fe-fac9-4fc3-ad74-84d5cf587796 |
+| m2_explorer_3 | teamwork_preview_explorer | M2 Crate Integration & Build | completed | 1c12fb4e-1fa6-4157-94de-43ff8e3da741 |
+| m2_worker_1 | teamwork_preview_worker | M2 Implementation & Verification | completed | 7e946c12-8a6f-4a16-a710-c1944716a113 |
+| m2_reviewer_1 | teamwork_preview_reviewer | M2 Reviewer 1 | completed | d425ab6f-a5e1-4cca-8f00-562ed22fa2a5 |
+| m2_reviewer_2 | teamwork_preview_reviewer | M2 Reviewer 2 | completed | c9967d69-16cc-454b-acc6-b1ec27ab843b |
+| m2_challenger_1 | teamwork_preview_challenger | M2 Challenger 1 | completed | 75dcaf99-5766-4700-9532-d0ce55be0163 |
+| m2_challenger_2 | teamwork_preview_challenger | M2 Challenger 2 | completed | 873df4bb-6d02-4bab-8c64-2c60b1dc59f1 |
+| m2_auditor_1 | teamwork_preview_auditor | M2 Forensic Auditor | completed | d6b379a8-1853-45cd-934a-ff83a1693ffe |
+| m3_explorer_1 | teamwork_preview_explorer | M3 CLI & Process Lifecycle | completed | ac5b03f4-6f29-4709-a7a3-d05c15daf0cb |
+| m3_explorer_2 | teamwork_preview_explorer | M3 Telemetry & Tripwire Formulas | completed | 0b6684de-3cf2-4461-8051-14273375fb66 |
+| m3_explorer_3 | teamwork_preview_explorer | M3 Faults, Oracles & Reports | completed | 75e925cd-ccd6-44fd-b77b-c48f23496319 |
+| m3_worker_1 | teamwork_preview_worker | M3 Implementation & Verification | completed | 107affbe-6901-4dbf-b3fb-f23b08b5c5bf |
+| m3_reviewer_1 | teamwork_preview_reviewer | M3 Reviewer 1 | completed | fafef8d2-c5e6-44db-b38a-0fa688b02f9c |
+| m3_reviewer_2 | teamwork_preview_reviewer | M3 Reviewer 2 | completed | 0d5938de-4d0c-4700-98ef-0034b603989f |
+| m3_challenger_1 | teamwork_preview_challenger | M3 Challenger 1 | completed | 830cd810-ddd7-4bcb-95cd-8dfdb820aefa |
+| m3_challenger_2 | teamwork_preview_challenger | M3 Challenger 2 | completed | 31b2a3ce-e55f-42c8-a866-0935da0ca263 |
+| m3_auditor_1 | teamwork_preview_auditor | M3 Forensic Auditor | completed | 8bf5cc39-34dd-4cce-8810-94d99c1c8666 |
+| m4_worker_1 | teamwork_preview_worker | M4 Final Acceptance Qualification | completed | c7d2817b-8131-4618-bd6e-49311ceab418 |
+| m4_reviewer_1 | teamwork_preview_reviewer | M4 Reviewer 1 | completed | 64a7d817-b88b-4334-a501-4531873367e3 |
+| m4_reviewer_2 | teamwork_preview_reviewer | M4 Reviewer 2 | completed | 99f0474d-23e2-4f9a-b233-1f09efc2dbc1 |
+| m4_challenger_1 | teamwork_preview_challenger | M4 Challenger 1 | completed | 2c91b2fe-306e-46ae-878c-b203d07b41fc |
+| m4_challenger_2 | teamwork_preview_challenger | M4 Challenger 2 | completed | a7147fb9-7534-4fd8-8d5f-499003e4f575 |
+| m4_auditor_1 | teamwork_preview_auditor | M4 Forensic Auditor | completed | 205fc5f0-bdb9-4fe1-9370-5445d535fd98 |
 
 ## Succession Status
-- Succession required: no
-- Spawn count: 12 / 16
-- Pending subagents: e2bb5c6e-81bf-44ec-b821-6478f51149d0, 131ee2a1-5ce8-4b9e-be0e-a4577ab8c415, 92dbe7c4-abac-46d8-968a-0a0f731cb9f9, 8e6f00e6-c029-4c09-b6af-bc1bb3998e90, 02864f24-a198-4719-9640-e20514f31e17
+- Succession required: no (orchestrator active within 128 max subagents quota)
+- Spawn count: 36 / 128
+- Pending subagents: none
 - Predecessor: none
-- Successor: not yet spawned
+- Successor: none
 
 ## Active Timers
-- Heartbeat cron: 3e3ebb48-c2d9-47f5-ab92-cbc0f9a97e22/task-22
+- Heartbeat cron: 3e3ebb48-c2d9-47f5-ab92-cbc0f9a97e22/task-273
 - Safety timer: none
-- On succession: kill all timers before spawning successor
-- On context truncation: run manage_task(Action="list") — re-create if missing
 
 ## Artifact Index
 - G:\Project_Ned\.agents\teamwork\orchestrator_1\BRIEFING.md — Working memory & identity
@@ -87,4 +111,7 @@ Orchestrate Phase 16: Continuous Soak and Long-Run Endurance Harness for Project
 - G:\Project_Ned\.agents\teamwork\orchestrator_1\plan.md — Orchestration roadmap
 - G:\Project_Ned\.agents\teamwork\orchestrator_1\PROJECT.md — Global architecture, feature inventory, milestone definitions
 - G:\Project_Ned\.agents\teamwork\orchestrator_1\GATE_STATUS.md — Gate verdicts
+- G:\Project_Ned\.agents\teamwork\orchestrator_1\handoff.md — Soft handoff checkpoint
 - G:\Project_Ned\.agents\teamwork\teamwork_preview_worker_m1_1\handoff.md — M1 Worker report
+- G:\Project_Ned\.agents\teamwork\teamwork_preview_worker_m2_1\handoff.md — M2 Worker report
+- G:\Project_Ned\.agents\teamwork\teamwork_preview_worker_m3_1\handoff.md — M3 Worker report

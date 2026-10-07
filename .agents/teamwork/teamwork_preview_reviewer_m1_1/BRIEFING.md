@@ -1,4 +1,4 @@
-# BRIEFING — 2026-10-07T15:52:00Z
+# BRIEFING — 2026-10-07T15:55:00Z
 
 ## Mission
 Independently review and stress-test the Fast Mocked Soak Test Suite (Milestone 1) in `tests/soak/test_soak_endurance.py` against R1 and R4.
@@ -19,7 +19,7 @@ Independently review and stress-test the Fast Mocked Soak Test Suite (Milestone 
 
 ## Current Parent
 - Conversation ID: 3e3ebb48-c2d9-47f5-ab92-cbc0f9a97e22
-- Updated: not yet
+- Updated: 2026-10-07T15:55:00Z
 
 ## Review Scope
 - **Files to review**: tests/soak/test_soak_endurance.py
@@ -27,7 +27,11 @@ Independently review and stress-test the Fast Mocked Soak Test Suite (Milestone 
 - **Review criteria**: correctness, completeness, robustness, interface conformance against R1 and R4, execution timing (< 3 mins), integrity
 
 ## Key Decisions Made
-- Initialized review and briefing state
+- Executed soak test suite: 5 passed in 4.01s (0 warnings)
+- Executed full regression suite: 216 passed in 20.79s (zero regressions)
+- Verified absence of integrity violations across all 5 test functions
+- Adversarially verified session cancellation isolation, concurrency atomicity, lease recovery, and capability containment
+- Verdict: APPROVE
 
 ## Artifact Index
 - DISPATCH.md — record of incoming dispatch messages
@@ -36,11 +40,16 @@ Independently review and stress-test the Fast Mocked Soak Test Suite (Milestone 
 - handoff.md — final review and challenge report
 
 ## Review Checklist
-- **Items reviewed**: none yet
-- **Verdict**: pending
-- **Unverified claims**: all claims from worker_m1_1 handoff
+- **Items reviewed**: tests/soak/test_soak_endurance.py (all 816 lines)
+- **Verdict**: APPROVE
+- **Unverified claims**: none; all claims verified via independent inspection and execution
 
 ## Attack Surface
-- **Hypotheses tested**: none yet
-- **Vulnerabilities found**: none yet
-- **Untested angles**: mid-turn cancellation, memory leak / churn accumulation, concurrent claim collision, anti-recursion depth, headless security fallback
+- **Hypotheses tested**:
+  - Mid-turn cancellation leaves lingering active cancel events in session registry -> REFUTED (registry empty, turns within same session succeed afterwards)
+  - Async task leakage on event loop during cancellations -> REFUTED (zero pending background tasks)
+  - SQLite double-claiming under concurrent gather -> REFUTED (all run IDs and job IDs unique)
+  - Stale / expired leases fail to recover -> REFUTED (recovered_ids contains abandoned run)
+  - Tracemalloc drift under 50 turns -> REFUTED (drift bounded < 25 MB)
+- **Vulnerabilities found**: None in test implementation or underlying subsystem interfaces
+- **Untested angles**: Physical GPU execution (intentionally deferred to M3 / `@pytest.mark.gpu`)

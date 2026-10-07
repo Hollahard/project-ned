@@ -1,4 +1,4 @@
-# BRIEFING — 2026-10-07T15:52:00Z
+# BRIEFING — 2026-10-07T15:58:00Z
 
 ## Mission
 Adversarially challenge `tests/soak/test_soak_endurance.py` (Fast Mocked Soak Test Suite) for Milestone 1 by writing and executing empirical tests for 4-tier memory churn / FTS5 sync, SQLite scheduler concurrency / idempotency, and security capability tokens. Formulate APPROVE/REJECT verdict.
@@ -20,7 +20,7 @@ Adversarially challenge `tests/soak/test_soak_endurance.py` (Fast Mocked Soak Te
 
 ## Current Parent
 - Conversation ID: 3e3ebb48-c2d9-47f5-ab92-cbc0f9a97e22
-- Updated: 2026-10-07T15:52:00Z
+- Updated: 2026-10-07T15:58:00Z
 
 ## Review Scope
 - **Files to review**:
@@ -38,17 +38,26 @@ Adversarially challenge `tests/soak/test_soak_endurance.py` (Fast Mocked Soak Te
   - Performance, stability, leak absence, teardown safety under mocked soak conditions
 
 ## Attack Surface
-- **Hypotheses tested**: [TBD]
-- **Vulnerabilities found**: [TBD]
-- **Untested angles**: [TBD]
+- **Hypotheses tested**:
+  - H1: Rapid churn desyncs FTS5 virtual tables or triggers fail under load -> REFUTED. Triggers kept FTS5 100% in sync; internal FTS5 integrity-checks passed.
+  - H2: 50 concurrent workers double-claim scheduled jobs or deadlock SQLite -> REFUTED. Atomic transactions and single-admission held; 0 double-claims, 0 lock timeouts.
+  - H3: Concurrent duplicate job creation with identical idempotency_key creates duplicate jobs -> REFUTED. SQLite UNIQUE constraint prevents duplicates (1 persisted). Caveat: callers receive `IntegrityError` instead of existing job on simultaneous race.
+  - H4: Security tokens vulnerable to replay, race consumption, tampering, expiration, or forgery -> REFUTED. All attack vectors strictly rejected.
+- **Vulnerabilities found**:
+  - Non-atomic check-then-insert in `SchedulerDatabaseManager.create_job` raises `sqlite3.IntegrityError` if two workers attempt simultaneous job creation with identical idempotency_key. Uniqueness is preserved in storage.
+- **Untested angles**:
+  - Hardware GPU inference endurance (assigned to M3 / `@pytest.mark.gpu`).
 
 ## Loaded Skills
-- None requested explicitly in dispatch; using core Python and Project Friday testing invariants.
+- Operational runbook and test execution protocols per Project Friday invariants.
 
 ## Key Decisions Made
-- Initializing briefing and reading context files.
+- Executed empirical adversarial stress harness (`adversarial_m1_harness.py`).
+- Verified 5/5 soak tests pass in 3.99s.
+- Verified 216/216 regression tests pass in 20.84s.
+- Formulated verdict: APPROVE.
 
 ## Artifact Index
 - `BRIEFING.md` — persistent working memory
 - `progress.md` — liveness heartbeat
-- `handoff.md` — final assessment and verdict
+- `handoff.md` — final assessment, empirical evidence chain, and verdict

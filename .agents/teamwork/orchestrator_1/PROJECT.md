@@ -65,10 +65,10 @@ The Phase 16 Continuous Soak and Long-Run Endurance Harness establishes both fas
 ## Milestones
 | # | Name | Scope | Dependencies | Status |
 |---|------|-------|-------------|--------|
-| 1 | M1: Fast Mocked Soak Suite | `tests/soak/test_soak_endurance.py` fixing all 5 API mismatches and verifying 50 turns, 4-tier memory churn, concurrent scheduler, subagent containment, WAL <= 64 MB | none | PLANNED |
-| 2 | M2: Rust Tauri Supervisor Contract | `apps/desktop/src-tauri/tests/test_endurance_invariants.rs` asserting handle/thread stability and multi-worker Job Object concurrency | none | PLANNED |
-| 3 | M3: Standalone Long-Run Runner | `tests/soak/run_8hr_soak.py` implementing CLI modes, Win32/NVML metrics, tripwires, fault injection, dual-sink telemetry, and reporting | M1 | PLANNED |
-| 4 | M4: Final Acceptance & Dual Track | End-to-end verification of all acceptance criteria (pytest soak < 3m, cargo test, smoke run qualification, 198+ regression suite) + Forensic Audit | M1, M2, M3 | PLANNED |
+| 1 | M1: Fast Mocked Soak Suite | `tests/soak/test_soak_endurance.py` fixing all 5 API mismatches and verifying 50 turns, 4-tier memory churn, concurrent scheduler, subagent containment, WAL <= 64 MB | none | DONE |
+| 2 | M2: Rust Tauri Supervisor Contract | `apps/desktop/src-tauri/tests/test_endurance_invariants.rs` asserting handle/thread stability and multi-worker Job Object concurrency | none | DONE |
+| 3 | M3: Standalone Long-Run Runner | `tests/soak/run_8hr_soak.py` implementing CLI modes, Win32/NVML metrics, tripwires, fault injection, dual-sink telemetry, and reporting | M1, M2 | DONE |
+| 4 | M4: Final Acceptance & Dual Track | End-to-end verification of all acceptance criteria (pytest soak < 3m, cargo test, smoke run qualification, 198+ regression pass) + Forensic Audit | M1, M2, M3 | DONE |
 
 ## Interface Contracts
 ### `SoakMockInference` ↔ `AgentLoop`
@@ -99,7 +99,7 @@ The Phase 16 Continuous Soak and Long-Run Endurance Harness establishes both fas
 - Tripwires: slope > 50 MB/hr, slope > 50 handles/hr, thread ratchet, temp > 83°C.
 
 ## Code Layout
-- `tests/soak/test_soak_endurance.py`: Fast mocked soak test suite (R1, R4).
+- `tests/soak/test_soak_endurance.py`: Fast mocked soak test suite (R1, R4). [VERIFIED & PASSING]
 - `tests/soak/run_8hr_soak.py`: Standalone long-run endurance runner CLI (R2, R4).
 - `apps/desktop/src-tauri/tests/test_endurance_invariants.rs`: Rust supervisor endurance integration test (R3).
 - `apps/desktop/src-tauri/src/processes.rs`: JobObject handle accessor (R3).
