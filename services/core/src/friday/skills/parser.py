@@ -17,14 +17,7 @@ from typing import List, Optional
 import yaml
 from pydantic import BaseModel, ConfigDict, Field
 
-from friday.security.paths import is_contained_in, get_canonical_path
-
-# Windows DOS device names (case-insensitive)
-RESERVED_DEVICE_NAMES = {
-    "CON", "PRN", "AUX", "NUL",
-    "COM1", "COM2", "COM3", "COM4", "COM5", "COM6", "COM7", "COM8", "COM9",
-    "LPT1", "LPT2", "LPT3", "LPT4", "LPT5", "LPT6", "LPT7", "LPT8", "LPT9",
-}
+from friday.security.paths import is_contained_in, get_canonical_path, RESERVED_DEVICE_NAMES
 
 # Forbidden privilege phrases
 BYPASS_PHRASES = [

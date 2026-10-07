@@ -94,12 +94,23 @@ class PowerShellASTValidator:
         tokens = normalized.split()
 
         # 1. Check for encoded command flags (e.g. powershell -enc ...)
-        for token in tokens:
+        for idx, token in enumerate(tokens):
             lower_token = token.lower().strip()
             for flag in cls.ENCODED_FLAGS:
                 if lower_token == flag or lower_token.startswith(f"{flag}:") or lower_token.startswith(f"{flag}="):
                     raise PowerShellSecurityViolation(
                         f"Blocked encoded execution parameter: '{token}'"
+                    )
+            # Check for ExecutionPolicy bypass flags
+            if lower_token in ("-executionpolicy", "/executionpolicy", "-ep", "/ep"):
+                if idx + 1 < len(tokens) and tokens[idx + 1].lower() in ("bypass", "unrestricted"):
+                    raise PowerShellSecurityViolation(
+                        f"Blocked execution policy bypass parameter: '{token} {tokens[idx + 1]}'"
+                    )
+            elif lower_token.startswith("-executionpolicy:") or lower_token.startswith("-ep:"):
+                if "bypass" in lower_token or "unrestricted" in lower_token:
+                    raise PowerShellSecurityViolation(
+                        f"Blocked execution policy bypass parameter: '{token}'"
                     )
 
         # 2. Check for blocked command names / aliases

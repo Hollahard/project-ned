@@ -386,7 +386,11 @@ class SchedulerDatabaseManager:
 
         await self._get_lock().acquire()
         try:
-            # Atomic transaction: BEGIN IMMEDIATE
+            # Atomic transaction: ensure no dangling transaction then BEGIN IMMEDIATE
+            try:
+                await conn.rollback()
+            except Exception:
+                pass
             await conn.execute("BEGIN IMMEDIATE;")
             # 1. Check total installation concurrency
             async with conn.execute(
@@ -599,9 +603,13 @@ class SchedulerDatabaseManager:
                 await conn.rollback()
             return None
 
-        except Exception as e:
-            await conn.rollback()
-            logger.error("Error during claim_next_due_job: %s", e)
+        except BaseException as e:
+            try:
+                await conn.rollback()
+            except Exception:
+                pass
+            if not isinstance(e, asyncio.CancelledError):
+                logger.error("Error during claim_next_due_job: %s", e)
             raise
         finally:
             self._get_lock().release()
@@ -653,6 +661,10 @@ class SchedulerDatabaseManager:
 
         await self._get_lock().acquire()
         try:
+            try:
+                await conn.rollback()
+            except Exception:
+                pass
             await conn.execute("BEGIN IMMEDIATE;")
             # 1. Fetch run and job
             async with conn.execute(
@@ -766,9 +778,13 @@ class SchedulerDatabaseManager:
             await conn.commit()
             return True
 
-        except Exception as e:
-            await conn.rollback()
-            logger.error("Error during complete_run for %s: %s", run_id, e)
+        except BaseException as e:
+            try:
+                await conn.rollback()
+            except Exception:
+                pass
+            if not isinstance(e, asyncio.CancelledError):
+                logger.error("Error during complete_run for %s: %s", run_id, e)
             raise
         finally:
             self._get_lock().release()

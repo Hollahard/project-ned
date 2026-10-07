@@ -7,6 +7,33 @@ from pathlib import Path
 
 logger = logging.getLogger(__name__)
 
+# Windows DOS device names (case-insensitive)
+RESERVED_DEVICE_NAMES = {
+    "CON", "PRN", "AUX", "NUL",
+    "COM1", "COM2", "COM3", "COM4", "COM5", "COM6", "COM7", "COM8", "COM9",
+    "LPT1", "LPT2", "LPT3", "LPT4", "LPT5", "LPT6", "LPT7", "LPT8", "LPT9",
+}
+
+
+def is_windows_reserved_name(path: Path | str) -> bool:
+    """Check if any path component is a Windows reserved DOS device name or has invalid NTFS suffixes."""
+    raw = str(path).replace("/", "\\")
+
+    # Check device namespace prefixes
+    if raw.startswith("\\\\.\\") or raw.startswith("//./") or raw.startswith("\\??\\"):
+        return True
+
+    parts = Path(raw).parts
+    for part in parts:
+        if part.endswith(":") and len(part) == 2:
+            continue
+        if part not in (".", "..") and (part.endswith(".") or part.endswith(" ")):
+            return True
+        base = part.split(".")[0].upper()
+        if base in RESERVED_DEVICE_NAMES or part.upper() in RESERVED_DEVICE_NAMES:
+            return True
+    return False
+
 
 def _win32_canonicalize(path: Path) -> Path | None:
     """Resolve NTFS junctions, symlinks, and 8.3 short names using Win32 API."""
@@ -77,6 +104,9 @@ def get_canonical_path(path: Path | str) -> Path:
     symbolic links, and 8.3 short names. For non-existent paths, canonicalizes
     the deepest existing ancestor directory and preserves trailing components.
     """
+    if is_windows_reserved_name(path):
+        raise ValueError(f"Path contains reserved Windows device name or invalid NTFS suffix: {path}")
+
     target = Path(path).expanduser().absolute()
 
     if sys.platform != "win32":
@@ -108,7 +138,7 @@ def get_canonical_path(path: Path | str) -> Path:
 def is_path_within_root(target_path: Path | str, safe_root: Path | str) -> bool:
     """Verify that the target path canonicalizes strictly within the safe root.
 
-    Fails closed on Alternate Data Streams (ADS), NTFS junctions, and traversal escapes.
+    Fails closed on Alternate Data Streams (ADS), NTFS junctions, reserved device names, and traversal escapes.
     """
     raw_str = str(target_path)
     # Fail closed on alternate data streams beyond drive letter
@@ -117,8 +147,17 @@ def is_path_within_root(target_path: Path | str, safe_root: Path | str) -> bool:
         logger.warning("Rejected path containing stream delimiter: %s", raw_str)
         return False
 
-    canonical_target = get_canonical_path(target_path)
-    canonical_root = get_canonical_path(safe_root)
+    # Fail closed on Windows reserved device names and invalid NTFS suffixes
+    if is_windows_reserved_name(target_path) or is_windows_reserved_name(safe_root):
+        logger.warning("Rejected path containing Windows reserved device name: %s", raw_str)
+        return False
+
+    try:
+        canonical_target = get_canonical_path(target_path)
+        canonical_root = get_canonical_path(safe_root)
+    except Exception as exc:
+        logger.warning("Failed to canonicalize path (%s): %s", raw_str, exc)
+        return False
 
     if sys.platform == "win32":
         t_str = str(canonical_target).lower().rstrip("\\/")

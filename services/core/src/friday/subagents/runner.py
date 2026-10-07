@@ -94,7 +94,10 @@ class SubagentExecutionGuard:
         # 5. Path boundary containment
         path_arg = arguments.get("path") or arguments.get("target_path")
         if path_arg:
-            target_path = get_canonical_path(path_arg)
+            try:
+                target_path = get_canonical_path(path_arg)
+            except Exception as exc:
+                raise PolicyDeniedError(f"Path '{path_arg}' failed canonicalization: {exc}")
             if not is_path_within_root(target_path, self.workspace_root):
                 raise PolicyDeniedError(
                     f"Path '{target_path}' is outside subagent workspace root '{self.workspace_root}'."
