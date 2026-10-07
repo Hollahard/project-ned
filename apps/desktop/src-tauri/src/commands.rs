@@ -9,6 +9,10 @@ use std::sync::Arc;
 use tauri::State;
 use tokio::sync::RwLock;
 
+use crate::first_launch::{
+    check_first_launch_status, execute_first_launch_setup, run_preflight_diagnostics,
+    FirstLaunchDiagnostics, FirstLaunchSetupRequest, FirstLaunchSetupResponse, FirstLaunchStatus,
+};
 use crate::proxy::{
     GamingModeStatus, GpuTelemetry, ModelProfile, PreflightRequest, PreflightResult, RuntimeStatus,
     SessionSummary,
@@ -149,3 +153,21 @@ pub async fn get_gaming_mode_status(state: State<'_, AppState>) -> Result<Gaming
     let proxy = runtime.proxy().ok_or("Supervisor proxy not initialized")?;
     proxy.get_gaming_mode_status().await.map_err(|e| e.to_string())
 }
+
+#[tauri::command]
+pub async fn check_first_launch() -> Result<FirstLaunchStatus, String> {
+    Ok(check_first_launch_status(None))
+}
+
+#[tauri::command]
+pub async fn run_first_launch_diagnostics() -> Result<FirstLaunchDiagnostics, String> {
+    Ok(run_preflight_diagnostics())
+}
+
+#[tauri::command]
+pub async fn complete_first_launch(
+    request: FirstLaunchSetupRequest,
+) -> Result<FirstLaunchSetupResponse, String> {
+    execute_first_launch_setup(&request)
+}
+

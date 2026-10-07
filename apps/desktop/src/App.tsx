@@ -3,6 +3,7 @@ import { Session, ChatMessage, RuntimeStatus, ModelProfile } from './types';
 import { TauriClient } from './services/tauriClient';
 import { SessionList } from './components/SessionList';
 import { ChatView } from './components/ChatView';
+import { FirstLaunchWizard } from './components/FirstLaunchWizard';
 
 export const App: React.FC = () => {
   const [sessions, setSessions] = useState<Session[]>([]);
@@ -14,6 +15,8 @@ export const App: React.FC = () => {
   const [status, setStatus] = useState<RuntimeStatus | null>(null);
   const [models, setModels] = useState<ModelProfile[]>([]);
   const [gamingModeLoading, setGamingModeLoading] = useState<boolean>(false);
+  const [showWizard, setShowWizard] = useState<boolean>(false);
+  const [isFirstLaunch, setIsFirstLaunch] = useState<boolean>(false);
 
   const refreshStatus = async () => {
     try {
@@ -24,20 +27,25 @@ export const App: React.FC = () => {
     }
   };
 
-  // Load initial telemetry and sessions on mount, plus background telemetry interval
+  // Load initial telemetry, sessions, models, and first-launch status
   useEffect(() => {
     async function loadInitial() {
       try {
-        const [stat, sess, mods] = await Promise.all([
+        const [stat, sess, mods, flStatus] = await Promise.all([
           TauriClient.getRuntimeStatus(),
           TauriClient.listSessions(),
           TauriClient.listModels(),
+          TauriClient.checkFirstLaunch(),
         ]);
         setStatus(stat);
         setSessions(sess);
         setModels(mods);
         if (sess.length > 0 && !activeSessionId) {
           setActiveSessionId(sess[0].id);
+        }
+        if (flStatus?.is_first_launch) {
+          setIsFirstLaunch(true);
+          setShowWizard(true);
         }
       } catch (err) {
         console.error('Failed to load initial desktop state:', err);
@@ -228,6 +236,26 @@ export const App: React.FC = () => {
               : 'GAMING MODE'}
           </button>
 
+          <button
+            onClick={() => setShowWizard(true)}
+            title="Open Hardware Diagnostics & Configuration Setup Wizard"
+            style={{
+              background: '#313244',
+              color: '#cdd6f4',
+              border: '1px solid #45475a',
+              borderRadius: '6px',
+              padding: '4px 10px',
+              fontSize: '11px',
+              fontWeight: 600,
+              cursor: 'pointer',
+              display: 'flex',
+              alignItems: 'center',
+              gap: '6px',
+            }}
+          >
+            ⚙️ Setup & Diagnostics
+          </button>
+
           <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
             <span
               style={{
@@ -364,6 +392,19 @@ export const App: React.FC = () => {
           </footer>
         </main>
       </div>
+
+      {/* First-Launch Setup & Hardware Diagnostics Wizard Modal */}
+      {showWizard && (
+        <FirstLaunchWizard
+          isInitialSetup={isFirstLaunch}
+          onComplete={async (_resp) => {
+            setShowWizard(false);
+            setIsFirstLaunch(false);
+            await refreshStatus();
+          }}
+          onCancel={!isFirstLaunch ? () => setShowWizard(false) : undefined}
+        />
+      )}
     </div>
   );
 };

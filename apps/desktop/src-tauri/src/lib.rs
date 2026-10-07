@@ -1,5 +1,6 @@
 pub mod approvals;
 pub mod commands;
+pub mod first_launch;
 pub mod processes;
 pub mod proxy;
 pub mod runtime;
@@ -45,11 +46,13 @@ pub fn run() {
             commands::trigger_native_approval_test,
             commands::request_tool_approval,
             commands::get_gpu_telemetry,
-
             commands::check_vram_preflight,
             commands::activate_gaming_mode,
             commands::deactivate_gaming_mode,
             commands::get_gaming_mode_status,
+            commands::check_first_launch,
+            commands::run_first_launch_diagnostics,
+            commands::complete_first_launch,
         ])
         .build(tauri::generate_context!())
         .expect("error while building tauri application")

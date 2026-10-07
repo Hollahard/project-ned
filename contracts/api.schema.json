@@ -107,6 +107,64 @@
         "vram_freed_mb": { "type": "number" },
         "message": { "type": "string" }
       }
+    },
+    "FirstLaunchStatusResponse": {
+      "type": "object",
+      "required": ["is_first_launch", "config_exists"],
+      "properties": {
+        "is_first_launch": { "type": "boolean" },
+        "workspace_root": { "type": ["string", "null"] },
+        "config_exists": { "type": "boolean" },
+        "configured_model": { "type": ["string", "null"] }
+      }
+    },
+    "FirstLaunchDiagnosticItem": {
+      "type": "object",
+      "required": ["id", "name", "category", "status", "details"],
+      "properties": {
+        "id": { "type": "string" },
+        "name": { "type": "string" },
+        "category": { "type": "string", "enum": ["gpu", "job_object", "os", "storage", "sidecar"] },
+        "status": { "type": "string", "enum": ["pass", "warn", "fail"] },
+        "details": { "type": "string" },
+        "recommended_action": { "type": ["string", "null"] }
+      }
+    },
+    "FirstLaunchDiagnosticsResponse": {
+      "type": "object",
+      "required": ["overall_status", "gpu_detected", "gpu_name", "vram_total_mb", "job_object_supported", "checks"],
+      "properties": {
+        "overall_status": { "type": "string", "enum": ["pass", "warn", "fail"] },
+        "gpu_detected": { "type": "boolean" },
+        "gpu_name": { "type": "string" },
+        "vram_total_mb": { "type": "number" },
+        "job_object_supported": { "type": "boolean" },
+        "checks": {
+          "type": "array",
+          "items": { "$ref": "#/definitions/FirstLaunchDiagnosticItem" }
+        }
+      }
+    },
+    "FirstLaunchSetupRequest": {
+      "type": "object",
+      "required": ["workspace_root", "model_profile", "kv_cache_dtype", "context_length"],
+      "properties": {
+        "workspace_root": { "type": "string" },
+        "model_profile": { "type": "string" },
+        "kv_cache_dtype": { "type": "string", "enum": ["q6", "q8", "fp16"] },
+        "context_length": { "type": "integer" },
+        "enable_gaming_mode": { "type": "boolean", "default": true }
+      }
+    },
+    "FirstLaunchSetupResponse": {
+      "type": "object",
+      "required": ["success", "message", "workspace_root", "initialized_at"],
+      "properties": {
+        "success": { "type": "boolean" },
+        "message": { "type": "string" },
+        "workspace_root": { "type": "string" },
+        "initialized_at": { "type": "string" }
+      }
     }
   }
 }

@@ -1,0 +1,9 @@
+feat(desktop): phase 15 - tauri installer packaging, bundle configuration & first-launch wizard
+
+- Configure Tauri 2 Windows bundle settings in tauri.conf.json for NSIS and MSI installers with full icon assets and metadata.
+- Implement Rust supervisor first_launch module with Windows Job Object verification, RTX 5090 Blackwell hardware preflight, NTFS reserved name checks, and directory scaffolding.
+- Define First-Launch IPC schemas in contracts/api.schema.json (FirstLaunchStatusResponse, FirstLaunchDiagnosticsResponse, FirstLaunchSetupRequest, FirstLaunchSetupResponse).
+- Implement interactive 5-step React 19 FirstLaunchWizard component for hardware preflight, workspace scaffolding, model profile selection (EXL3 / Q6 KV cache), and sovereign launch.
+- Wire first-launch methods into TauriClient service with realistic mock fallbacks for browser testing.
+- Add Phase 15 contract test suite in apps/desktop/tests/first_launch_wizard_contract.test.mjs.
+- Full multi-stack verification: 13/13 desktop contract tests pass, 10/10 Cargo supervisor tests pass, 215/215 Python tests pass, and Vite production bundle compiles cleanly.

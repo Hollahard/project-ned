@@ -115,3 +115,44 @@ export interface EventEnvelope {
     | 'error';
   payload: Record<string, any>;
 }
+
+export interface FirstLaunchStatus {
+  is_first_launch: boolean;
+  workspace_root: string | null;
+  config_exists: boolean;
+  configured_model: string | null;
+}
+
+export interface DiagnosticCheck {
+  id: string;
+  name: string;
+  category: 'gpu' | 'job_object' | 'os' | 'storage' | 'sidecar';
+  status: 'pass' | 'warn' | 'fail';
+  details: string;
+  recommended_action?: string | null;
+}
+
+export interface FirstLaunchDiagnostics {
+  overall_status: 'pass' | 'warn' | 'fail';
+  gpu_detected: boolean;
+  gpu_name: string;
+  vram_total_mb: number;
+  job_object_supported: boolean;
+  checks: DiagnosticCheck[];
+}
+
+export interface FirstLaunchSetupRequest {
+  workspace_root: string;
+  model_profile: string;
+  kv_cache_dtype: 'q6' | 'q8' | 'fp16';
+  context_length: number;
+  enable_gaming_mode?: boolean;
+}
+
+export interface FirstLaunchSetupResponse {
+  success: boolean;
+  message: string;
+  workspace_root: string;
+  initialized_at: string;
+}
+

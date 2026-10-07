@@ -6,6 +6,10 @@ import {
   GamingModeStatus,
   PreflightRequest,
   PreflightResult,
+  FirstLaunchStatus,
+  FirstLaunchDiagnostics,
+  FirstLaunchSetupRequest,
+  FirstLaunchSetupResponse,
 } from '../types';
 
 // Detect if running inside Tauri desktop webview
@@ -143,6 +147,78 @@ async function tauriInvoke<T>(cmd: string, args: Record<string, any> = {}): Prom
       } as T;
     case 'cancel_turn':
       return undefined as T;
+    case 'check_first_launch':
+      return {
+        is_first_launch: false,
+        workspace_root: 'G:\\Project_Ned',
+        config_exists: true,
+        configured_model: 'Mistral-Small-3.1-24B-Instruct-2503-exl3',
+      } as T;
+    case 'run_first_launch_diagnostics':
+      return {
+        overall_status: 'pass',
+        gpu_detected: true,
+        gpu_name: 'NVIDIA GeForce RTX 5090',
+        vram_total_mb: 32607.0,
+        job_object_supported: true,
+        checks: [
+          {
+            id: 'job_object_containment',
+            name: 'Windows Job Object Process Cage',
+            category: 'job_object',
+            status: 'pass',
+            details: 'JOB_OBJECT_LIMIT_KILL_ON_JOB_CLOSE verified. Zero-orphan process invariant active.',
+            recommended_action: null,
+          },
+          {
+            id: 'os_platform',
+            name: 'Windows OS Architecture',
+            category: 'os',
+            status: 'pass',
+            details: 'Verified 64-bit Windows operating system (Target: Windows 11 x64).',
+            recommended_action: null,
+          },
+          {
+            id: 'gpu_blackwell_preflight',
+            name: 'NVIDIA RTX 5090 Blackwell Qualification',
+            category: 'gpu',
+            status: 'pass',
+            details: 'Target GPU detected: NVIDIA GeForce RTX 5090 (32 GB GDDR7, sm_120 architecture). Driver: 572.16+, CUDA 12.8+ ready.',
+            recommended_action: null,
+          },
+          {
+            id: 'gpu_vram_capacity',
+            name: 'Dedicated VRAM Capacity Check',
+            category: 'gpu',
+            status: 'pass',
+            details: '32.0 GB GDDR7 available. Sufficient headroom for 24B–30B EXL3 quantized models with 32K–64K Q6 KV cache.',
+            recommended_action: null,
+          },
+          {
+            id: 'workspace_storage',
+            name: 'Workspace Directory & NTFS Storage',
+            category: 'storage',
+            status: 'pass',
+            details: 'Default workspace root exists and is accessible: G:\\Project_Ned',
+            recommended_action: null,
+          },
+          {
+            id: 'python_venv_runtime',
+            name: 'Python Core Isolated Virtual Environment',
+            category: 'sidecar',
+            status: 'pass',
+            details: 'Active virtual environment located: G:\\Project_Ned\\.venv\\Scripts\\python.exe',
+            recommended_action: null,
+          },
+        ],
+      } as T;
+    case 'complete_first_launch':
+      return {
+        success: true,
+        message: 'Project Friday workspace and supervisor successfully initialized.',
+        workspace_root: args.request?.workspace_root || 'G:\\Project_Ned',
+        initialized_at: new Date().toISOString(),
+      } as T;
     default:
       return {} as T;
   }
@@ -162,4 +238,10 @@ export const TauriClient = {
   activateGamingMode: () => tauriInvoke<GamingModeStatus>('activate_gaming_mode'),
   deactivateGamingMode: () => tauriInvoke<GamingModeStatus>('deactivate_gaming_mode'),
   getGamingModeStatus: () => tauriInvoke<GamingModeStatus>('get_gaming_mode_status'),
+  checkFirstLaunch: () => tauriInvoke<FirstLaunchStatus>('check_first_launch'),
+  runFirstLaunchDiagnostics: () =>
+    tauriInvoke<FirstLaunchDiagnostics>('run_first_launch_diagnostics'),
+  completeFirstLaunch: (request: FirstLaunchSetupRequest) =>
+    tauriInvoke<FirstLaunchSetupResponse>('complete_first_launch', { request }),
 };
+
