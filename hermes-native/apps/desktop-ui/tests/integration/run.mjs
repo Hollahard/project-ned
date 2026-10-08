@@ -31,7 +31,7 @@ if (!process.env.HERMES_BASE_PYTHON) {
 }
 const context = await startVitest('test', [], {
   config: false, root, watch: false, environment: 'jsdom',
-  include: ['settings.test.tsx'], reporters: ['default', 'json'],
+  include: ['settings.test.tsx', 'inspection.test.tsx'], reporters: ['default', 'json'],
   outputFile: { json: path.join(root, '.runs', 'results.json') },
   maxWorkers: 1, fileParallelism: false, testTimeout: 15000,
 }, {

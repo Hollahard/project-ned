@@ -17,4 +17,11 @@
 .native-model-profiles li button { width: 100%; text-align: left; overflow-wrap: anywhere; }
 .native-model-profiles .native-model-checkbox { flex-direction: row; align-items: center; grid-column: 1 / -1; }
 .native-model-actions { display: flex; flex-wrap: wrap; gap: 8px; }
+.native-model-inspection { border: 1px solid var(--stroke-nous, #8886); border-radius: 6px; padding: 12px; margin-bottom: 18px; overflow-wrap: anywhere; }
+.native-model-inspection h3 { font-size: 1rem; font-weight: 600; margin-bottom: 10px; }
+.native-model-inspection dl { display: grid; grid-template-columns: minmax(130px, 1fr) 2fr; gap: 8px 12px; }
+.native-model-inspection dt { color: var(--ui-text-secondary, inherit); }
+.native-model-inspection dd { margin: 0; }
+.native-model-inspection summary { cursor: pointer; }
+.native-model-inspection code { font-size: 12px; }
 @media (max-width: 700px) { .native-model-layout { grid-template-columns: 1fr; } .native-model-profiles fieldset { grid-template-columns: 1fr; } }

@@ -36,6 +36,9 @@
       control(operation, payload) {
         return window.__TAURI__.core.invoke('hermes_control_request', {operation, payload});
       },
+      inspectModel(modelPath) {
+        return window.__TAURI__.core.invoke('hermes_model_inspect', {modelPath});
+      },
       async subscribe(channel, listener) {
         if (channel !== 'hermes:host:event') return Promise.reject(new Error('Unknown host channel'));
         if (typeof listener !== 'function') throw new TypeError('Host event listener required');

@@ -1,0 +1,121 @@
+{
+  "executable_sha256": "334f22bc32038c1ff2080a33ffc4f170044248079ba73c8665ac7b1862ba06ad",
+  "models": [
+    {
+      "model": "Mistral-Small-3.1-24B-Instruct-2503-exl3",
+      "elapsed_seconds": 0.297,
+      "cleanup": {
+        "job_empty": true,
+        "root_exit_code": 0,
+        "stderr_eof": true,
+        "stdout_eof": true,
+        "verified": true
+      },
+      "error": null,
+      "result": {
+        "bytes_read": 65363706,
+        "declared_architectures": [
+          "Mistral3ForConditionalGeneration"
+        ],
+        "declared_bits": 5.0,
+        "fingerprint_partial": false,
+        "fingerprint_scope": "metadata_files_weight_headers_and_file_sizes",
+        "format": "EXL3",
+        "index_tensor_count": 1147,
+        "issues": [],
+        "issues_truncated": false,
+        "load_certified": false,
+        "metadata_fingerprint": "45630d422a23cc024f047f976880e8bea71e26c4c6a8d29660abb7ce2625b24c",
+        "missing_shards": [],
+        "model": "Mistral-Small-3.1-24B-Instruct-2503-exl3",
+        "observed_shard_count": 2,
+        "observed_tensor_count": 1147,
+        "runtime_compatible": null,
+        "schema": 1,
+        "status": "metadata_inspected",
+        "weight_payload_bytes_read": 0,
+        "weights_content_hashed": false
+      }
+    },
+    {
+      "model": "Qwen3-30B-A3B-Instruct-2507",
+      "elapsed_seconds": 1.171,
+      "cleanup": {
+        "job_empty": true,
+        "root_exit_code": 0,
+        "stderr_eof": true,
+        "stdout_eof": true,
+        "verified": true
+      },
+      "error": null,
+      "result": {
+        "bytes_read": 92066192,
+        "declared_architectures": [
+          "Qwen3MoeForCausalLM"
+        ],
+        "declared_bits": 5.0,
+        "fingerprint_partial": false,
+        "fingerprint_scope": "metadata_files_weight_headers_and_file_sizes",
+        "format": "EXL3",
+        "index_tensor_count": 56117,
+        "issues": [],
+        "issues_truncated": false,
+        "load_certified": false,
+        "metadata_fingerprint": "fc8f174222c988d84300281b14893f37dce011cd90b9261c08e8a4aa05d04b11",
+        "missing_shards": [],
+        "model": "Qwen3-30B-A3B-Instruct-2507",
+        "observed_shard_count": 3,
+        "observed_tensor_count": 56117,
+        "runtime_compatible": null,
+        "schema": 1,
+        "status": "metadata_inspected",
+        "weight_payload_bytes_read": 0,
+        "weights_content_hashed": false
+      }
+    },
+    {
+      "model": "Qwen3.5-35B-A3B-exl3-clean",
+      "elapsed_seconds": 2.282,
+      "cleanup": {
+        "job_empty": true,
+        "root_exit_code": 0,
+        "stderr_eof": true,
+        "stdout_eof": true,
+        "verified": true
+      },
+      "error": null,
+      "result": {
+        "bytes_read": 173249794,
+        "declared_architectures": [
+          "Qwen3_5MoeForConditionalGeneration"
+        ],
+        "declared_bits": 4.09,
+        "fingerprint_partial": true,
+        "fingerprint_scope": "metadata_files_weight_headers_and_file_sizes",
+        "format": "EXL3",
+        "index_tensor_count": 124579,
+        "issues": [
+          {
+            "category": "incomplete",
+            "code": "SHARD_MISSING",
+            "file": "model-00001-of-00003.safetensors"
+          }
+        ],
+        "issues_truncated": false,
+        "load_certified": false,
+        "metadata_fingerprint": "1b8b08a48a44cee03cd6531f83f7001e3b44a10457d178f9eab9d6525d8181bf",
+        "missing_shards": [
+          "model-00001-of-00003.safetensors"
+        ],
+        "model": "Qwen3.5-35B-A3B-exl3-clean",
+        "observed_shard_count": 2,
+        "observed_tensor_count": 71776,
+        "runtime_compatible": null,
+        "schema": 1,
+        "status": "incomplete",
+        "weight_payload_bytes_read": 0,
+        "weights_content_hashed": false
+      }
+    }
+  ]
+}

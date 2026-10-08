@@ -1,6 +1,6 @@
 # Hermes Native Desktop engineering specification
 
-**Start with [the complete architecture and roadmap](./ARCHITECTURE.md).** For current implementation progress, read [the model catalog checkpoint](./MODEL-CATALOG-CHECKPOINT.md), [the owned backend checkpoint](./OWNED-BACKEND-CHECKPOINT.md), [the native profiles checkpoint](./NATIVE-PROFILES-CHECKPOINT.md) and [the implementation overview](../../hermes-native/README.md).
+**Start with [the complete architecture and roadmap](./ARCHITECTURE.md).** For current implementation progress, read [the native catalog checkpoint](./NATIVE-CATALOG-CHECKPOINT.md), [the model catalog checkpoint](./MODEL-CATALOG-CHECKPOINT.md), [the owned backend checkpoint](./OWNED-BACKEND-CHECKPOINT.md), [the native profiles checkpoint](./NATIVE-PROFILES-CHECKPOINT.md) and [the implementation overview](../../hermes-native/README.md).
 
 The original specification was prepared on 7 October 2026 from installed official Hermes source at `649d6c0391029f35959cfbc240eb3534a6667cf5`, with official Hermes, TabbyAPI, ExLlama, Tauri and database references. The separate `hermes-webui` installation is identified but is not the official desktop baseline.
 
@@ -19,7 +19,7 @@ The selected TabbyAPI baseline rejects V2, so the proposed V3/V2 runtime-pack sp
 
 The retained renderer now mounts in the Tauri shell and shows a genuine backend-unavailable recovery dialog. Real preview watchers deliver changes to their owning native window/document. A separate Rust-owned CPU Python service persists local model settings with the reused inference schema, strict bounded IPC, optimistic revisions and atomic SQLite initialization.
 
-The actual retained settings form passed 22 native checks covering navigation, validation and CRUD with confirmed deletion. Separate native checks verified unavailable behavior and persistence across shell launches. Configured workers and their outer fixture Jobs verified process/pipe cleanup. The source guard still reports 2,986 unchanged retained inputs and 110 pinned direct dependencies.
+The actual retained settings form passed 29 native checks covering navigation, validation, CRUD with confirmed deletion and separate owned metadata inspection. The full native suite passed 142 assertions; the foundation runner passed 48 groups and 478 component tests. Separate native checks verified unavailable behavior and persistence across shell launches. Configured workers and their outer fixture Jobs verified process/pipe cleanup. The source guard still reports 2,986 unchanged retained inputs and 110 pinned direct dependencies.
 
 Hermes agent startup, chat/tools, integrated inference, browser/terminal parity, vector memory, Gaming Mode and installer packaging remain open. The Mistral and Qwen3 EXL3 GPU smoke tests are separate recorded observations, not connections between the new settings UI and a running model. Hidden DOM checks and source reuse do not prove full visual or behavioral parity.
 
@@ -39,6 +39,9 @@ Hermes agent startup, chat/tools, integrated inference, browser/terminal parity,
 | [NATIVE-PROFILES-CHECKPOINT.md](./NATIVE-PROFILES-CHECKPOINT.md) | Integrated preview, retained bootstrap and Rust-owned CPU profile settings evidence |
 | [OWNED-BACKEND-CHECKPOINT.md](./OWNED-BACKEND-CHECKPOINT.md) | Rust-owned retained HTTP diagnostic, socket ownership before authentication and failure-cleanup evidence |
 | [MODEL-CATALOG-CHECKPOINT.md](./MODEL-CATALOG-CHECKPOINT.md) | Bounded read-only artifact metadata/header inspection, partial reports and actual model observations |
+| [NATIVE-CATALOG-CHECKPOINT.md](./NATIVE-CATALOG-CHECKPOINT.md) | Integrated owned inspection, retained profile-form behavior and final regression evidence |
+| [NEXT-BACKEND-INTEGRATION.md](./NEXT-BACKEND-INTEGRATION.md) | Proposed retained backend/gateway integration sequence and source-side-effect audit |
+| [NATIVE-SOCKET-TEST-PLAN.md](./NATIVE-SOCKET-TEST-PLAN.md) | Proposed socket/ownership/client acceptance boundaries |
 | [QWEN3-RUNTIME-CHECKPOINT.md](./QWEN3-RUNTIME-CHECKPOINT.md) | Second opt-in EXL3 model load/generation/unload and measured owned cleanup |
 | [baseline-inventory.json](./baseline-inventory.json) | Static baseline of 252 RPC methods, 13 server requests, 77 notifications and 259 literal preload channels |
 | [contracts/gateway-baseline.openrpc.json](./contracts/gateway-baseline.openrpc.json) | Complete pinned method/request/event schemas; upstream license beside them |

@@ -10,7 +10,7 @@ report = inspect_model(Path(r"C:\PyDev\LLM_PC\models"), "chosen-model-folder")
 data = report.as_dict()
 ```
 
-The root is selected by the host, never implicitly discovered from model metadata. The model argument is one immediate folder name. A future native picker/service must issue and enforce that grant; this library does not create a renderer capability or expose arbitrary filesystem access.
+The root is selected by the host, never implicitly discovered from model metadata. The model argument is one immediate folder name. The separate [catalog host](../catalog-host/README.md) enforces native receipt grants and owns the inspector process. A native picker remains future work; this library does not create a renderer capability or expose arbitrary filesystem access.
 
 The standalone CLI supports an isolated, no-site interpreter:
 
@@ -69,4 +69,4 @@ Read-only observations on 8 October 2026 under the user-granted `C:\PyDev\LLM_PC
 | Qwen3-30B-A3B-Instruct-2507 | EXL3 / 5 | 56,117 tensor entries, three complete referenced shards |
 | Qwen3.5-35B-A3B-exl3-clean | EXL3 / 4.09 | Incomplete: shard `model-00001-of-00003.safetensors` missing; 71,776 existing entries inspected of 124,579 indexed |
 
-These observations are metadata/header checks only, with zero load certification. Actual bounded reports remain in the isolated stage's `reports` directory; user model files were not copied or modified. No worker, UI or runtime-control interface was changed.
+These observations are metadata/header checks only, with zero load certification. Actual bounded reports remain in the isolated stage's `reports` directory; user model files were not copied or modified. The original library slice changed no worker/UI interface. The later [native catalog integration](../../../docs/hermes-native-desktop/NATIVE-CATALOG-CHECKPOINT.md) adds a separate owned inspector and read-only profile-form action; runtime control remains separate.

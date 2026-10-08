@@ -1,10 +1,12 @@
 import type { HermesApiRequest } from '@hermes/upstream-global'
+import type { ModelInspection } from './model-inspection-client.ts'
 
 /** Exact command/event seam registered by the isolated Rust shell. */
 export interface NativeTransport {
   invoke<T>(command: 'hermes_host_request', payload: { method: string; args: unknown[] }): Promise<T>
   subscribe(channel: 'hermes:host:event', listener: (event: HostEvent) => void): Promise<() => void>
   control?<T>(operation: string, payload: object): Promise<T>
+  inspectModel?(modelPath: string): Promise<ModelInspection>
 }
 
 export interface HostEvent {

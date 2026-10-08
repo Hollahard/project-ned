@@ -66,6 +66,9 @@ def main():
             "control-unavailable-proof.html",
             "control-proof.js",
             "control-expected.json",
+            "catalog-proof.html",
+            "catalog-unavailable-proof.html",
+            "catalog-proof.js",
         )
     ]
     hashes = {}

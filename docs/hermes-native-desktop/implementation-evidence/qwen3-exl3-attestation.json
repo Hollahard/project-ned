@@ -38,5 +38,10 @@
   },
   "weight_payloads_fully_hashed_before_launch": true,
   "post_run_weight_payloads_rehashed": false,
-  "metadata_inspection_fingerprint": "fc8f174222c988d84300281b14893f37dce011cd90b9261c08e8a4aa05d04b11"
+  "metadata_inspection_fingerprint": "fc8f174222c988d84300281b14893f37dce011cd90b9261c08e8a4aa05d04b11",
+  "extension": {
+    "file_name": "exllamav3_ext.cp312-win_amd64.pyd",
+    "sha256": "0f77eb19bc52d9a925a29a97c0dbcd8a00bd474fb26e2246abc2c03a136dadda",
+    "source": "pre-launch prepared receipt; current file hash rechecked during checkpoint documentation"
+  }
 }

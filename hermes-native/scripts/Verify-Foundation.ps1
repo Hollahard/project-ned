@@ -28,7 +28,8 @@ $savedEnvironment = @{}
 foreach ($name in @(
     'HERMES_UPSTREAM_ROOT', 'HERMES_TABBY_SOURCE', 'HERMES_CONTROL_PYTHON',
     'HERMES_CONTROL_WORKER_ROOT', 'HERMES_CONTROL_INFERENCE_SRC',
-    'HERMES_BASE_PYTHON', 'HERMES_INFERENCE_SRC', 'HERMES_NATIVE_DESKTOP'
+    'HERMES_BASE_PYTHON', 'HERMES_INFERENCE_SRC', 'HERMES_NATIVE_DESKTOP',
+    'HERMES_CATALOG_PYTHON', 'HERMES_CATALOG_TEST_ROOT'
 )) {
     $savedEnvironment[$name] = [Environment]::GetEnvironmentVariable($name, 'Process')
 }
@@ -84,10 +85,11 @@ try {
     $inference = Join-Path $nativeRoot 'services/inference'
     $control = Join-Path $nativeRoot 'services/control-worker'
     $catalog = Join-Path $nativeRoot 'services/model-catalog'
+    $catalogHost = Join-Path $nativeRoot 'services/catalog-host'
     if ($NativeFixtures) {
         # Windows venv executables redirect to a base interpreter. The owned host
         # and UI fixtures must pin that actual interpreter, not an ambient override.
-        $baseOutput = @(& $python -I -S -B -c 'import json, sys; print(json.dumps({"path": sys._base_executable, "version": list(sys.version_info[:2])}))')
+        $baseOutput = @(& $python -I -S -B -c 'from pathlib import Path; import json, sys; print(json.dumps({"path": str(Path(sys._base_executable).resolve(strict=True)), "version": list(sys.version_info[:2])}))')
         if ($LASTEXITCODE -ne 0 -or $baseOutput.Count -ne 1) { throw 'Unable to discover the active virtual environment base interpreter.' }
         $baseInfo = $baseOutput[0] | ConvertFrom-Json
         if ($baseInfo.version[0] -ne 3 -or $baseInfo.version[1] -lt 12 -or $baseInfo.version[1] -ge 14) {
@@ -97,6 +99,8 @@ try {
         if (-not (Test-Path -LiteralPath $basePython -PathType Leaf)) { throw 'The base interpreter is not a file.' }
         $env:HERMES_CONTROL_PYTHON = $basePython
         $env:HERMES_BASE_PYTHON = $basePython
+        $env:HERMES_CATALOG_PYTHON = $basePython
+        $env:HERMES_CATALOG_TEST_ROOT = New-TestDirectory -Label 'catalog-host-native'
         $env:HERMES_CONTROL_WORKER_ROOT = (Resolve-Path -LiteralPath $control).Path
         $env:HERMES_CONTROL_INFERENCE_SRC = (Resolve-Path -LiteralPath (Join-Path $inference 'src')).Path
         $env:HERMES_INFERENCE_SRC = $env:HERMES_CONTROL_INFERENCE_SRC
@@ -118,6 +122,16 @@ try {
     Invoke-Check -Name 'model-catalog-tests' -Command $python -ToolArguments @('-m', 'pytest', '-c', (Join-Path $catalog 'pyproject.toml'), '-o', 'addopts=', (Join-Path $catalog 'tests'), '--basetemp', $catalogTemp, '-q')
     Invoke-Check -Name 'model-catalog-lint' -Command $python -ToolArguments (@('-m', 'ruff', 'check') + $catalogCode)
     Invoke-Check -Name 'model-catalog-format' -Command $python -ToolArguments (@('-m', 'ruff', 'format', '--check') + $catalogCode)
+
+    $catalogHostCode = @('bootstrap.py', 'prepare_config.py', 'tests/test_bootstrap.py') | ForEach-Object { Join-Path $catalogHost $_ }
+    Invoke-Check -Name 'catalog-host-python-lint' -Command $python -ToolArguments (@('-m', 'ruff', 'check') + $catalogHostCode)
+    Invoke-Check -Name 'catalog-host-python-format' -Command $python -ToolArguments (@('-m', 'ruff', 'format', '--check') + $catalogHostCode)
+    if ($NativeFixtures) {
+        # Bootstrap tests run only synthetic CPU child processes and prepare fresh
+        # receipts. They never inspect user model roots or import model engines.
+        $catalogHostTemp = New-TestDirectory -Label 'catalog-host-pytest'
+        Invoke-Check -Name 'catalog-host-python-tests' -Command $python -ToolArguments @('-m', 'pytest', '-o', 'addopts=', (Join-Path $catalogHost 'tests/test_bootstrap.py'), '--basetemp', $catalogHostTemp, '-q')
+    }
 
     $auth = Join-Path $nativeRoot 'runtime-packs/tabby-v3'
     $authTemp = New-TestDirectory -Label 'auth-pytest'
@@ -146,13 +160,15 @@ try {
         Invoke-Check -Name 'backend-host-tests' -Command $python -ToolArguments @('-m', 'pytest', '-c', (Join-Path $backend 'pyproject.toml'), (Join-Path $backend 'tests'), '--basetemp', $backendTemp, '-q')
     }
 
-    foreach ($package in @('services/resource-host', 'services/preview-watch', 'services/control-host', 'services/owned-http', 'services/terminal-host', 'spikes/webview2-guest')) {
+    foreach ($package in @('services/resource-host', 'services/preview-watch', 'services/control-host', 'services/catalog-host', 'services/owned-http', 'services/terminal-host', 'spikes/webview2-guest')) {
         $manifest = Join-Path (Join-Path $nativeRoot $package) 'Cargo.toml'
         $label = Split-Path -Leaf $package
         Invoke-Check -Name "$label-format" -Command $cargo -ToolArguments @('fmt', '--manifest-path', $manifest, '--check')
         $lintArgs = @('clippy', '--offline', '--locked', '--manifest-path', $manifest, '--all-targets', '--quiet')
         # resource-host enables owned, captured and framed worker suites; control-host
         # enables its synthetic peers and actual Python worker tests with the env above.
+        # catalog-host uses the resolved base interpreter and a fresh synthetic
+        # output root; its one-shot tests do not load engines or user models.
         # owned-http enables harmless loopback peers; the retained real-handler proof is separate.
         if ($label -in @('resource-host', 'control-host', 'owned-http')) { $lintArgs += @('--features', 'test-fixture') }
         Invoke-Check -Name "$label-lint" -Command $cargo -ToolArguments ($lintArgs + @('--', '-D', 'warnings'))

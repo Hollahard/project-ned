@@ -3,6 +3,7 @@ fn main() {
         tauri_build::AppManifest::new().commands(&[
             "hermes_host_request",
             "hermes_control_request",
+            "hermes_model_inspect",
             "hermes_binding_fixture",
         ]),
     ))

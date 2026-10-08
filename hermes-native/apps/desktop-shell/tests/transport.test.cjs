@@ -39,6 +39,14 @@ function page({ local = true, top = true } = {}) {
 
 const change = { name: 'preview-file-changed', payload: { id: 'preview-1-1', path: 'G:\\fixture.txt', url: 'file:///G:/fixture.txt' } };
 
+test('inspection uses one finite native command and cannot supply a grant', async () => {
+  const p = page();
+  await p.bridge.inspectModel('C:/models/chosen');
+  assert.equal(p.state.calls[0][0], 'hermes_model_inspect');
+  assert.equal(JSON.stringify(p.state.calls[0][1]), JSON.stringify({ modelPath: 'C:/models/chosen' }));
+  assert.equal(page({ local: false }).bridge, undefined);
+});
+
 test('receiver and transport are installed once and cannot be replaced', () => {
   const p = page();
   assert(Object.isFrozen(p.bridge));

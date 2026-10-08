@@ -1,12 +1,16 @@
 import { useEffect, useRef, useState } from 'react'
 import type { ControlClient, LoadProfile, ProfileSummary } from './control-client.ts'
+import { createModelInspector, type ModelInspection, type ModelInspector } from './model-inspection-client.ts'
+import { ModelInspectionResult } from './model-inspection.tsx'
 import './model-profiles.css'
 
 const blank = (): LoadProfile => ({ artifact_id: 'local-model', revision: 'unverified', model_name: '',
   expected_model_path: '', context_length: 2048, cache_size: 2048, cache_mode: 'FP16',
   max_batch_size: 1, chunk_size: 256, vision: false })
 
-export function ModelProfiles({ client }: { client: ControlClient }) {
+const unavailableInspector = createModelInspector()
+
+export function ModelProfiles({ client, inspector = unavailableInspector }: { client: ControlClient; inspector?: ModelInspector }) {
   const [profiles, setProfiles] = useState<ProfileSummary[]>([])
   const [id, setId] = useState('')
   const [name, setName] = useState('')
@@ -19,6 +23,41 @@ export function ModelProfiles({ client }: { client: ControlClient }) {
   const [confirmDelete, setConfirmDelete] = useState(false)
   const alive = useRef(true)
   const generation = useRef(0)
+  const inspectionGeneration = useRef(0)
+  const inspectedPath = useRef('')
+  const [inspection, setInspection] = useState<ModelInspection | null>(null)
+  const [inspectionBusy, setInspectionBusy] = useState(false)
+  const [inspectionMessage, setInspectionMessage] = useState('')
+  const [inspectionFailed, setInspectionFailed] = useState(false)
+  const [inspectionSettled, setInspectionSettled] = useState(0)
+
+  const clearInspection = () => {
+    inspectionGeneration.current++
+    inspectedPath.current = ''
+    setInspection(null); setInspectionBusy(false); setInspectionMessage(''); setInspectionFailed(false)
+  }
+
+  const inspect = async () => {
+    const started = ++inspectionGeneration.current
+    const modelPath = profile.expected_model_path
+    inspectedPath.current = modelPath
+    setInspection(null); setInspectionBusy(true); setInspectionFailed(false)
+    setInspectionMessage('Inspecting model metadata…')
+    try {
+      const result = await inspector.inspect(modelPath)
+      if (alive.current && started === inspectionGeneration.current && inspectedPath.current === modelPath) {
+        setInspection(result); setInspectionMessage('Inspection finished. Saved settings were not changed.')
+      }
+    } catch (error) {
+      if (alive.current && started === inspectionGeneration.current) {
+        setInspectionFailed(true)
+        setInspectionMessage(error instanceof Error ? error.message : 'Model metadata could not be inspected.')
+      }
+    } finally {
+      if (alive.current) setInspectionSettled(count => count + 1)
+      if (alive.current && started === inspectionGeneration.current) setInspectionBusy(false)
+    }
+  }
 
   const perform = async (action: (active: () => boolean) => Promise<string>) => {
     const started = generation.current
@@ -53,30 +92,36 @@ export function ModelProfiles({ client }: { client: ControlClient }) {
     generation.current++
     setConnected(false); setProfiles([]); setId(''); setName(''); setRevision(null)
     setProfile(blank()); setConfirmDelete(false)
+    clearInspection()
     setMessage('Connecting to local settings…')
     void perform(connect)
-    return () => { alive.current = false; generation.current++ }
-  }, [client])
+    return () => { alive.current = false; generation.current++; inspectionGeneration.current++ }
+  }, [client, inspector])
 
-  const update = <K extends keyof LoadProfile>(key: K, value: LoadProfile[K]) =>
+  const update = <K extends keyof LoadProfile>(key: K, value: LoadProfile[K]) => {
+    if (key === 'expected_model_path') clearInspection()
     setProfile(current => ({ ...current, [key]: value }))
+  }
 
   const reset = () => {
     setId(''); setName(''); setRevision(null); setProfile(blank()); setConfirmDelete(false)
     setFailed(false); setMessage('Enter a model folder and the settings to save.')
+    clearInspection()
   }
 
   const select = (key: string) => void perform(async active => {
+    clearInspection()
     const saved = await client.get(key)
     if (active()) {
       setId(saved.profile_id); setName(saved.name); setRevision(saved.revision); setProfile(saved.profile)
+      clearInspection()
     }
     return 'Profile loaded. Model files have not been verified.'
   })
 
-  return <section className="native-model-profiles" data-native-model-profiles>
+  return <section className="native-model-profiles" data-native-model-profiles data-native-inspection-settled={inspectionSettled}>
     <header><h2>Local model profiles</h2><p>Save ExLlamaV3 context and cache settings for each local model.</p></header>
-    <p className="native-model-note">Saving a profile does not load a model. Model files and available VRAM have not been checked. Weight quantization comes from the selected model files.</p>
+    <p className="native-model-note">Saving a profile does not load a model or inspect its files. Available VRAM remains unchecked. Weight quantization comes from the selected model files.</p>
     <div role={failed ? 'alert' : 'status'} aria-live="polite" data-native-profile-status data-failed={failed}>{message}</div>
     <div className="native-model-layout">
       <nav aria-label="Saved model profiles">
@@ -103,7 +148,11 @@ export function ModelProfiles({ client }: { client: ControlClient }) {
           <label>Profile ID<input name="profile-id" value={id} pattern="[A-Za-z0-9][A-Za-z0-9_.\-]{0,63}" maxLength={64} required disabled={revision !== null} onChange={e => setId(e.target.value)} /></label>
           <label>Model name<input name="model-name" value={profile.model_name} required onChange={e => update('model_name', e.target.value)} /></label>
           <label>Model folder<input name="model-folder" value={profile.expected_model_path} placeholder="C:\Models\my-exl3-model" required onChange={e => update('expected_model_path', e.target.value)} /></label>
+          <button type="button" disabled={inspectionBusy || !profile.expected_model_path.trim()} onClick={() => void inspect()}>Inspect metadata</button>
+          <p className="native-model-note">Inspection is limited to model directories approved by the host.</p>
         </fieldset>
+        {inspectionMessage && <p role={inspectionFailed ? 'alert' : 'status'} aria-live="polite" data-native-inspection-status>{inspectionMessage}</p>}
+        {inspection && <ModelInspectionResult result={inspection} />}
         <fieldset disabled={busy || !connected}>
           <legend>Context and cache</legend>
           <label>Context tokens<input name="context-length" type="number" min={1} step={1} required value={profile.context_length} onChange={e => update('context_length', e.target.valueAsNumber)} /></label>

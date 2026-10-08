@@ -1,10 +1,10 @@
 # Tauri 2 native shell and profile control
 
-This independent Windows shell embeds the retained Hermes renderer and injects its typed transport before entry-point side effects. The retained root and contribution shell have mounted with the real, readable backend-unavailable recovery dialog. The actual local-profile form has passed native IPC/SQLite checks using a separate, explicitly configured CPU worker. The shell starts no Hermes agent backend, Tabby runtime, model or GPU work. It is a development integration; installer packaging and complete desktop parity remain open.
+This independent Windows shell embeds the retained Hermes renderer and injects its typed transport before entry-point side effects. The retained root and contribution shell have mounted with the real, readable backend-unavailable recovery dialog. The actual local-profile form has passed native IPC/SQLite checks using a separate, explicitly configured CPU worker, plus read-only metadata inspection through an independent catalog owner. The shell starts no Hermes agent backend, Tabby runtime, model or GPU work. It is a development integration; installer packaging and complete desktop parity remain open.
 
 ## Host surfaces and ownership
 
-The default build grants the bundled `main` WebView only `hermes_host_request`, `hermes_control_request` and core event listen/unlisten permissions. Commands independently check the exact main label and bundled origin. Native process control also checks the bound native window identity. Remote top-level navigation, popups and frames are denied; frontend event emission is not granted. Injection runs only in the top frame at a bundled origin.
+The default build grants the bundled `main` WebView only `hermes_host_request`, `hermes_control_request`, `hermes_model_inspect` and core event listen/unlisten permissions. Commands independently check the exact main label and bundled origin. Native process control also checks the bound native window identity. Remote top-level navigation, popups and frames are denied; frontend event emission is not granted. Injection runs only in the top frame at a bundled origin.
 
 The host adapter has **16 methods and 5 event subscriptions**, detailed in [the renderer capability manifest](../desktop-ui/host-capabilities.json). Thirteen backend/bootstrap methods explicitly reject as unavailable. Three preview methods reach the real Rust implementation: `watchPreviewFile`, `watchDirectory`, `stopPreviewFileWatch`. Subscribing to an event is valid without an active watch; registration never invents a file change.
 
@@ -43,6 +43,25 @@ No secrets belong in this manifest or SQLite profiles. Renderer requests cannot 
 
 Without `HERMES_NATIVE_CONTROL_CONFIG`, settings remain unavailable and no worker is launched. An invalid configuration also stays unavailable with a fixed error. Hash verification is a launch-time integrity check, not an attestation of every Python DLL/stdlib byte or protection against concurrent privileged file replacement. Filesystem/kernel calls are not hard real-time operations.
 
+## Independent model metadata inspection
+
+`hermes_model_inspect {modelPath}` checks the exact main label, bundled origin and bound HWND, then acquires a finite admission permit before queueing blocking work. The separate [catalog host](../../services/catalog-host/README.md) creates one short-lived Python inspection process in a private Windows Job. It does not extend the profile worker's import surface or protocol.
+
+The optional `HERMES_NATIVE_CATALOG_CONFIG` names a host-owned launch receipt. It pins the resolved base Python executable, source-only bootstrap and five catalog source modules, plus one to eight explicit root grants and separate work/cleanup deadlines. Missing or invalid configuration leaves inspection unavailable. Renderer requests cannot choose the executable, grants, source paths, working directory, environment or deadlines. Source changes require a newly reviewed receipt; the pins do not completely attest installed Python DLL/stdlib bytes.
+
+The requested model must be an immediate child of a granted local directory. Entering a path grants no additional access. The current preparer and host require ordinary DOS paths with native Windows backslashes; forward-slash spelling is not accepted. Reparse, network and device paths are rejected, and the inspector independently enforces its path and finite-read rules. It reads metadata and weight headers, never weight payload bytes. Missing shards and partial/malformed artifacts remain visible; runtime compatibility stays unknown and load certification false. A metadata fingerprint excludes weight contents.
+
+Result delivery requires root exit zero, both output EOFs, drained pipes, no trailing protocol data and empty Job membership. Window destruction, full document navigation and app exit can retire the independently reachable owner before or during launch. Hash navigation preserves it; a late result cannot reach a replacement document. Inspection does not change saved settings, register an artifact or load a model.
+
+From this package, after activating the project virtual environment:
+
+```powershell
+python ../../services/catalog-host/prepare_config.py --python '<absolute resolved trusted base python.exe>' --catalog-src '<absolute services/model-catalog/src>' --working-directory '<new absolute empty work directory>' --root-grant '<absolute approved model parent>' --output '<new absolute catalog-launch.json>'
+$env:HERMES_NATIVE_CATALOG_CONFIG = '<absolute catalog-launch.json>'
+```
+
+Both output parents must already exist; working/output paths must be outside model and source roots. Preparation launches no inspection process. The existing control configuration is still required for editing/saving profiles. This separate catalog capability grants neither model loading nor general filesystem access. A native picker and persistent user-facing grant management remain future work.
+
 ## Build and verify
 
 Rebuild the sibling renderer using its documented `HERMES_UPSTREAM_ROOT`. Asset preparation refuses an existing output; use fresh private output or a clean build checkout rather than overwriting unrelated files. From this package:
@@ -74,18 +93,31 @@ python ./scripts/verify_native.py --executable ./target/debug/hermes-native-shel
 python ./scripts/verify_native.py --executable ./target/debug/hermes-native-shell.exe --backend-src ../../services/backend-host/src --state .checks/new-profiles-proof --mode profiles --control-config '<absolute separate fresh form launch.json>'
 ```
 
+For catalog modes, prepare fresh synthetic model fixtures and a catalog receipt granting their `models` directory:
+
+```powershell
+python ./scripts/prepare_catalog_fixture.py --root '<new absolute fixture root>'
+python ./scripts/verify_native.py --executable '<absolute fixture shell.exe>' --backend-src '<absolute backend-host/src>' --state '<new outer fixture state>' --mode catalog --catalog-config '<absolute synthetic catalog config>' --catalog-fixture-root '<absolute fixture root/models>'
+python ./scripts/verify_native.py --executable '<absolute fixture shell.exe>' --backend-src '<absolute backend-host/src>' --state '<different new outer state>' --mode catalog-unavailable
+python ./scripts/verify_native.py --executable '<absolute fixture shell.exe>' --backend-src '<absolute backend-host/src>' --state '<different new outer state>' --mode catalog-profiles --catalog-config '<absolute synthetic catalog config>' --catalog-fixture-root '<absolute fixture root/models>' --control-config '<separate fresh profile config>'
+```
+
+Use Windows backslashes when replacing the absolute-path placeholders. The combined form fixture uses a fixture-only, five-second delivery gate for an actual inspected and already-cleaned result. It waits for React promise-finally settlement before asserting that a stale result was discarded. The gate and its phase handlers are absent from default builds; neither metadata nor native transport is fabricated.
+
 Fixture controls, result-file writing and additional fixture capabilities exist only in `binding-fixture` builds. The default build does not register or permit the helper. Assets are copied byte-for-byte with pre/post hashes and a receipt, including the selected fixture assets. Receipt metadata alone does not authenticate an old bundle: rebuild through the renderer's source/dependency guards. Generated assets, state, logs and targets are ignored. Offline Cargo builds require a populated cache.
 
 ## Evidence and open work
 
-Current native evidence covers typed dispatch/denials, genuine preview file/directory changes, ownership and queued-delivery fencing, hash-route versus document-reload behavior, and retained bootstrap with the real backend-unavailable panel. The independent profile UI integration suite passes nine jsdom cases; the control host's real Python/native tests cover persistence and bounded owner cleanup. These are distinct pieces of evidence.
+Current native evidence covers typed dispatch/denials, genuine preview file/directory changes, ownership and queued-delivery fencing, hash-route versus document-reload behavior, retained bootstrap with the real backend-unavailable panel, and model metadata inspection through an independent owner. The profile/inspection UI integration suite passes 12 jsdom cases; the control host's real Python/native tests cover persistence and bounded owner cleanup. These are distinct pieces of evidence.
 
-The consolidated native binary passes 19 binding checks, 11 retained-bootstrap checks, 14 preview checks and six document-reload checks. The shell also passes seven Rust tests, 11 transport tests and two asset-packaging tests, with strict Clippy in default and all-feature configurations. These counts belong to this continuation, not the historical foundation totals.
+The consolidated native binary passes 19 binding checks, 11 retained-bootstrap checks, 14 preview checks and six document-reload checks. The shell also passes seven Rust tests, 12 transport tests and two asset-packaging tests, with strict Clippy in default and all-feature configurations. These counts belong to this continuation, not the historical foundation totals.
 
 Native control modes passed **4 unavailable, 13 create and 13 reopen checks**, proving honest absence without configuration, schema/validation/CRUD, optimistic conflicts and persistence across native shell launches. The actual retained profile form passed **22 checks**: the observer dismissed the real recovery dialog, navigated the real settings route, drove React controls and correlated saved fields/revisions/deletion with read-only Tauri calls. No backend connection was fabricated, and no React crash, uncaught error or unhandled rejection was observed.
 
-All configured runs verified cooperative control-worker shutdown, root exit code zero, empty Job membership and both output EOFs. The outer fixture Job verified its own process cleanup. Final worktree reports were produced under `.checks/*-worktree-01` and summarized in the [native checkpoint evidence](../../../docs/hermes-native-desktop/implementation-evidence/native-profiles-native-worktree.json); local diagnostic state remains ignored. Hidden DOM checks do not prove visual parity, keyboard/focus behavior or normal desktop usability.
+The separate catalog modes passed **9 direct command, 2 unavailable and 29 retained form checks**. The 29-check `catalog-profiles` mode retains the existing 22 profile checks and adds actual partial metadata display, missing-shard disclosure, truthful certification labels, clearing after input changes, late-result fencing after edits/selection and unchanged saved fields/revisions.
 
-Hermes backend startup/JSON-RPC, live conversations/tools/history, source routing, guest browser, terminal, general filesystem/Git, credentials, remaining bridge families and normal packaging remain incomplete. Local model settings are implemented separately; runtime launch, artifact/VRAM checks, vector memory and Gaming Mode are not connected by this slice.
+All configured control workers shut down cooperatively with root exit code zero, empty Job membership and both output EOFs. Configured catalog workers also exited zero with both EOFs and empty Job membership before delivery. Every outer fixture Job verified its own process cleanup. The [native catalog checkpoint](../../../docs/hermes-native-desktop/NATIVE-CATALOG-CHECKPOINT.md) records **48 foundation groups/478 component tests** and **142 assertions across 11 native modes** against executable SHA-256 `24b0e8a3fc2bd90b812b4ce2446051482d837ae87e93c69fb48075c1ab41a309`. The [current native receipt](../../../docs/hermes-native-desktop/implementation-evidence/native-catalog-native-worktree.json) preserves per-mode results; the earlier [profile checkpoint evidence](../../../docs/hermes-native-desktop/implementation-evidence/native-profiles-native-worktree.json) remains historical. Local diagnostic state stays ignored. Hidden DOM checks do not prove visual parity, keyboard/focus behavior or normal desktop usability.
+
+Hermes backend startup/JSON-RPC, live conversations/tools/history, source routing, guest browser, terminal, general filesystem/Git, credentials, remaining bridge families and normal packaging remain incomplete. Local model settings and read-only metadata inspection are integrated separately. Runtime launch, full weight-content integrity, quantization conversion, context/VRAM qualification, vector memory and Gaming Mode are not connected by this slice.
 
 The unchanged upstream Windows icon comes from Hermes `apps/desktop/assets/icon.ico` at the pinned revision; SHA256 `41bfca2371bc0e6159038c7c78dd39f29c6272038b4a2ce38be2a568203d5f98`. Its [upstream MIT notice](icons/LICENSE) is retained. Product branding, signed installer/executable distribution and immutable runtime packaging are not finalized.

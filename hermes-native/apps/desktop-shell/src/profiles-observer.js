@@ -13,6 +13,7 @@
     fill: 'profiles-failed-form-input',
     validate: 'profiles-failed-validation',
     create: 'profiles-failed-create',
+    catalog: 'profiles-failed-catalog',
     list: 'profiles-failed-list',
     read: 'profiles-failed-read',
     update: 'profiles-failed-update',
@@ -164,6 +165,53 @@
       expectProfile(created, 2048, 2048, 256);
       assert(created.revision === 1 && input('profile-id').disabled);
       checks.add('profiles-form-create-confirmed');
+
+      if (window.__HERMES_CATALOG_FIXTURE__ === true) {
+        stage = 'catalog';
+        const fixture = phase => bounded(window.__TAURI__.core.invoke('hermes_binding_fixture', { phase }));
+        const paths = await fixture('catalog-inputs');
+        const result = () => panel()?.querySelector('[data-native-model-inspection]');
+        const settled = () => Number(panel()?.dataset.nativeInspectionSettled ?? 0);
+        const waitHeld = async () => {
+          const end = performance.now() + 4000;
+          while (performance.now() < end) {
+            if ((await fixture('catalog-held')).held) return;
+            await pause(25);
+          }
+          fail();
+        };
+        await setValue('model-folder', paths.partial);
+        await click('Inspect metadata');
+        await wait(() => result()?.querySelector('h3')?.textContent === 'Model files are incomplete');
+        assert(result().textContent.includes('model-00002-of-00002.safetensors'));
+        assert(result().textContent.includes('Runtime compatibility and VRAM use remain unchecked. No model was loaded.'));
+        checks.add('catalog-profiles-real-partial-metadata-displayed');
+        checks.add('catalog-profiles-all-missing-shards-displayed');
+        checks.add('catalog-profiles-no-runtime-certification');
+        await setValue('model-folder', paths.complete);
+        assert(!result());
+        checks.add('catalog-profiles-edit-clears-old-result');
+        await fixture('catalog-hold-next');
+        let settledBefore = settled();
+        await click('Inspect metadata'); await waitHeld();
+        await setValue('model-folder', paths.invalid);
+        await fixture('catalog-release'); await wait(() => settled() > settledBefore);
+        assert(!result());
+        checks.add('catalog-profiles-late-real-result-ignored-after-edit');
+        await setValue('model-folder', paths.partial);
+        await fixture('catalog-hold-next');
+        settledBefore = settled();
+        await click('Inspect metadata'); await waitHeld();
+        await click(fixtureName);
+        await expectStatus('Profile loaded. Model files have not been verified.');
+        await fixture('catalog-release'); await wait(() => settled() > settledBefore);
+        assert(!result() && input('model-folder')?.value === fixtureFolder);
+        checks.add('catalog-profiles-late-real-result-ignored-after-selection');
+        const unchanged = await native('profiles.get', { profile_id: fixtureId });
+        expectProfile(unchanged, 2048, 2048, 256);
+        assert(unchanged.revision === created.revision);
+        checks.add('catalog-profiles-inspection-does-not-mutate-saved-settings');
+      }
 
       stage = 'list';
       await click('Refresh');

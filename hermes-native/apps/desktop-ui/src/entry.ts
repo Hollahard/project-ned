@@ -14,7 +14,10 @@ void bootstrapRetainedRenderer(window, () => import('@hermes-native/retained-ent
   try {
   const { registerModelProfiles } = await import('./model-profiles-plugin.tsx')
   const transport = (window as BootstrapTarget).__HERMES_NATIVE_TRANSPORT__
-  const unregister = registerModelProfiles(transport?.control ? { control: transport.control.bind(transport) } : undefined)
+  const unregister = registerModelProfiles(transport?.control ? {
+    control: transport.control.bind(transport),
+    inspectModel: transport.inspectModel?.bind(transport),
+  } : undefined)
   notice.dataset.bootstrap = 'resolved'
   notice.dataset.modelProfiles = 'registered'
   window.addEventListener('pagehide', () => { unregister(); adapter.dispose() }, { once: true })

@@ -6,6 +6,7 @@
   "permissions": [
     "allow-hermes-host-request",
     "allow-hermes-control-request",
+    "allow-hermes-model-inspect",
     "core:event:allow-listen",
     "core:event:allow-unlisten"
   ]

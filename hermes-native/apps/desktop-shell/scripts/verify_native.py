@@ -10,6 +10,26 @@ import time
 from pathlib import Path
 
 LOG = logging.getLogger(__name__)
+CATALOG_EXPECTED = [
+    "catalog-native-command-injected",
+    "catalog-real-complete-metadata",
+    "catalog-no-load-or-content-hash-certification",
+    "catalog-real-partial-missing-shard",
+    "catalog-real-malformed-metadata",
+    "catalog-renderer-cannot-grant-outside-path",
+    "catalog-parent-traversal-denied",
+    "catalog-real-child-exit-eof-and-empty-job",
+    "catalog-native-owner-retirement-permanent",
+]
+CATALOG_PROFILE_EXPECTED = {
+    "catalog-profiles-real-partial-metadata-displayed",
+    "catalog-profiles-all-missing-shards-displayed",
+    "catalog-profiles-no-runtime-certification",
+    "catalog-profiles-edit-clears-old-result",
+    "catalog-profiles-late-real-result-ignored-after-edit",
+    "catalog-profiles-late-real-result-ignored-after-selection",
+    "catalog-profiles-inspection-does-not-mutate-saved-settings",
+}
 CONTROL_EXPECTED = json.loads(
     (
         Path(__file__).resolve().parents[1] / "fixtures" / "control-expected.json"
@@ -100,6 +120,8 @@ def main():
     parser.add_argument("--backend-src", type=Path, required=True)
     parser.add_argument("--state", type=Path, required=True)
     parser.add_argument("--control-config", type=Path)
+    parser.add_argument("--catalog-config", type=Path)
+    parser.add_argument("--catalog-fixture-root", type=Path)
     parser.add_argument(
         "--mode",
         choices=[
@@ -111,17 +133,60 @@ def main():
             "control-reopen",
             "control-unavailable",
             "profiles",
+            "catalog",
+            "catalog-unavailable",
+            "catalog-profiles",
         ],
         default="binding",
     )
     args = parser.parse_args()
     if (
-        args.mode in {"control-create", "control-reopen", "profiles"}
+        args.mode
+        in {"control-create", "control-reopen", "profiles", "catalog-profiles"}
         and not args.control_config
     ):
         raise ValueError("This fixture requires an explicit control configuration")
     if args.mode == "control-unavailable" and args.control_config:
         raise ValueError("The unavailable fixture forbids control configuration")
+    if args.mode in {"catalog", "catalog-profiles"} and (
+        not args.catalog_config or not args.catalog_fixture_root
+    ):
+        raise ValueError(
+            "Catalog fixtures require explicit host config and synthetic model root"
+        )
+    if args.mode == "catalog-unavailable" and (
+        args.catalog_config or args.catalog_fixture_root
+    ):
+        raise ValueError(
+            "The unavailable catalog fixture forbids catalog configuration"
+        )
+    if args.catalog_config and (
+        not args.catalog_config.is_absolute()
+        or not args.catalog_config.is_file()
+        or args.catalog_config.stat().st_size > 65_536
+    ):
+        raise ValueError("Catalog config must be an explicit bounded host file")
+    if args.catalog_fixture_root:
+        fixture_root = args.catalog_fixture_root.resolve(strict=True)
+        receipt_file = fixture_root.parent / "fixture-receipt.json"
+        if (
+            not args.catalog_fixture_root.is_absolute()
+            or not fixture_root.is_dir()
+            or not receipt_file.is_file()
+            or receipt_file.stat().st_size > 16_384
+        ):
+            raise ValueError("An explicit generated synthetic fixture root is required")
+        receipt = json.loads(receipt_file.read_text())
+        if receipt.get("kind") != "synthetic-native-catalog-fixture-v1":
+            raise ValueError("Unknown catalog fixture receipt")
+        for relative, digest in receipt["files"].items():
+            target = fixture_root.parent / relative
+            if (
+                not target.resolve(strict=True).is_relative_to(fixture_root)
+                or target.stat().st_size > 1_048_576
+                or hashlib.sha256(target.read_bytes()).hexdigest() != digest
+            ):
+                raise ValueError("Synthetic catalog fixture changed")
     if args.control_config:
         if (
             not args.control_config.is_absolute()
@@ -129,7 +194,7 @@ def main():
             or args.control_config.stat().st_size > 65_536
         ):
             raise ValueError("Control configuration must be an absolute bounded file")
-        if args.mode in {"control-create", "profiles"}:
+        if args.mode in {"control-create", "profiles", "catalog-profiles"}:
             config = json.loads(args.control_config.read_text())
             control_state = Path(config["state_dir"])
             if (
@@ -171,6 +236,14 @@ def main():
         environment["HERMES_NATIVE_CONTROL_CONFIG"] = str(
             args.control_config.resolve(strict=True)
         )
+    if args.catalog_config:
+        environment["HERMES_NATIVE_CATALOG_CONFIG"] = str(
+            args.catalog_config.resolve(strict=True)
+        )
+    if args.catalog_fixture_root:
+        environment["HERMES_NATIVE_CATALOG_FIXTURE_ROOT"] = str(
+            args.catalog_fixture_root.resolve(strict=True)
+        )
     executable = args.executable.resolve(strict=True)
     started = time.monotonic()
     process = OwnedProcess(executable, [], root, environment)
@@ -190,6 +263,15 @@ def main():
         ):
             raise RuntimeError("Native fixture check labels were malformed")
         cleanup = report.get("control_cleanup", {})
+        if report.get("catalog_cleanup", {}).get("verified") is not True:
+            raise RuntimeError("Native catalog owner cleanup was not verified")
+        if args.mode in {"catalog", "catalog-profiles"}:
+            catalog_cleanup = report["catalog_cleanup"].get("report") or {}
+            if catalog_cleanup.get("root_exit_code") != 0 or not all(
+                catalog_cleanup.get(key) is True
+                for key in ("verified", "stdout_eof", "stderr_eof", "job_empty")
+            ):
+                raise RuntimeError("Real catalog child cleanup receipt was incomplete")
         if cleanup.get("verified") is not True:
             raise RuntimeError("Native control cleanup was not verified")
         if args.control_config:
@@ -222,10 +304,20 @@ def main():
             )
         if args.mode in CONTROL_EXPECTED and checks != CONTROL_EXPECTED[args.mode]:
             raise RuntimeError("Native control fixture checks were incomplete")
-        if args.mode == "profiles" and (
-            not PROFILES_EXPECTED.issubset(checks)
+        if args.mode == "catalog" and checks != CATALOG_EXPECTED:
+            raise RuntimeError("Native catalog inspection checks were incomplete")
+        if args.mode == "catalog-unavailable" and checks != [
+            "catalog-native-command-injected",
+            "catalog-unconfigured-host-unavailable",
+        ]:
+            raise RuntimeError("Unconfigured catalog did not remain unavailable")
+        profile_expected = PROFILES_EXPECTED | (
+            CATALOG_PROFILE_EXPECTED if args.mode == "catalog-profiles" else set()
+        )
+        if args.mode in {"profiles", "catalog-profiles"} and (
+            not profile_expected.issubset(checks)
             or any("failed" in check or "failure" in check for check in checks)
-            or set(checks) - PROFILES_EXPECTED - {"profiles-connection-retry-used"}
+            or set(checks) - profile_expected - {"profiles-connection-retry-used"}
         ):
             raise RuntimeError("Retained native profile CRUD checks were incomplete")
         if args.mode == "retained" and not {
@@ -253,7 +345,8 @@ def main():
             "executable_sha256": hashlib.sha256(executable.read_bytes()).hexdigest(),
             "tauri_version": "2.12.1",
             "hidden_window": True,
-            "retained_wrapper_runtime_observed": args.mode in {"retained", "profiles"},
+            "retained_wrapper_runtime_observed": args.mode
+            in {"retained", "profiles", "catalog-profiles"},
             "retained_ui_parity_verified": False,
             "llm_inference_or_agent_backend_started": False,
         }
