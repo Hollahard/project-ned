@@ -1,0 +1,137 @@
+{
+  "schema": 1,
+  "model": "Qwen3-30B-A3B-Instruct-2507",
+  "status": "metadata_inspected",
+  "format": "EXL3",
+  "architecture": {
+    "declared": [
+      "Qwen3MoeForCausalLM"
+    ],
+    "model_type": "qwen3_moe",
+    "recognized_in_reference_source": true,
+    "reference": "installed_exllamav3_1.5.4_source_observation"
+  },
+  "quantization": {
+    "source": "config.json",
+    "declared_method": "exl3",
+    "bits_are_declared_not_measured": true,
+    "bits": 5.0,
+    "head_bits": 6
+  },
+  "shards": [
+    {
+      "file": "model-00001-of-00003.safetensors",
+      "bytes": 8465356200,
+      "header_bytes": 2739624,
+      "sha256": "39d32eb60098ff7ee4de5fd4c12b0ea426bacd396dca50abf5edf8b8f90a9298",
+      "scope": "weight_header_and_file_size_only",
+      "tensor_count": 23381,
+      "payload_bytes": 8462616576,
+      "dtypes": [
+        "F16",
+        "I16"
+      ],
+      "unsupported_dtypes": [],
+      "format_markers": [
+        "exl3_trellis"
+      ]
+    },
+    {
+      "file": "model-00002-of-00003.safetensors",
+      "bytes": 8235148992,
+      "header_bytes": 2847936,
+      "sha256": "0ac501b5ec03fd171380d628a8206bb083d49de80052dbebd1271fb20d7c8673",
+      "scope": "weight_header_and_file_size_only",
+      "tensor_count": 24549,
+      "payload_bytes": 8232301056,
+      "dtypes": [
+        "F16",
+        "I16"
+      ],
+      "unsupported_dtypes": [],
+      "format_markers": [
+        "exl3_trellis"
+      ]
+    },
+    {
+      "file": "model-00003-of-00003.safetensors",
+      "bytes": 2978730920,
+      "header_bytes": 944808,
+      "sha256": "53f6e017d7ee5aae86fbb7e9272d95b6e5887e838544118d993fcc072f9dc764",
+      "scope": "weight_header_and_file_size_only",
+      "tensor_count": 8187,
+      "payload_bytes": 2977786112,
+      "dtypes": [
+        "F16",
+        "I16"
+      ],
+      "unsupported_dtypes": [],
+      "format_markers": [
+        "exl3_trellis"
+      ]
+    }
+  ],
+  "metadata": [
+    {
+      "file": "config.json",
+      "bytes": 1293,
+      "sha256": "6f37e683bd165a73f227f657744cd226752f9c2e07b551c16407963805092c00",
+      "scope": "complete_metadata_file"
+    },
+    {
+      "file": "model.safetensors.index.json",
+      "bytes": 5190572,
+      "sha256": "fdcaf94b18d8a1ef176c182e544ff9512476f1ee2c7228026d3922871c40bbfa",
+      "scope": "complete_metadata_file"
+    },
+    {
+      "file": "tokenizer.json",
+      "bytes": 11422654,
+      "sha256": "aeb13307a71acd8fe81861d94ad54ab689df773318809eed3cbe794b4492dae4",
+      "scope": "opaque_auxiliary_file"
+    },
+    {
+      "file": "tokenizer_config.json",
+      "bytes": 10824,
+      "sha256": "a5036bfb48523661f15d50c664e8dfc0e9b0b4c9a20eba3180782d52a1b94a8d",
+      "scope": "opaque_auxiliary_file"
+    },
+    {
+      "file": "vocab.json",
+      "bytes": 2776833,
+      "sha256": "ca10d7e9fb3ed18575dd1e277a2579c16d108e32f27439684afa0e10b1440910",
+      "scope": "opaque_auxiliary_file"
+    },
+    {
+      "file": "merges.txt",
+      "bytes": 1671839,
+      "sha256": "599bab54075088774b1733fde865d5bd747cbcc7a547c5bc12610e874e26f5e3",
+      "scope": "opaque_auxiliary_file"
+    },
+    {
+      "file": "generation_config.json",
+      "bytes": 239,
+      "sha256": "19d306dd769db12a9d710b44cf7f83b635efbe5166b84fb4358a08fb7d88bb53",
+      "scope": "opaque_auxiliary_file"
+    },
+    {
+      "file": "quantization_config.json",
+      "bytes": 18426474,
+      "sha256": "d1041573df8c78c860a08bf017a041025f3cea3f6050d4ab196dac81a272d2fd",
+      "scope": "opaque_auxiliary_file"
+    }
+  ],
+  "issues": [],
+  "index_tensor_count": 56117,
+  "observed_tensor_count": 56117,
+  "missing_shards": [],
+  "metadata_fingerprint": "fc8f174222c988d84300281b14893f37dce011cd90b9261c08e8a4aa05d04b11",
+  "fingerprint_scope": "metadata_files_weight_headers_and_file_sizes",
+  "fingerprint_partial": false,
+  "bytes_read": 92066192,
+  "weights_content_hashed": false,
+  "weight_payload_bytes_read": 0,
+  "load_certified": false,
+  "runtime_compatible": null,
+  "registration_mode": "external_reference_inspection_only"
+}

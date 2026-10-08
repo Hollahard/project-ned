@@ -4,6 +4,8 @@
 # Desktop-shell asset packaging, full Tauri builds and its bounded native UI modes
 # remain separate: apps/desktop-shell/scripts/verify_native.py. GPU/model tests are
 # never selected by this script.
+# Model-catalog checks use only synthetic metadata/header fixtures; real user
+# model directories are never inspected by this foundation runner.
 param(
     [Parameter(Mandatory = $true)][string]$UpstreamRoot,
     [Parameter(Mandatory = $true)][string]$TabbySource,
@@ -81,6 +83,7 @@ try {
     $ui = Join-Path $nativeRoot 'apps/desktop-ui'
     $inference = Join-Path $nativeRoot 'services/inference'
     $control = Join-Path $nativeRoot 'services/control-worker'
+    $catalog = Join-Path $nativeRoot 'services/model-catalog'
     if ($NativeFixtures) {
         # Windows venv executables redirect to a base interpreter. The owned host
         # and UI fixtures must pin that actual interpreter, not an ambient override.
@@ -109,6 +112,13 @@ try {
     Invoke-Check -Name 'inference-tests' -Command $python -ToolArguments @('-m', 'pytest', '-c', (Join-Path $inference 'pyproject.toml'), '-o', 'addopts=', (Join-Path $inference 'tests'), '-q')
     Invoke-Check -Name 'inference-lint' -Command $python -ToolArguments @('-m', 'ruff', 'check', (Join-Path $inference 'src'), (Join-Path $inference 'tests'), '--output-format', 'concise')
     Invoke-Check -Name 'inference-format' -Command $python -ToolArguments @('-m', 'ruff', 'format', '--check', (Join-Path $inference 'src'), (Join-Path $inference 'tests'))
+
+    $catalogTemp = New-TestDirectory -Label 'model-catalog-pytest'
+    $catalogCode = @('src', 'tests', 'inspect_model.py') | ForEach-Object { Join-Path $catalog $_ }
+    Invoke-Check -Name 'model-catalog-tests' -Command $python -ToolArguments @('-m', 'pytest', '-c', (Join-Path $catalog 'pyproject.toml'), '-o', 'addopts=', (Join-Path $catalog 'tests'), '--basetemp', $catalogTemp, '-q')
+    Invoke-Check -Name 'model-catalog-lint' -Command $python -ToolArguments (@('-m', 'ruff', 'check') + $catalogCode)
+    Invoke-Check -Name 'model-catalog-format' -Command $python -ToolArguments (@('-m', 'ruff', 'format', '--check') + $catalogCode)
+
     $auth = Join-Path $nativeRoot 'runtime-packs/tabby-v3'
     $authTemp = New-TestDirectory -Label 'auth-pytest'
     # A fresh directory avoids pytest replacing an earlier test directory.

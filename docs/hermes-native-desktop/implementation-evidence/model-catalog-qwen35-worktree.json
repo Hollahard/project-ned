@@ -1,0 +1,152 @@
+{
+  "schema": 1,
+  "model": "Qwen3.5-35B-A3B-exl3-clean",
+  "status": "incomplete",
+  "format": "EXL3",
+  "architecture": {
+    "declared": [
+      "Qwen3_5MoeForConditionalGeneration"
+    ],
+    "model_type": "qwen3_5_moe",
+    "recognized_in_reference_source": true,
+    "reference": "installed_exllamav3_1.5.4_source_observation"
+  },
+  "quantization": {
+    "source": "config.json",
+    "declared_method": "exl3",
+    "bits_are_declared_not_measured": true,
+    "bits": 4.09,
+    "head_bits": 6
+  },
+  "shards": [
+    {
+      "file": "model-00002-of-00003.safetensors",
+      "bytes": 8175056499,
+      "header_bytes": 7825943,
+      "sha256": "56266945baaa8a02ec5a4c73914839208f57692db7066b6d82bf54abc27fcf8c",
+      "scope": "weight_header_and_file_size_only",
+      "tensor_count": 59014,
+      "payload_bytes": 8167230556,
+      "dtypes": [
+        "BF16",
+        "F16",
+        "F32",
+        "I16",
+        "I32"
+      ],
+      "unsupported_dtypes": [],
+      "format_markers": [
+        "exl3_trellis"
+      ]
+    },
+    {
+      "file": "model-00003-of-00003.safetensors",
+      "bytes": 2996381097,
+      "header_bytes": 1672993,
+      "sha256": "5ecb52fa7c0c24926c5f907d2a98220e00313e7cf8e6cc547892c0b64206655c",
+      "scope": "weight_header_and_file_size_only",
+      "tensor_count": 12762,
+      "payload_bytes": 2994708104,
+      "dtypes": [
+        "BF16",
+        "F16",
+        "F32",
+        "I16",
+        "I32"
+      ],
+      "unsupported_dtypes": [],
+      "format_markers": [
+        "exl3_trellis"
+      ]
+    }
+  ],
+  "metadata": [
+    {
+      "file": "config.json",
+      "bytes": 3957,
+      "sha256": "a4eeaa350855ed7090a4dc0901f3a550952c6501dbce947ee7d09d952c8a5f89",
+      "scope": "complete_metadata_file"
+    },
+    {
+      "file": "model.safetensors.index.json",
+      "bytes": 13401028,
+      "sha256": "11e35ca26041ce1d9d6878c7f62d34fe68b84b9560665eab422d3ad11486f510",
+      "scope": "complete_metadata_file"
+    },
+    {
+      "file": "tokenizer.json",
+      "bytes": 12807982,
+      "sha256": "5f9e4d4901a92b997e463c1f46055088b6cca5ca61a6522d1b9f64c4bb81cb42",
+      "scope": "opaque_auxiliary_file"
+    },
+    {
+      "file": "tokenizer_config.json",
+      "bytes": 17014,
+      "sha256": "cf4b617cc2633b2db4293db8e50bd6f4722dc71905758c29d6429d22b2132318",
+      "scope": "opaque_auxiliary_file"
+    },
+    {
+      "file": "vocab.json",
+      "bytes": 6970804,
+      "sha256": "af00aa80af1c7596b813f6f4123ffc70791aeafcf903f66dc5506cf8d93b7b42",
+      "scope": "opaque_auxiliary_file"
+    },
+    {
+      "file": "merges.txt",
+      "bytes": 3600846,
+      "sha256": "c816d8f77053cf52c4e3f7eca130460b3f6cc72c1eac31bb0251db38a86a75dd",
+      "scope": "opaque_auxiliary_file"
+    },
+    {
+      "file": "chat_template.jinja",
+      "bytes": 7909,
+      "sha256": "a92e1dd97cb1cb175c9b70c0828e146bea4371c2643319b661b777e89811972e",
+      "scope": "opaque_auxiliary_file"
+    },
+    {
+      "file": "generation_config.json",
+      "bytes": 256,
+      "sha256": "1adef5f9077c53e9f7c64c8b4a55a85f42e5581ae36eb22d54f674c1376a1b68",
+      "scope": "opaque_auxiliary_file"
+    },
+    {
+      "file": "quantization_config.json",
+      "bytes": 40315350,
+      "sha256": "5039d4879c86156e7b90898d4def99b174590584ff1fd55e4bc0db17fc48b12e",
+      "scope": "opaque_auxiliary_file"
+    },
+    {
+      "file": "preprocessor_config.json",
+      "bytes": 410,
+      "sha256": "2767d5efeb29362bc8e25e8e6baa9bc862da73fdcb5eee4db4e7f23f6625b6f7",
+      "scope": "opaque_auxiliary_file"
+    },
+    {
+      "file": "video_preprocessor_config.json",
+      "bytes": 405,
+      "sha256": "2b17b535a4bc0119c27d385f8265a23d93d274a02e1b0fb6055d7676ac15d9b1",
+      "scope": "opaque_auxiliary_file"
+    }
+  ],
+  "issues": [
+    {
+      "code": "SHARD_MISSING",
+      "category": "incomplete",
+      "file": "model-00001-of-00003.safetensors"
+    }
+  ],
+  "index_tensor_count": 124579,
+  "observed_tensor_count": 71776,
+  "missing_shards": [
+    "model-00001-of-00003.safetensors"
+  ],
+  "metadata_fingerprint": "1b8b08a48a44cee03cd6531f83f7001e3b44a10457d178f9eab9d6525d8181bf",
+  "fingerprint_scope": "metadata_files_weight_headers_and_file_sizes",
+  "fingerprint_partial": true,
+  "bytes_read": 173249794,
+  "weights_content_hashed": false,
+  "weight_payload_bytes_read": 0,
+  "load_certified": false,
+  "runtime_compatible": null,
+  "registration_mode": "external_reference_inspection_only"
+}

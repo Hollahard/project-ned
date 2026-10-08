@@ -1,0 +1,145 @@
+{
+  "schema": 1,
+  "model": "Mistral-Small-3.1-24B-Instruct-2503-exl3",
+  "status": "metadata_inspected",
+  "format": "EXL3",
+  "architecture": {
+    "declared": [
+      "Mistral3ForConditionalGeneration"
+    ],
+    "model_type": "mistral3",
+    "recognized_in_reference_source": true,
+    "reference": "installed_exllamav3_1.5.4_source_observation"
+  },
+  "quantization": {
+    "source": "config.json",
+    "declared_method": "exl3",
+    "bits_are_declared_not_measured": true,
+    "bits": 5.0,
+    "head_bits": 6
+  },
+  "shards": [
+    {
+      "file": "model-00001-of-00002.safetensors",
+      "bytes": 8295236256,
+      "header_bytes": 58016,
+      "sha256": "7c6c0fe0094c2c8e1821db3211e22ab40a0c013a81b8ff049eb368d72c997349",
+      "scope": "weight_header_and_file_size_only",
+      "tensor_count": 461,
+      "payload_bytes": 8295178240,
+      "dtypes": [
+        "F16",
+        "I16"
+      ],
+      "unsupported_dtypes": [],
+      "format_markers": [
+        "exl3_trellis"
+      ]
+    },
+    {
+      "file": "model-00002-of-00002.safetensors",
+      "bytes": 8334603736,
+      "header_bytes": 87512,
+      "sha256": "f2496c03e11d175e892fd9fc9c393bbbfc7f109d4aeb579f233e9308138d23ca",
+      "scope": "weight_header_and_file_size_only",
+      "tensor_count": 686,
+      "payload_bytes": 8334516224,
+      "dtypes": [
+        "BF16",
+        "F16",
+        "I16"
+      ],
+      "unsupported_dtypes": [],
+      "format_markers": [
+        "exl3_trellis"
+      ]
+    }
+  ],
+  "metadata": [
+    {
+      "file": "config.json",
+      "bytes": 1580,
+      "sha256": "bbd7c6810e0ad98d6ed869c9d020a4df62a918a6e3f126ac378b6972d1e70727",
+      "scope": "complete_metadata_file"
+    },
+    {
+      "file": "model.safetensors.index.json",
+      "bytes": 115107,
+      "sha256": "08395fb1e24cd4465b299fe70602ca0e7cb302406015b18eb4e194362bad85db",
+      "scope": "complete_metadata_file"
+    },
+    {
+      "file": "tokenizer.json",
+      "bytes": 17078037,
+      "sha256": "b76085f9923309d873994d444989f7eb6ec074b06f25b58f1e8d7b7741070949",
+      "scope": "opaque_auxiliary_file"
+    },
+    {
+      "file": "tokenizer_config.json",
+      "bytes": 198120,
+      "sha256": "85d2cc5ea2cddee01ddd36fe98a2eed62d85e78c8b049ea93ee0b2ae4c2c8e5e",
+      "scope": "opaque_auxiliary_file"
+    },
+    {
+      "file": "tekken.json",
+      "bytes": 14801330,
+      "sha256": "c604f35d1035f534519622c0ec83fed6184978d4fdee92a5bd2a50bc05438094",
+      "scope": "opaque_auxiliary_file"
+    },
+    {
+      "file": "special_tokens_map.json",
+      "bytes": 21449,
+      "sha256": "c98562eff7be177aafa0bf23cacb9c86549aef1c4c60e91931bded3d70fe6f8f",
+      "scope": "opaque_auxiliary_file"
+    },
+    {
+      "file": "chat_template.json",
+      "bytes": 2210,
+      "sha256": "e7207a5d13b1596e314b2b0a34a6a5a74a9e2987e7d6acea47c3c05f32233bc6",
+      "scope": "opaque_auxiliary_file"
+    },
+    {
+      "file": "generation_config.json",
+      "bytes": 116,
+      "sha256": "8e8cb26b98a0738d5ce154290725a4d7d65a577d3cfe586eb3cea4ebecf83105",
+      "scope": "opaque_auxiliary_file"
+    },
+    {
+      "file": "quantization_config.json",
+      "bytes": 316785,
+      "sha256": "b4dd211fc4c27b0b9ed0e0cb5c65d9f064e17f86276c9b16a3c344d9221ab0e4",
+      "scope": "opaque_auxiliary_file"
+    },
+    {
+      "file": "params.json",
+      "bytes": 768,
+      "sha256": "925d9c90e80dea268272b3af30cf6127b6ced8e165f8ba20ba09a2009adcddfb",
+      "scope": "opaque_auxiliary_file"
+    },
+    {
+      "file": "preprocessor_config.json",
+      "bytes": 634,
+      "sha256": "0f1a312ed75c86bccdf65333b5b43507f597028d895dbb9cf9f16be9f87b52f1",
+      "scope": "opaque_auxiliary_file"
+    },
+    {
+      "file": "processor_config.json",
+      "bytes": 189,
+      "sha256": "4ceef0d0cbf062ffd522d85fcbf5248c2db8659c589afcc47b2f26810e7d9a58",
+      "scope": "opaque_auxiliary_file"
+    }
+  ],
+  "issues": [],
+  "index_tensor_count": 1147,
+  "observed_tensor_count": 1147,
+  "missing_shards": [],
+  "metadata_fingerprint": "45630d422a23cc024f047f976880e8bea71e26c4c6a8d29660abb7ce2625b24c",
+  "fingerprint_scope": "metadata_files_weight_headers_and_file_sizes",
+  "fingerprint_partial": false,
+  "bytes_read": 65363706,
+  "weights_content_hashed": false,
+  "weight_payload_bytes_read": 0,
+  "load_certified": false,
+  "runtime_compatible": null,
+  "registration_mode": "external_reference_inspection_only"
+}

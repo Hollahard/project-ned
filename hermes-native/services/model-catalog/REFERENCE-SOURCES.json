@@ -1,0 +1,15 @@
+{
+  "schema": 1,
+  "observed_date": "2026-10-08",
+  "tabby_commit": "2fd6cc76203a66e13042daf7d76e5898b21c1ad8",
+  "exllamav3_distribution": "1.5.4+cu132.torch2.11.0",
+  "scope": "source-read observations only; no runtime imports or compatibility qualification",
+  "source_files": {
+    "architecture/architectures.py": "3ed7dca0df6d386050599d5aae410cf7187b1854a734f1cf37ea1aac8e833d7f",
+    "architecture/mistral3.py": "e6b8febc000b263c6b5ec93b8ba21e9ffb517d408e66b4e52df9bb950a0f54ed",
+    "architecture/qwen3_moe.py": "8b912c7252dffc9f26bb77ac0f21bde63dd0c6db9c90ae463ded11a24430c327",
+    "architecture/qwen3_5.py": "93a79a798532f6e23efa138dfb0d2d65f7358c6bb6eddce53ba721e97c222165",
+    "model/config.py": "63ce524557187ce828a6e28dad196d2ada690b6268d3fccbad760d2e617bf18b",
+    "conversion/quant_config.py": "c0d92e094310856e39de7f419abe50dc73f554dedadf1a06a3bb118ab7730a42"
+  }
+}

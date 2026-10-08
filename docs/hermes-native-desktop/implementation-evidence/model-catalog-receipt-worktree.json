@@ -1,0 +1,49 @@
+{
+  "mode": "read-only-metadata-worktree",
+  "reports": [
+    {
+      "model": "Mistral-Small-3.1-24B-Instruct-2503-exl3",
+      "status": "metadata_inspected",
+      "elapsed_seconds": 0.188,
+      "observed_tensor_count": 1147,
+      "index_tensor_count": 1147,
+      "bytes_read": 65363706,
+      "weight_payload_bytes_read": 0,
+      "load_certified": false,
+      "runtime_compatible": null,
+      "metadata_fingerprint": "45630d422a23cc024f047f976880e8bea71e26c4c6a8d29660abb7ce2625b24c",
+      "missing_shards": [],
+      "report_sha256": "785e1182816f1747231dd7dd6fc6a06611d0f299953d1e693cfaa5c555214104"
+    },
+    {
+      "model": "Qwen3-30B-A3B-Instruct-2507",
+      "status": "metadata_inspected",
+      "elapsed_seconds": 1.14,
+      "observed_tensor_count": 56117,
+      "index_tensor_count": 56117,
+      "bytes_read": 92066192,
+      "weight_payload_bytes_read": 0,
+      "load_certified": false,
+      "runtime_compatible": null,
+      "metadata_fingerprint": "fc8f174222c988d84300281b14893f37dce011cd90b9261c08e8a4aa05d04b11",
+      "missing_shards": [],
+      "report_sha256": "9016306e345ae0340b0911e7cd9f4ebe5c69f568a652823adfb927ebe69e8ee4"
+    },
+    {
+      "model": "Qwen3.5-35B-A3B-exl3-clean",
+      "status": "incomplete",
+      "elapsed_seconds": 2.125,
+      "observed_tensor_count": 71776,
+      "index_tensor_count": 124579,
+      "bytes_read": 173249794,
+      "weight_payload_bytes_read": 0,
+      "load_certified": false,
+      "runtime_compatible": null,
+      "metadata_fingerprint": "1b8b08a48a44cee03cd6531f83f7001e3b44a10457d178f9eab9d6525d8181bf",
+      "missing_shards": [
+        "model-00001-of-00003.safetensors"
+      ],
+      "report_sha256": "6414347e0f941e6cba3fb9e4b23c79e7b1efacc76322b85a05469279643c11e9"
+    }
+  ]
+}

@@ -1,0 +1,58 @@
+{
+  "schema": 1,
+  "package": "hermes-native/services/model-catalog",
+  "source_files": [
+    {
+      "path": ".gitignore",
+      "sha256": "cf4887cfe6588c7f68856159ca3be99e17f7a42855bba2b98eaf6c20e70f999b"
+    },
+    {
+      "path": "inspect_model.py",
+      "sha256": "3e0683a67a69603b491c993f988d946bcb553f34f4feb47a9d5ae29675f664fe"
+    },
+    {
+      "path": "pyproject.toml",
+      "sha256": "343c9bb0d1dccf704f72b643313b10e8d752f97706d86572fbab7acc52fe4bba"
+    },
+    {
+      "path": "README.md",
+      "sha256": "3966060e89ffd226980f57c38a3f52e2fac1ff8bb669d2f361b33a7c1e0e51c6"
+    },
+    {
+      "path": "REFERENCE-SOURCES.json",
+      "sha256": "d1ef518d819a25237bb261aa68c768108810cf9de96036bd972937dc66c194fa"
+    },
+    {
+      "path": "src/hermes_model_catalog/__init__.py",
+      "sha256": "8b10d0852e88fb636d603bc43fc6838fa61515451fec9882c6462bd06c392260"
+    },
+    {
+      "path": "src/hermes_model_catalog/catalog.py",
+      "sha256": "0d794a9e8a233eb6985a821a3de5a626666cda338a1d3aca84cd07911066fa6a"
+    },
+    {
+      "path": "src/hermes_model_catalog/common.py",
+      "sha256": "6fe47b539f9fade4ec5443ac6a727bbc4c6c151217c339d917c8f3ad88102c0e"
+    },
+    {
+      "path": "src/hermes_model_catalog/paths.py",
+      "sha256": "d9063d68e56fcadf3068a53cbba04dc37dd63aec76e9f1dc3b986ed70a05ae20"
+    },
+    {
+      "path": "src/hermes_model_catalog/tensors.py",
+      "sha256": "f8f17d05272f18f6299c11b27f5fc68e8464b0eee1c725abbf80dc33038a8479"
+    },
+    {
+      "path": "tests/test_catalog.py",
+      "sha256": "449008a31bb342b4abe2c18ab4b04aa45defea379e9559f7f8fb90df5ea122d3"
+    }
+  ],
+  "excluded": [
+    "SOURCE-RECEIPT.json",
+    "reports",
+    "__pycache__",
+    ".checks",
+    ".pytest_cache",
+    ".ruff_cache"
+  ]
+}
