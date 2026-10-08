@@ -1,0 +1,27 @@
+{
+  "checks": [
+    "native-injection-before-entry",
+    "honest-unavailable:api",
+    "honest-unavailable:getConnection",
+    "honest-unavailable:getConnectionFor",
+    "honest-unavailable:getGatewayWsUrl",
+    "honest-unavailable:getGatewayWsUrlFor",
+    "honest-unavailable:revalidateConnection",
+    "honest-unavailable:touchBackend",
+    "honest-unavailable:getVersion",
+    "native-unknown-method-rejected",
+    "window-create-acl-denied",
+    "event-emit-acl-denied",
+    "native-event-payload-delivered",
+    "native-event-unsubscribe"
+  ],
+  "mode": "native-tauri-fixture",
+  "owned_job_empty_root_exit_pipe_eof_verified": true,
+  "seconds": 1.172,
+  "executable_sha256": "25ba76c2a5446ffa89f7f18c8aa85726bad13536ba493b78aac3bcfc67191dd8",
+  "tauri_version": "2.12.1",
+  "hidden_window": true,
+  "retained_wrapper_runtime_observed": false,
+  "retained_ui_parity_verified": false,
+  "llm_inference_or_agent_backend_started": false
+}

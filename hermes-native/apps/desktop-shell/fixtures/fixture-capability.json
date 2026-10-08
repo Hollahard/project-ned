@@ -1,0 +1,7 @@
+{
+  "identifier": "binding-fixture-control",
+  "description": "Opt-in hidden fixture only; never granted by the default build",
+  "webviews": ["main"],
+  "local": true,
+  "permissions": ["allow-hermes-binding-fixture"]
+}

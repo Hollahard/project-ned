@@ -108,3 +108,5 @@ Logs, temporary test directories and generated bundles stay in package-owned ign
 ## Live runtime continuation
 
 See [the live runtime checkpoint](LIVE-RUNTIME-CHECKPOINT.md) for measured EXL3 load/generation/unload and the retained configuration/session HTTP subset. The foundation evidence above remains historical; the replacement desktop, full startup, V2 and feature UI gates remain open.
+
+The [native binding continuation](NATIVE-BINDING-CHECKPOINT.md) adds a verified Tauri transport slice; retained bootstrap remains blocked at a missing native event method.

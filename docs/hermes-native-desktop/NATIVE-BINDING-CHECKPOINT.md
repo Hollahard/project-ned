@@ -1,0 +1,21 @@
+# Native binding checkpoint — 2026-10-08
+
+This extends live-runtime commit `94ae1ebe49bd5aecdaa076f7332ad9f25ef64315`. The [EXL3 and retained HTTP results](LIVE-RUNTIME-CHECKPOINT.md) remain valid observations. The new [desktop-shell](../../hermes-native/apps/desktop-shell/README.md) registers the typed transport in an independent Tauri 2.12.1 Windows executable and packages the retained renderer without modifying upstream source. It is an incomplete development shell, not the replacement application or a Windows installer.
+
+## What was verified
+
+- Three Rust policy tests pass in both default and all-feature configurations; these are the same three cases, not six unique tests. Two Python asset-packaging tests pass. Strict Clippy, rustfmt, Ruff and formatting checks pass.
+- The integrated hidden native fixture passes 14 checks: injection before entry, eight explicit unavailable-method responses, rejection of an unknown method, denial of window creation and frontend event emission, native event delivery, and unsubscribe.
+- The default build grants only the explicit host request and event listen/unlisten permissions to the bundled main window. Fixture control and dynamic fixture ACL are compiled/granted only in the opt-in feature. Rust independently checks the WebView label and bundled origin. Remote navigation, popups and frames are denied. Argument size checks occur after deserialization and do not establish raw IPC memory bounds.
+- Packaging inventories 1,067 retained and fixture asset files with exact copy hashes. The upstream guard was rerun and still reports 2,986 unchanged retained source inputs, aggregate `7a6c24f0b7dd1383baac61169eafedb7cb212229f1775b9eb667b6a167e7b968`, and 110 pinned direct dependencies. Metadata alone does not authenticate a preexisting build; the source/dependency-guarded renderer build remains part of reproduction.
+- Both hidden fixtures run in fresh profiles under a private owned Windows Job. Root exit, pipe EOF and empty-job cleanup are verified. No agent backend or inference worker starts. Browser graphics and OS caches are outside a claim of complete filesystem/GPU isolation.
+
+The [worktree verification](implementation-evidence/tauri-binding-worktree-verification.json), [14-check native report](implementation-evidence/tauri-binding-native-worktree.json), [retained observation](implementation-evidence/tauri-retained-observation-worktree.json) and [asset package receipt](implementation-evidence/tauri-native-asset-package.json) record the final scope. Staging reports are separately named and retain their historical binary hashes and durations. Executables, profiles, copied assets and generated permissions are excluded from Git. The unchanged upstream icon is included with its MIT notice.
+
+## Actual remaining compatibility gate
+
+The retained renderer was evaluated in the native WebView. The wrapper and host adapter installed successfully, but upstream bootstrap stopped at missing `onPreviewFileChanged`; the React root remained empty. This observation is not a passing GUI startup test or evidence of visual parity. The eight host methods still return capability-unavailable because no production runtime owner is connected. There are no fake connection/version/model responses or success stubs.
+
+Next, implement the preview-file subscription together with its real producer/owner, then resolve the next observed host families. Consolidate captured I/O and authenticated connection ownership into the Rust owner before routing retained API and gateway requests. Keep browser guests outside the privileged renderer bridge. Full chat/settings/history, retained browser/terminal integration, source routing, credentials and visual interaction captures remain required before desktop parity. Saved model profiles, vector memory, Gaming Mode admission/draining/recovery, V2 qualification, fallback switching, hibernation and installer packaging remain subsequent gates.
+
+The earlier foundation record remains historical; native fixture assertions are not silently added to its 256-test count. The 50 backend and 11 GPU-harness tests from the live checkpoint are separate component runs. Existing user modifications in the main checkout were left untouched; all four originally modified desktop files were checked byte-for-byte against their saved hashes.

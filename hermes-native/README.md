@@ -35,3 +35,5 @@ Read the [implementation checkpoint](../docs/hermes-native-desktop/IMPLEMENTATIO
 ## Live proof continuation
 
 The [live checkpoint](../docs/hermes-native-desktop/LIVE-RUNTIME-CHECKPOINT.md) verifies one EXL3 model load/generation/unload and an isolated retained HTTP subset. [Model-proof](spikes/model-proof/README.md) and [backend diagnostics](services/backend-host/diagnostics/README.md) are opt-in; the foundation verifier still does not load a GPU model. These observations extend the component table without establishing full application parity.
+
+The [Tauri desktop-shell](apps/desktop-shell/README.md) binds the transport with explicit unavailable responses. Its [checkpoint](../docs/hermes-native-desktop/NATIVE-BINDING-CHECKPOINT.md) records native IPC/event/ACL checks and the observed `onPreviewFileChanged` bootstrap gate. It is not a usable replacement desktop.

@@ -42,3 +42,7 @@ The bridge is installed before upstream `main.tsx` evaluates its store side effe
 Native WebView2 guest browser (partitions/navigation/capture/automation/popout), ConPTY terminal, filesystem/Git, profile and connection persistence, credentials/OAuth, windows/overlays/HUD/pets, notifications, clipboard/capture, themes, updates/install/recovery, and the remainder of the upstream native bridge are not implemented here. Backend JSON-RPC wiring and live Tauri binding remain separate gates. A successful bundle proves source/dependency feasibility only; it does not prove that Hermes boots, visual parity, native behavior, tool execution, inference or VRAM evacuation works.
 
 The 15 tests comprise 12 deterministic adapter contract tests and three baseline-guard tests. The latter create and remove only their own temporary Git repositories; they do not modify upstream. Adapter regressions cover repeated stale unsubscribe and explicit version-request connection/profile scope. `dist/feasibility-report.json` records the verified source and dependency baseline and explicitly unverified runtime/visual state.
+
+## Native binding continuation
+
+The independent [desktop-shell](../desktop-shell/README.md) now injects this transport in Tauri. Native methods remain explicitly unavailable while the runtime owner is absent. Actual retained import stops at missing `onPreviewFileChanged`; see the [native checkpoint](../../../docs/hermes-native-desktop/NATIVE-BINDING-CHECKPOINT.md). The source/dependency build evidence above remains unchanged.

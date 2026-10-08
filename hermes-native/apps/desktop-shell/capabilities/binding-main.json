@@ -1,0 +1,11 @@
+{
+  "identifier": "binding-main",
+  "description": "Local retained main renderer: explicit host command and listen/unlisten only",
+  "webviews": ["main"],
+  "local": true,
+  "permissions": [
+    "allow-hermes-host-request",
+    "core:event:allow-listen",
+    "core:event:allow-unlisten"
+  ]
+}

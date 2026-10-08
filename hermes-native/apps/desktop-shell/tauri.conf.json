@@ -1,0 +1,16 @@
+{
+  "$schema": "https://schema.tauri.app/config/2",
+  "productName": "Hermes Native Binding Proof",
+  "version": "0.1.0",
+  "identifier": "org.projectned.hermes.native.binding",
+  "build": { "frontendDist": "frontend" },
+  "app": {
+    "withGlobalTauri": true,
+    "windows": [],
+    "security": {
+      "capabilities": ["binding-main"],
+      "csp": "default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; font-src 'self' data:; connect-src ipc: http://ipc.localhost; frame-src 'none'; object-src 'none'; base-uri 'none'; form-action 'none'"
+    }
+  },
+  "bundle": { "active": false }
+}

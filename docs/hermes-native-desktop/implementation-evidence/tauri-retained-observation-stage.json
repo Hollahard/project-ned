@@ -1,0 +1,18 @@
+{
+  "checks": [
+    "retained-wrapper-evaluated",
+    "host-adapter-installed",
+    "retained-root-empty",
+    "retained-bootstrap-stopped",
+    "missing-method:onPreviewFileChanged"
+  ],
+  "mode": "native-tauri-fixture",
+  "owned_job_empty_root_exit_pipe_eof_verified": true,
+  "seconds": 3.39,
+  "executable_sha256": "ffec44a21f52fa9a8c680cc0a22de2382d2e776cef23b18aefe1211697eb3545",
+  "tauri_version": "2.12.1",
+  "hidden_window": true,
+  "retained_wrapper_runtime_observed": true,
+  "retained_ui_parity_verified": false,
+  "llm_inference_or_agent_backend_started": false
+}

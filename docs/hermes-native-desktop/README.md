@@ -41,3 +41,5 @@ This package is the completed research/specification deliverable. It does not co
 Implementation continuation: [checkpoint](./IMPLEMENTATION-CHECKPOINT.md) and [reconciliation](./RECONCILIATION.md).
 
 The [live runtime checkpoint](LIVE-RUNTIME-CHECKPOINT.md) adds opt-in EXL3 GPU qualification and unchanged retained HTTP-handler evidence.
+
+The [native binding checkpoint](NATIVE-BINDING-CHECKPOINT.md) records the Tauri transport proof and actual retained-bootstrap compatibility gate.
