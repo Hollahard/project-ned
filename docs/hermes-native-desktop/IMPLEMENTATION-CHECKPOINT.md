@@ -104,3 +104,7 @@ Use Windows with PowerShell 7+, an activated Python 3.12 development environment
 The wrapper reads the installed upstream dependency tree; it does not provision a fresh independent frontend environment. Direct dependency versions and retained lockfile hashes are checked, but every installed transitive file is not attested. Rust checks use lockfiles/offline mode; a new machine must provision cached crates and required formatter/Clippy components separately. Python test tools and dependencies must already be present. Sandbox-denied native/path checks were rerun with narrowly scoped permission; a denied run is not a passing test.
 
 Logs, temporary test directories and generated bundles stay in package-owned ignored locations. The consolidated runner records optional omissions explicitly and does not invoke GPU tests. Its final worktree run includes backend-host's 29 tests and separate lint/format groups. These checks do not install, update or replace an application.
+
+## Live runtime continuation
+
+See [the live runtime checkpoint](LIVE-RUNTIME-CHECKPOINT.md) for measured EXL3 load/generation/unload and the retained configuration/session HTTP subset. The foundation evidence above remains historical; the replacement desktop, full startup, V2 and feature UI gates remain open.

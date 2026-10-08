@@ -1,0 +1,21 @@
+{
+  "docs/hermes-native-desktop/implementation-evidence/live-exl3-attestation.json": "cfc9f9cb1ea4350796fddd2b8487acfb929911e04837d064d07e6366a1ecefa8",
+  "docs/hermes-native-desktop/implementation-evidence/live-exl3-proof.json": "88d480793fc72c39dbf3a15a994b3cd59b095f7c1f1e2ae61d9c0863c4ba74f3",
+  "docs/hermes-native-desktop/implementation-evidence/retained-http-proof.json": "127cf6d2e57d07e23a8b6130b505b8a82d3729c386b4f28bac686c795e7cb9d0",
+  "docs/hermes-native-desktop/implementation-evidence/retained-http-source-manifest.json": "9244bb722b60f2c1940b8e791cf719c2ae6dd53ae1fff1313ca7192cca15c576",
+  "hermes-native/services/backend-host/diagnostics/bootstrap.py": "8496add2addb9309eeb39dc639db63146a2dae270e067316a682b857681ce392",
+  "hermes-native/services/backend-host/diagnostics/run_proof.py": "ec7ac2c4fdb24b26fc280e7e66553ff609a36a0f41f02146bab3804b651b617f",
+  "hermes-native/services/backend-host/tests/test_diagnostic_policy.py": "a380667856594e3baed628388867ed2e215ee45a61878d743afd6d4fb129b81a",
+  "hermes-native/services/backend-host/src/hermes_backend_host/diagnostic_policy.py": "b249102eea8faeecb26023127eb8c4410b9d29bc58fb3e225b8a088558289fd5",
+  "hermes-native/services/backend-host/src/hermes_backend_host/diagnostic_source.py": "f4ef3c97c80505aba544d61a01d278ddc7902860573bef681e6cee99fff5363d",
+  "hermes-native/services/backend-host/src/hermes_backend_host/owned_http.py": "4c0ddd6b8f4055e222420934d6a92c6b0ed28caed6f39fa0502776433784a549",
+  "hermes-native/spikes/model-proof/.gitignore": "5f70e1510b128ea6919f8088a9c77a7695db490b95f010b144eeee00816f193a",
+  "hermes-native/spikes/model-proof/bootstrap.py": "f994ee2af48fa8054060646a779e9b4b00f4a9b7f82d36c4bd7d9ec6d987e07c",
+  "hermes-native/spikes/model-proof/inventory.py": "9a2b069751c41fb800703c3517e1dfd16265647193a00814729cee647ffaecac",
+  "hermes-native/spikes/model-proof/prepare.py": "462f8ed96afe3428e62d8f8d10e66228361d124d9930ce72335000ba7a0b6539",
+  "hermes-native/spikes/model-proof/pyproject.toml": "5ba117769fa1b4b182d4a08f1469d7729abcd0cea3f7e165e4f77df61bd8606c",
+  "hermes-native/spikes/model-proof/run_live.py": "63f58742c74ba192bfe75aa25ec701b6376771e3d966f9b0560b9fcc48fc6f7f",
+  "hermes-native/spikes/model-proof/tests/environment_probe.py": "a91eb887ddeef364d1047ae434a2e62a2abd1ac555c928838860000abfef5bef",
+  "hermes-native/spikes/model-proof/tests/fixture_runtime.py": "aeb58d3821072d0496aa05cf76ea526e0e91b1abdaf23b9d9492cf6d9b418676",
+  "hermes-native/spikes/model-proof/tests/test_proof.py": "a31f4dc502a54743d2be0fc85243c65fc490177e0422d79ff63785fced652b73"
+}

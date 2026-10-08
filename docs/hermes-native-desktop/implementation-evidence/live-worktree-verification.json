@@ -1,0 +1,44 @@
+{
+  "verified_at_utc": "2026-10-08T04:02:55.932848+00:00",
+  "backend_tests": {
+    "passed": 50,
+    "seconds": 2.45
+  },
+  "gpu_harness_tests": {
+    "passed": 11,
+    "seconds": 0.79
+  },
+  "ruff_check_and_format": "passed for both integrated components",
+  "live_exl3_status": "passed",
+  "retained_http_status": "passed",
+  "foundation_record_replaced": false,
+  "hash_encoding": "SHA256 after CRLF to LF normalization",
+  "component_source_sha256": {
+    "hermes-native/spikes/model-proof/bootstrap.py": "f994ee2af48fa8054060646a779e9b4b00f4a9b7f82d36c4bd7d9ec6d987e07c",
+    "hermes-native/spikes/model-proof/inventory.py": "9a2b069751c41fb800703c3517e1dfd16265647193a00814729cee647ffaecac",
+    "hermes-native/spikes/model-proof/prepare.py": "462f8ed96afe3428e62d8f8d10e66228361d124d9930ce72335000ba7a0b6539",
+    "hermes-native/spikes/model-proof/pyproject.toml": "4f96f805a4479754787cf73a9ada817a7d1bf6ff8519d7dd2d0ad46dabbd54cb",
+    "hermes-native/spikes/model-proof/README.md": "6536c183bb11b16d03933ec6c36e4ea318fbfdd77bbc9012b986ffd221a41c3d",
+    "hermes-native/spikes/model-proof/run_live.py": "63f58742c74ba192bfe75aa25ec701b6376771e3d966f9b0560b9fcc48fc6f7f",
+    "hermes-native/spikes/model-proof/tests/environment_probe.py": "a91eb887ddeef364d1047ae434a2e62a2abd1ac555c928838860000abfef5bef",
+    "hermes-native/spikes/model-proof/tests/fixture_runtime.py": "aeb58d3821072d0496aa05cf76ea526e0e91b1abdaf23b9d9492cf6d9b418676",
+    "hermes-native/spikes/model-proof/tests/test_proof.py": "a31f4dc502a54743d2be0fc85243c65fc490177e0422d79ff63785fced652b73",
+    "hermes-native/services/backend-host/pyproject.toml": "c9c152a6497cabfb64d6eb03d12fa88d06455e40da834fe332e2fb8558277419",
+    "hermes-native/services/backend-host/README.md": "645f8be71c47d16b355dd2335e0067135b75ef1744063ed173b8019acd6d9cf2",
+    "hermes-native/services/backend-host/diagnostics/bootstrap.py": "8496add2addb9309eeb39dc639db63146a2dae270e067316a682b857681ce392",
+    "hermes-native/services/backend-host/diagnostics/README.md": "afacf8a495562d73b2af571bbf2d20706bdce62853b5c8542096d02bc858e537",
+    "hermes-native/services/backend-host/diagnostics/run_proof.py": "ec7ac2c4fdb24b26fc280e7e66553ff609a36a0f41f02146bab3804b651b617f",
+    "hermes-native/services/backend-host/tests/fixture_backend.py": "4ce39900dac88a9dc0e1db2105892585753a570967c5ce4275997a2df19728e5",
+    "hermes-native/services/backend-host/tests/test_diagnostic_policy.py": "a380667856594e3baed628388867ed2e215ee45a61878d743afd6d4fb129b81a",
+    "hermes-native/services/backend-host/tests/test_owned_http.py": "692041d022a4d2feecfc8ff043242f7b77a603906282e65d439092070535d56a",
+    "hermes-native/services/backend-host/tests/test_readiness.py": "4ca0c806b5fadaef418f105a66193cfcb4977eb625e873eb406a9728babb02f5",
+    "hermes-native/services/backend-host/tests/test_windows_process.py": "8a1e5362c0680de5eba41bdbf78c2a7316a66d701b08b46670b763cf2992e642",
+    "hermes-native/services/backend-host/src/hermes_backend_host/diagnostic_policy.py": "b249102eea8faeecb26023127eb8c4410b9d29bc58fb3e225b8a088558289fd5",
+    "hermes-native/services/backend-host/src/hermes_backend_host/diagnostic_source.py": "f4ef3c97c80505aba544d61a01d278ddc7902860573bef681e6cee99fff5363d",
+    "hermes-native/services/backend-host/src/hermes_backend_host/owned_http.py": "4c0ddd6b8f4055e222420934d6a92c6b0ed28caed6f39fa0502776433784a549",
+    "hermes-native/services/backend-host/src/hermes_backend_host/readiness.py": "70851cfac48f8e89a7b61f2f119d878dadc8d9f52a6eddf9846ace3937c5d07e",
+    "hermes-native/services/backend-host/src/hermes_backend_host/windows_process.py": "313c8ddd3b05c57661d78b5da1e5be157c1d5273305c342d78e42577a1ddb7fb",
+    "hermes-native/services/backend-host/src/hermes_backend_host/__init__.py": "c25339a23634ff6e4a2c1ded7a6731b0716e4851a43be65267376894e3a66fa8"
+  },
+  "regression_correction": "Handle-number reuse can yield false inheritance; fixture now attempts to signal the event and the parent checks its actual event remains unsignaled."
+}

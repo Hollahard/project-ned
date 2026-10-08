@@ -57,13 +57,11 @@ class Handler(BaseHTTPRequestHandler):
             unlisted = os.environ.get("UNLISTED_HANDLE")
             inherited = None
             if unlisted:
-                get_info = ctypes.WinDLL(
-                    "kernel32", use_last_error=True
-                ).GetHandleInformation
-                get_info.argtypes = [ctypes.c_void_p, ctypes.POINTER(ctypes.c_ulong)]
-                get_info.restype = ctypes.c_int
-                flags = ctypes.c_ulong()
-                inherited = bool(get_info(int(unlisted), ctypes.byref(flags)))
+                set_event = ctypes.WinDLL("kernel32", use_last_error=True).SetEvent
+                set_event.argtypes = [ctypes.c_void_p]
+                set_event.restype = ctypes.c_int
+                set_event(int(unlisted))
+                inherited = True  # Signal attempted; parent checks its own object.
             self.answer(
                 200,
                 {
@@ -73,7 +71,7 @@ class Handler(BaseHTTPRequestHandler):
                     "environment_names": sorted(os.environ),
                     "arguments": sys.argv[2:],
                     "stdin_eof": sys.stdin.read(1) == "",
-                    "unlisted_handle_inherited": inherited,
+                    "unlisted_handle_signal_attempted": inherited,
                 },
             )
         else:

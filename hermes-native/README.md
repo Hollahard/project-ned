@@ -31,3 +31,7 @@ The baseline is Hermes `649d6c0391029f35959cfbc240eb3534a6667cf5`. The managed V
 ## Continue
 
 Read the [implementation checkpoint](../docs/hermes-native-desktop/IMPLEMENTATION-CHECKPOINT.md) for verification, remaining gates and the next coherent integration step. M0 still needs baseline interaction/visual captures, and M1 remains open until the full native browser and V3/V2 runtime gates are resolved. Model/profile persistence, vector memory, complete Gaming Mode, Tauri binding and an NSIS `.exe` installer are subsequent work; none is implied by the fixture executables.
+
+## Live proof continuation
+
+The [live checkpoint](../docs/hermes-native-desktop/LIVE-RUNTIME-CHECKPOINT.md) verifies one EXL3 model load/generation/unload and an isolated retained HTTP subset. [Model-proof](spikes/model-proof/README.md) and [backend diagnostics](services/backend-host/diagnostics/README.md) are opt-in; the foundation verifier still does not load a GPU model. These observations extend the component table without establishing full application parity.

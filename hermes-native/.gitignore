@@ -1,4 +1,4 @@
-/.checks/
+**/.checks/
 **/target/
 **/.pytest-tmp/
 !**/Cargo.lock

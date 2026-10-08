@@ -39,3 +39,5 @@ The independent review's seven findings are integrated in section 19. The plan t
 This package is the completed research/specification deliverable. It does not contain a built replacement `.exe`, downloaded models or verified GPU performance. No installed application code was changed. The implementation begins with the M0 baseline and M1 native/GPU feasibility gates defined in the roadmap.
 
 Implementation continuation: [checkpoint](./IMPLEMENTATION-CHECKPOINT.md) and [reconciliation](./RECONCILIATION.md).
+
+The [live runtime checkpoint](LIVE-RUNTIME-CHECKPOINT.md) adds opt-in EXL3 GPU qualification and unchanged retained HTTP-handler evidence.

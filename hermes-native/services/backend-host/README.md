@@ -81,7 +81,7 @@ runtime attestation. The relevant code was inspected read-only:
 These blockers are source findings, not observed changes from an actual launch.
 No installed interpreter environment, source file, user config or service changed.
 
-## Proposed next managed diagnostic mode
+## Historical diagnostic proposal (foundation checkpoint)
 
 This is a reviewable proposal, **not an implemented or cleared launch path**:
 
@@ -124,3 +124,7 @@ remain with the architecture's existing owners.
 
 Windows mechanisms: [process attribute lists](https://learn.microsoft.com/en-us/windows/win32/api/processthreadsapi/nf-processthreadsapi-updateprocthreadattribute)
 and [CreateProcessW](https://learn.microsoft.com/en-us/windows/win32/api/processthreadsapi/nf-processthreadsapi-createprocessw).
+
+## Implemented diagnostic continuation
+
+The explicit [retained-handler diagnostic subset](diagnostics/README.md) now passes against unchanged upstream configuration/session handlers with synthetic state, nine auth/rejection checks and owned cleanup. The proposal above is retained as historical planning, not the current implementation status. This does not clear stock startup, gateway or chat.

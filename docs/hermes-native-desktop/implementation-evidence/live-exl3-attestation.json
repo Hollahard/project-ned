@@ -1,0 +1,30 @@
+{
+  "model_revision_sha256": "28c437ef44cc3e45448b08987fe272c14f8afb38b395c9b3d96477676dd0e2af",
+  "model_required_sha256": {
+    "config.json": "bbd7c6810e0ad98d6ed869c9d020a4df62a918a6e3f126ac378b6972d1e70727",
+    "generation_config.json": "8e8cb26b98a0738d5ce154290725a4d7d65a577d3cfe586eb3cea4ebecf83105",
+    "model-00001-of-00002.safetensors": "e33e4503310cfe57ee6da364f3c0fcd5e73daf81235fe16cc3446fa20dfbafa1",
+    "model-00002-of-00002.safetensors": "9f88cb87306535871d3189ab1b9cb244bc6697650d110ae4c405e5a6542b37d7",
+    "model.safetensors.index.json": "08395fb1e24cd4465b299fe70602ca0e7cb302406015b18eb4e194362bad85db",
+    "preprocessor_config.json": "0f1a312ed75c86bccdf65333b5b43507f597028d895dbb9cf9f16be9f87b52f1",
+    "processor_config.json": "4ceef0d0cbf062ffd522d85fcbf5248c2db8659c589afcc47b2f26810e7d9a58",
+    "quantization_config.json": "b4dd211fc4c27b0b9ed0e0cb5c65d9f064e17f86276c9b16a3c344d9221ab0e4",
+    "tekken.json": "c604f35d1035f534519622c0ec83fed6184978d4fdee92a5bd2a50bc05438094",
+    "tokenizer.json": "b76085f9923309d873994d444989f7eb6ec074b06f25b58f1e8d7b7741070949",
+    "tokenizer_config.json": "85d2cc5ea2cddee01ddd36fe98a2eed62d85e78c8b049ea93ee0b2ae4c2c8e5e"
+  },
+  "triton_toolchain": {
+    "compiler": "G:\\Project_Ned\\runtime\\tabbyAPI\\.venv\\Lib\\site-packages\\triton\\runtime\\tcc\\tcc.exe",
+    "cuda_path": "G:\\Project_Ned\\runtime\\tabbyAPI\\.venv\\Lib\\site-packages\\triton\\backends\\nvidia",
+    "files": {
+      "G:\\Project_Ned\\runtime\\tabbyAPI\\.venv\\Lib\\site-packages\\triton\\runtime\\tcc\\tcc.exe": "cdbe68b97d668ce977cb9f059504a841965ef01f20d16c734fb59640e3ab1961",
+      "G:\\Project_Ned\\runtime\\tabbyAPI\\.venv\\Lib\\site-packages\\triton\\backends\\nvidia\\bin\\ptxas.exe": "bb89f22b3afe5d63141c5d83838c7aff9df66171a02d3c501376c8d7904eae0b",
+      "G:\\Project_Ned\\runtime\\tabbyAPI\\.venv\\Lib\\site-packages\\triton\\backends\\nvidia\\include\\cuda.h": "756c5d0b68c4bf33d279419d5db479d63263abe80c1e476f8899f4b077215bf5",
+      "G:\\Project_Ned\\runtime\\tabbyAPI\\.venv\\Lib\\site-packages\\triton\\backends\\nvidia\\lib\\x64\\cuda.lib": "a55203daeb1b04d348200e002d2f2dc77d9b31edcff7dad76cffa4497ee14265"
+    }
+  },
+  "limitations": [
+    "Dependency environment is reused read-only, not fully hashed",
+    "Filesystem attestation does not enforce immutable weights"
+  ]
+}

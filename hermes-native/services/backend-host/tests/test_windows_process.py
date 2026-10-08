@@ -138,6 +138,9 @@ def test_handle_list_excludes_other_inheritable_handles(tmp_path):
         wintypes.LPCWSTR,
     ]
     create_event.restype = wintypes.HANDLE
+    wait_event = kernel.WaitForSingleObject
+    wait_event.argtypes = [wintypes.HANDLE, wintypes.DWORD]
+    wait_event.restype = wintypes.DWORD
     sa = SecurityAttributes(ctypes.sizeof(SecurityAttributes), None, True)
     event = create_event(ctypes.byref(sa), True, False, None)
     assert event
@@ -145,8 +148,12 @@ def test_handle_list_excludes_other_inheritable_handles(tmp_path):
         process, env = launch(tmp_path, extra_env={"UNLISTED_HANDLE": str(event)})
         with process, client(process, env) as http:
             assert (
-                http.get("/api/identity").json()["unlisted_handle_inherited"] is False
+                http.get("/api/identity").json()["unlisted_handle_signal_attempted"]
+                is True
             )
+            # Child handle numbers can collide with unrelated objects. Only the
+            # original parent's event becoming signaled proves inheritance.
+            assert wait_event(event, 0) == 258  # WAIT_TIMEOUT
     finally:
         CloseHandle(event)
 

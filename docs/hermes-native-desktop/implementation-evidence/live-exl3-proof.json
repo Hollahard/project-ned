@@ -1,0 +1,155 @@
+{
+  "status": "passed",
+  "gpu_samples": [
+    {
+      "stage": "before_worker",
+      "time_utc": "2026-10-08T03:56:28.722903+00:00",
+      "gpus": [
+        {
+          "index": 0,
+          "name": "NVIDIA GeForce RTX 5090",
+          "total_mib": 32607,
+          "used_mib": 2832,
+          "free_mib": 29356,
+          "driver": "617.42"
+        }
+      ],
+      "scope": "whole GPU including unrelated desktop allocations"
+    },
+    {
+      "stage": "loaded",
+      "time_utc": "2026-10-08T03:56:52.045963+00:00",
+      "gpus": [
+        {
+          "index": 0,
+          "name": "NVIDIA GeForce RTX 5090",
+          "total_mib": 32607,
+          "used_mib": 18080,
+          "free_mib": 14108,
+          "driver": "617.42"
+        }
+      ],
+      "scope": "whole GPU including unrelated desktop allocations"
+    },
+    {
+      "stage": "unloaded_worker_still_alive",
+      "time_utc": "2026-10-08T03:56:58.403453+00:00",
+      "gpus": [
+        {
+          "index": 0,
+          "name": "NVIDIA GeForce RTX 5090",
+          "total_mib": 32607,
+          "used_mib": 2870,
+          "free_mib": 29318,
+          "driver": "617.42"
+        }
+      ],
+      "scope": "whole GPU including unrelated desktop allocations"
+    },
+    {
+      "stage": "after_owned_exit_0",
+      "time_utc": "2026-10-08T03:56:58.620983+00:00",
+      "gpus": [
+        {
+          "index": 0,
+          "name": "NVIDIA GeForce RTX 5090",
+          "total_mib": 32607,
+          "used_mib": 2208,
+          "free_mib": 29980,
+          "driver": "617.42"
+        }
+      ],
+      "scope": "whole GPU including unrelated desktop allocations"
+    },
+    {
+      "stage": "after_owned_exit_1",
+      "time_utc": "2026-10-08T03:56:59.690205+00:00",
+      "gpus": [
+        {
+          "index": 0,
+          "name": "NVIDIA GeForce RTX 5090",
+          "total_mib": 32607,
+          "used_mib": 2188,
+          "free_mib": 30000,
+          "driver": "617.42"
+        }
+      ],
+      "scope": "whole GPU including unrelated desktop allocations"
+    },
+    {
+      "stage": "after_owned_exit_2",
+      "time_utc": "2026-10-08T03:57:00.789424+00:00",
+      "gpus": [
+        {
+          "index": 0,
+          "name": "NVIDIA GeForce RTX 5090",
+          "total_mib": 32607,
+          "used_mib": 2188,
+          "free_mib": 30000,
+          "driver": "617.42"
+        }
+      ],
+      "scope": "whole GPU including unrelated desktop allocations"
+    }
+  ],
+  "runtime_pack_id": "tabby-v3:2fd6cc76203a66e13042daf7d76e5898b21c1ad8:hermes-native-observation-v1",
+  "port": 63040,
+  "model_revision_sha256": "28c437ef44cc3e45448b08987fe272c14f8afb38b395c9b3d96477676dd0e2af",
+  "limitations": [
+    "Dependency environment is reused read-only, not fully hashed",
+    "Filesystem attestation does not enforce immutable weights"
+  ],
+  "instant_vram_release_claimed": false,
+  "ownership": {
+    "listener_in_private_job": true,
+    "bootstrap_pid_in_private_job": true,
+    "root_pid": 42708,
+    "bootstrap_pid": 42708
+  },
+  "auth_and_no_autoload": true,
+  "load_seconds": 19.938,
+  "control_ready": true,
+  "effective_settings": {
+    "id": "Mistral-Small-3.1-24B-Instruct-2503-exl3",
+    "parameters": {
+      "max_seq_len": 2048,
+      "cache_size": 2048,
+      "cache_mode": "FP16",
+      "max_batch_size": 1,
+      "chunk_size": 256,
+      "use_vision": false,
+      "hermes_native_draft_enabled": false
+    },
+    "model_path": "C:\\PyDev\\LLM_PC\\models\\Mistral-Small-3.1-24B-Instruct-2503-exl3",
+    "total_slots": 1,
+    "n_ctx": 2048,
+    "vision": false
+  },
+  "generation": {
+    "seconds": 6.141,
+    "completion_tokens": 16,
+    "finish_reason": "length",
+    "nonempty_text": true
+  },
+  "unload": {
+    "seconds": 0.156,
+    "model_absence_verified": true
+  },
+  "cleanup": {
+    "owned_job_zero_processes_verified": true,
+    "root_exit_and_pipe_eof_verified": true,
+    "stdout_bytes": 2628,
+    "stderr_bytes": 0
+  },
+  "model_names_sizes_mtimes_unchanged": true,
+  "model_small_hashes_unchanged": true,
+  "managed_source_hashes_unchanged": true,
+  "listener_closed": true,
+  "finished_at_utc": "2026-10-08T03:57:01.825104+00:00",
+  "credential_artifact_scan": {
+    "complete": true,
+    "token_file_found": false,
+    "credential_match_found": false,
+    "bytes_scanned": 236223251
+  }
+}
