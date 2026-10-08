@@ -6,8 +6,9 @@ use std::os::windows::ffi::OsStrExt;
 use std::os::windows::io::{AsRawHandle, FromRawHandle, OwnedHandle};
 use std::path::PathBuf;
 use std::ptr::{null, null_mut};
-use std::sync::Mutex;
-use std::time::Duration;
+use std::sync::atomic::{AtomicBool, Ordering};
+use std::sync::{Mutex, TryLockError};
+use std::time::{Duration, Instant};
 
 use windows_sys::Win32::Foundation::{HANDLE, WAIT_OBJECT_0, WAIT_TIMEOUT};
 use windows_sys::Win32::System::JobObjects::{
@@ -19,9 +20,11 @@ use windows_sys::Win32::System::JobObjects::{
 };
 use windows_sys::Win32::System::Threading::{
     CreateProcessW, GetExitCodeProcess, ResumeThread, TerminateProcess, WaitForSingleObject,
-    CREATE_NO_WINDOW, CREATE_SUSPENDED, CREATE_UNICODE_ENVIRONMENT, PROCESS_INFORMATION,
-    STARTUPINFOW,
+    CREATE_NO_WINDOW, CREATE_SUSPENDED, CREATE_UNICODE_ENVIRONMENT, EXTENDED_STARTUPINFO_PRESENT,
+    PROCESS_INFORMATION, STARTUPINFOW,
 };
+
+use crate::capture::{CaptureLimits, CapturedSetup, CapturedWorker};
 
 /// Explicit inputs only: no inherited environment, shell expansion or PATH lookup.
 /// Arguments/environment values intentionally have no Debug implementation.
@@ -36,6 +39,7 @@ pub struct WorkerSpec {
 pub struct WorkerGroup {
     job: OwnedHandle,
     retired: Mutex<bool>,
+    retirement_requested: AtomicBool,
 }
 
 /// A stable native handle, never a PID reopened for termination.
@@ -68,6 +72,7 @@ impl WorkerGroup {
         Ok(Self {
             job,
             retired: Mutex::new(false),
+            retirement_requested: AtomicBool::new(false),
         })
     }
 
@@ -75,10 +80,31 @@ impl WorkerGroup {
         self.spawn_impl(spec, |process| self.assign(process))
     }
 
+    /// Capture stdout/stderr while supplying closed (NUL) stdin. Only these
+    /// three handles are inherited. Drainage begins before child execution.
+    pub fn spawn_captured(
+        &self,
+        spec: &WorkerSpec,
+        limits: CaptureLimits,
+    ) -> io::Result<CapturedWorker> {
+        let mut capture = CapturedSetup::new(limits)?;
+        let worker = self.spawn_native(spec, |process| self.assign(process), Some(&mut capture))?;
+        Ok(capture.finish(worker))
+    }
+
     fn spawn_impl(
         &self,
         spec: &WorkerSpec,
         assign: impl FnOnce(HANDLE) -> io::Result<()>,
+    ) -> io::Result<Worker> {
+        self.spawn_native(spec, assign, None)
+    }
+
+    pub(crate) fn spawn_native(
+        &self,
+        spec: &WorkerSpec,
+        assign: impl FnOnce(HANDLE) -> io::Result<()>,
+        mut capture: Option<&mut CapturedSetup>,
     ) -> io::Result<Worker> {
         // Serialize create -> assign -> resume against retirement. Without this
         // fence a concurrent terminate could miss a newly assigned child.
@@ -86,7 +112,7 @@ impl WorkerGroup {
             .retired
             .lock()
             .map_err(|_| io::Error::other("worker group lifecycle lock poisoned"))?;
-        if *retired {
+        if *retired || self.retirement_requested.load(Ordering::Acquire) {
             return Err(io::Error::new(
                 io::ErrorKind::PermissionDenied,
                 "worker group is retired; create a new group to restart",
@@ -121,20 +147,31 @@ impl WorkerGroup {
         let mut environment = environment_block(&spec.environment)?;
         let mut startup: STARTUPINFOW = unsafe { zeroed() };
         startup.cb = size_of::<STARTUPINFOW>() as u32;
+        let startup_ptr = if let Some(capture) = &mut capture {
+            capture.startup()
+        } else {
+            &startup
+        };
+        let (inherit_handles, extra_flags) = if capture.is_some() {
+            (1, EXTENDED_STARTUPINFO_PRESENT)
+        } else {
+            (0, 0)
+        };
         let mut information: PROCESS_INFORMATION = unsafe { zeroed() };
         // SAFETY: buffers outlive the call; executable is explicit; handles are
-        // not inherited; execution is suspended until successful job assignment.
+        // not inherited unless an exact HANDLE_LIST supplies only capture stdio;
+        // execution is suspended until successful job assignment.
         let created = unsafe {
             CreateProcessW(
                 application.as_ptr(),
                 command.as_mut_ptr(),
                 null(),
                 null(),
-                0,
-                CREATE_SUSPENDED | CREATE_NO_WINDOW | CREATE_UNICODE_ENVIRONMENT,
+                inherit_handles,
+                CREATE_SUSPENDED | CREATE_NO_WINDOW | CREATE_UNICODE_ENVIRONMENT | extra_flags,
                 environment.as_mut_ptr() as *const c_void,
                 directory.as_ptr(),
-                &startup,
+                startup_ptr,
                 &mut information,
             )
         };
@@ -147,6 +184,15 @@ impl WorkerGroup {
             resumed: false,
         };
         assign(suspended.process.as_raw_handle())?;
+        // A bounded retirement may time out waiting for this lifecycle fence.
+        // It still permanently closes admission and cancels a launch that has
+        // not yet reached the final resume decision.
+        if self.retirement_requested.load(Ordering::Acquire) {
+            return Err(io::Error::new(
+                io::ErrorKind::PermissionDenied,
+                "worker group retirement was requested during launch",
+            ));
+        }
         // Clone before resuming: even handle-allocation failure must not leak a
         // running worker whose ownership was never returned to the caller.
         let process = suspended.process.try_clone()?;
@@ -160,7 +206,7 @@ impl WorkerGroup {
         })
     }
 
-    fn assign(&self, process: HANDLE) -> io::Result<()> {
+    pub(crate) fn assign(&self, process: HANDLE) -> io::Result<()> {
         if unsafe { AssignProcessToJobObject(self.job.as_raw_handle(), process) } == 0 {
             return Err(io::Error::last_os_error());
         }
@@ -196,6 +242,40 @@ impl WorkerGroup {
             return Err(io::Error::last_os_error());
         }
         Ok(())
+    }
+
+    /// Permanently close admission immediately, then wait at most `timeout`
+    /// for the create/assign/resume fence before terminating the owned Job.
+    /// A timeout reports incomplete cleanup: an in-flight launch may already
+    /// have committed to resume. Retry termination or drop the group, whose
+    /// kill-on-close Job remains the final containment backstop. Kernel calls
+    /// themselves do not provide a hard real-time scheduling guarantee.
+    pub fn terminate_timeout(&self, exit_code: u32, timeout: Duration) -> io::Result<()> {
+        let deadline = Instant::now()
+            .checked_add(timeout)
+            .ok_or_else(|| invalid("retirement deadline is out of range"))?;
+        self.retirement_requested.store(true, Ordering::Release);
+        loop {
+            match self.retired.try_lock() {
+                Ok(mut retired) => {
+                    *retired = true;
+                    if unsafe { TerminateJobObject(self.job.as_raw_handle(), exit_code) } == 0 {
+                        return Err(io::Error::last_os_error());
+                    }
+                    return Ok(());
+                }
+                Err(TryLockError::Poisoned(_)) => {
+                    return Err(io::Error::other("worker group lifecycle lock poisoned"))
+                }
+                Err(TryLockError::WouldBlock) => {
+                    let remaining = deadline.saturating_duration_since(Instant::now());
+                    if remaining.is_zero() {
+                        return Err(io::Error::new(io::ErrorKind::TimedOut, "worker group retirement fence deadline expired; admission remains closed"));
+                    }
+                    std::thread::sleep(remaining.min(Duration::from_millis(2)));
+                }
+            }
+        }
     }
 
     pub fn active_count(&self) -> io::Result<u32> {
@@ -422,6 +502,55 @@ mod tests {
             .wait_timeout(Duration::from_secs(5))
             .unwrap()
             .is_some());
+        let invalid_after_retirement = WorkerSpec {
+            executable: "unused.exe".into(),
+            working_directory: "unused".into(),
+            arguments: vec![],
+            environment: BTreeMap::new(),
+        };
+        assert_eq!(
+            group.spawn(&invalid_after_retirement).err().unwrap().kind(),
+            io::ErrorKind::PermissionDenied
+        );
+    }
+
+    #[test]
+    fn bounded_retirement_closes_admission_when_spawn_fence_times_out() {
+        use std::sync::{mpsc, Arc};
+        let group = Arc::new(WorkerGroup::new().unwrap());
+        let exe = std::env::current_exe().unwrap();
+        let spec = WorkerSpec {
+            working_directory: exe.parent().unwrap().to_path_buf(),
+            executable: exe,
+            arguments: vec!["--list".into()],
+            environment: BTreeMap::new(),
+        };
+        let (paused_tx, paused_rx) = mpsc::channel();
+        let (resume_tx, resume_rx) = mpsc::channel();
+        let spawning = group.clone();
+        let spawn = std::thread::spawn(move || {
+            spawning.spawn_impl(&spec, |process| {
+                paused_tx.send(()).unwrap();
+                resume_rx.recv_timeout(Duration::from_secs(5)).unwrap();
+                spawning.assign(process)
+            })
+        });
+        paused_rx.recv_timeout(Duration::from_secs(5)).unwrap();
+        assert_eq!(
+            group
+                .terminate_timeout(29, Duration::from_millis(20))
+                .unwrap_err()
+                .kind(),
+            io::ErrorKind::TimedOut
+        );
+        assert!(group.retirement_requested.load(Ordering::Acquire));
+        resume_tx.send(()).unwrap();
+        assert_eq!(
+            spawn.join().unwrap().err().unwrap().kind(),
+            io::ErrorKind::PermissionDenied
+        );
+        assert_eq!(group.active_count().unwrap(), 0);
+        group.terminate_timeout(29, Duration::from_secs(1)).unwrap();
         let invalid_after_retirement = WorkerSpec {
             executable: "unused.exe".into(),
             working_directory: "unused".into(),

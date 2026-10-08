@@ -1,0 +1,234 @@
+{
+  "generated_at_utc": "2026-10-08T17:34:22.3973111Z",
+  "completed": true,
+  "passed": true,
+  "renderer_build_requested": true,
+  "native_fixtures_requested": true,
+  "gpu_tests_requested": false,
+  "separate_runners": [
+    "desktop-shell-assets",
+    "desktop-shell-build",
+    "desktop-shell-native-ui"
+  ],
+  "skipped_optional_groups": [
+    "gpu-runtime"
+  ],
+  "checks": [
+    {
+      "check": "renderer-tests",
+      "passed": true,
+      "elapsed_seconds": 0.377,
+      "log": "C:\\Users\\Ghols\\.codex\\worktrees\\hermes-compat\\Project_Ned\\hermes-native\\.checks\\renderer-tests.log"
+    },
+    {
+      "check": "upstream-baseline",
+      "passed": true,
+      "elapsed_seconds": 1.073,
+      "log": "C:\\Users\\Ghols\\.codex\\worktrees\\hermes-compat\\Project_Ned\\hermes-native\\.checks\\upstream-baseline.log"
+    },
+    {
+      "check": "renderer-typecheck",
+      "passed": true,
+      "elapsed_seconds": 17.935,
+      "log": "C:\\Users\\Ghols\\.codex\\worktrees\\hermes-compat\\Project_Ned\\hermes-native\\.checks\\renderer-typecheck.log"
+    },
+    {
+      "check": "gateway-contracts",
+      "passed": true,
+      "elapsed_seconds": 0.388,
+      "log": "C:\\Users\\Ghols\\.codex\\worktrees\\hermes-compat\\Project_Ned\\hermes-native\\.checks\\gateway-contracts.log"
+    },
+    {
+      "check": "inference-tests",
+      "passed": true,
+      "elapsed_seconds": 1.167,
+      "log": "C:\\Users\\Ghols\\.codex\\worktrees\\hermes-compat\\Project_Ned\\hermes-native\\.checks\\inference-tests.log"
+    },
+    {
+      "check": "inference-lint",
+      "passed": true,
+      "elapsed_seconds": 0.145,
+      "log": "C:\\Users\\Ghols\\.codex\\worktrees\\hermes-compat\\Project_Ned\\hermes-native\\.checks\\inference-lint.log"
+    },
+    {
+      "check": "inference-format",
+      "passed": true,
+      "elapsed_seconds": 0.092,
+      "log": "C:\\Users\\Ghols\\.codex\\worktrees\\hermes-compat\\Project_Ned\\hermes-native\\.checks\\inference-format.log"
+    },
+    {
+      "check": "managed-pack-tests",
+      "passed": true,
+      "elapsed_seconds": 1.252,
+      "log": "C:\\Users\\Ghols\\.codex\\worktrees\\hermes-compat\\Project_Ned\\hermes-native\\.checks\\managed-pack-tests.log"
+    },
+    {
+      "check": "managed-pack-lint",
+      "passed": true,
+      "elapsed_seconds": 0.108,
+      "log": "C:\\Users\\Ghols\\.codex\\worktrees\\hermes-compat\\Project_Ned\\hermes-native\\.checks\\managed-pack-lint.log"
+    },
+    {
+      "check": "managed-pack-format",
+      "passed": true,
+      "elapsed_seconds": 0.092,
+      "log": "C:\\Users\\Ghols\\.codex\\worktrees\\hermes-compat\\Project_Ned\\hermes-native\\.checks\\managed-pack-format.log"
+    },
+    {
+      "check": "managed-pack-config",
+      "passed": true,
+      "elapsed_seconds": 0.307,
+      "log": "C:\\Users\\Ghols\\.codex\\worktrees\\hermes-compat\\Project_Ned\\hermes-native\\.checks\\managed-pack-config.log"
+    },
+    {
+      "check": "control-worker-lint",
+      "passed": true,
+      "elapsed_seconds": 0.153,
+      "log": "C:\\Users\\Ghols\\.codex\\worktrees\\hermes-compat\\Project_Ned\\hermes-native\\.checks\\control-worker-lint.log"
+    },
+    {
+      "check": "control-worker-format",
+      "passed": true,
+      "elapsed_seconds": 0.101,
+      "log": "C:\\Users\\Ghols\\.codex\\worktrees\\hermes-compat\\Project_Ned\\hermes-native\\.checks\\control-worker-format.log"
+    },
+    {
+      "check": "control-worker-tests",
+      "passed": true,
+      "elapsed_seconds": 1.974,
+      "log": "C:\\Users\\Ghols\\.codex\\worktrees\\hermes-compat\\Project_Ned\\hermes-native\\.checks\\control-worker-tests.log"
+    },
+    {
+      "check": "renderer-integration",
+      "passed": true,
+      "elapsed_seconds": 7.21,
+      "log": "C:\\Users\\Ghols\\.codex\\worktrees\\hermes-compat\\Project_Ned\\hermes-native\\.checks\\renderer-integration.log"
+    },
+    {
+      "check": "backend-host-lint",
+      "passed": true,
+      "elapsed_seconds": 0.112,
+      "log": "C:\\Users\\Ghols\\.codex\\worktrees\\hermes-compat\\Project_Ned\\hermes-native\\.checks\\backend-host-lint.log"
+    },
+    {
+      "check": "backend-host-format",
+      "passed": true,
+      "elapsed_seconds": 0.099,
+      "log": "C:\\Users\\Ghols\\.codex\\worktrees\\hermes-compat\\Project_Ned\\hermes-native\\.checks\\backend-host-format.log"
+    },
+    {
+      "check": "backend-host-tests",
+      "passed": true,
+      "elapsed_seconds": 2.9,
+      "log": "C:\\Users\\Ghols\\.codex\\worktrees\\hermes-compat\\Project_Ned\\hermes-native\\.checks\\backend-host-tests.log"
+    },
+    {
+      "check": "resource-host-format",
+      "passed": true,
+      "elapsed_seconds": 0.176,
+      "log": "C:\\Users\\Ghols\\.codex\\worktrees\\hermes-compat\\Project_Ned\\hermes-native\\.checks\\resource-host-format.log"
+    },
+    {
+      "check": "resource-host-lint",
+      "passed": true,
+      "elapsed_seconds": 1.918,
+      "log": "C:\\Users\\Ghols\\.codex\\worktrees\\hermes-compat\\Project_Ned\\hermes-native\\.checks\\resource-host-lint.log"
+    },
+    {
+      "check": "resource-host-tests",
+      "passed": true,
+      "elapsed_seconds": 4.818,
+      "log": "C:\\Users\\Ghols\\.codex\\worktrees\\hermes-compat\\Project_Ned\\hermes-native\\.checks\\resource-host-tests.log"
+    },
+    {
+      "check": "preview-watch-format",
+      "passed": true,
+      "elapsed_seconds": 0.105,
+      "log": "C:\\Users\\Ghols\\.codex\\worktrees\\hermes-compat\\Project_Ned\\hermes-native\\.checks\\preview-watch-format.log"
+    },
+    {
+      "check": "preview-watch-lint",
+      "passed": true,
+      "elapsed_seconds": 4.523,
+      "log": "C:\\Users\\Ghols\\.codex\\worktrees\\hermes-compat\\Project_Ned\\hermes-native\\.checks\\preview-watch-lint.log"
+    },
+    {
+      "check": "preview-watch-tests",
+      "passed": true,
+      "elapsed_seconds": 7.861,
+      "log": "C:\\Users\\Ghols\\.codex\\worktrees\\hermes-compat\\Project_Ned\\hermes-native\\.checks\\preview-watch-tests.log"
+    },
+    {
+      "check": "control-host-format",
+      "passed": true,
+      "elapsed_seconds": 0.132,
+      "log": "C:\\Users\\Ghols\\.codex\\worktrees\\hermes-compat\\Project_Ned\\hermes-native\\.checks\\control-host-format.log"
+    },
+    {
+      "check": "control-host-lint",
+      "passed": true,
+      "elapsed_seconds": 3.433,
+      "log": "C:\\Users\\Ghols\\.codex\\worktrees\\hermes-compat\\Project_Ned\\hermes-native\\.checks\\control-host-lint.log"
+    },
+    {
+      "check": "control-host-tests",
+      "passed": true,
+      "elapsed_seconds": 6.031,
+      "log": "C:\\Users\\Ghols\\.codex\\worktrees\\hermes-compat\\Project_Ned\\hermes-native\\.checks\\control-host-tests.log"
+    },
+    {
+      "check": "terminal-host-format",
+      "passed": true,
+      "elapsed_seconds": 0.135,
+      "log": "C:\\Users\\Ghols\\.codex\\worktrees\\hermes-compat\\Project_Ned\\hermes-native\\.checks\\terminal-host-format.log"
+    },
+    {
+      "check": "terminal-host-lint",
+      "passed": true,
+      "elapsed_seconds": 0.228,
+      "log": "C:\\Users\\Ghols\\.codex\\worktrees\\hermes-compat\\Project_Ned\\hermes-native\\.checks\\terminal-host-lint.log"
+    },
+    {
+      "check": "terminal-host-tests",
+      "passed": true,
+      "elapsed_seconds": 1.009,
+      "log": "C:\\Users\\Ghols\\.codex\\worktrees\\hermes-compat\\Project_Ned\\hermes-native\\.checks\\terminal-host-tests.log"
+    },
+    {
+      "check": "webview2-guest-format",
+      "passed": true,
+      "elapsed_seconds": 0.128,
+      "log": "C:\\Users\\Ghols\\.codex\\worktrees\\hermes-compat\\Project_Ned\\hermes-native\\.checks\\webview2-guest-format.log"
+    },
+    {
+      "check": "webview2-guest-lint",
+      "passed": true,
+      "elapsed_seconds": 1.347,
+      "log": "C:\\Users\\Ghols\\.codex\\worktrees\\hermes-compat\\Project_Ned\\hermes-native\\.checks\\webview2-guest-lint.log"
+    },
+    {
+      "check": "webview2-guest-tests",
+      "passed": true,
+      "elapsed_seconds": 0.884,
+      "log": "C:\\Users\\Ghols\\.codex\\worktrees\\hermes-compat\\Project_Ned\\hermes-native\\.checks\\webview2-guest-tests.log"
+    },
+    {
+      "check": "renderer-build",
+      "passed": true,
+      "elapsed_seconds": 23.465,
+      "log": "C:\\Users\\Ghols\\.codex\\worktrees\\hermes-compat\\Project_Ned\\hermes-native\\.checks\\renderer-build.log"
+    },
+    {
+      "check": "webview-native-build",
+      "passed": true,
+      "elapsed_seconds": 0.547,
+      "log": "C:\\Users\\Ghols\\.codex\\worktrees\\hermes-compat\\Project_Ned\\hermes-native\\.checks\\webview-native-build.log"
+    },
+    {
+      "check": "webview-native-run",
+      "passed": true,
+      "elapsed_seconds": 1.212,
+      "log": "C:\\Users\\Ghols\\.codex\\worktrees\\hermes-compat\\Project_Ned\\hermes-native\\.checks\\webview-native-run.log"
+    }
+  ]
+}

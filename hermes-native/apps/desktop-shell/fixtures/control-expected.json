@@ -1,0 +1,38 @@
+{
+  "control-unavailable": [
+    "control-native-transport-installed",
+    "control-unconfigured-status-unavailable",
+    "control-unconfigured-schema-unavailable",
+    "control-unconfigured-list-unavailable"
+  ],
+  "control-create": [
+    "control-native-transport-installed",
+    "control-owned-worker-truthfully-detached",
+    "control-owner-describe-not-renderer-operation",
+    "control-owner-shutdown-not-renderer-operation",
+    "control-model-loading-unavailable",
+    "control-real-worker-schema",
+    "control-real-worker-profile-normalization",
+    "control-invalid-profile-leaves-worker-usable",
+    "control-profile-created-through-native-command",
+    "control-created-profile-listed",
+    "control-optimistic-conflict-does-not-overwrite",
+    "control-saved-profile-remains-normalized",
+    "control-worker-healthy-after-profile-operations"
+  ],
+  "control-reopen": [
+    "control-native-transport-installed",
+    "control-owned-worker-truthfully-detached",
+    "control-owner-describe-not-renderer-operation",
+    "control-owner-shutdown-not-renderer-operation",
+    "control-model-loading-unavailable",
+    "control-profile-persists-across-native-shell-launch",
+    "control-reopened-profile-rejects-stale-delete",
+    "control-profile-update-advances-revision",
+    "control-updated-profile-is-normalized",
+    "control-profile-deleted-through-native-command",
+    "control-profile-list-empty-after-delete",
+    "control-deleted-profile-is-unavailable",
+    "control-worker-healthy-after-profile-operations"
+  ]
+}

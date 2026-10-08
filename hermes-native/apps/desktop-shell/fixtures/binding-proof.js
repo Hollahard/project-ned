@@ -2,7 +2,7 @@ const checks = [];
 function assert(value, label) { if (!value) throw new Error(label); checks.push(label); }
 const transport = window.__HERMES_NATIVE_TRANSPORT__;
 assert(transport && Object.isFrozen(transport), 'native-injection-before-entry');
-const methods = ['api','getConnection','getConnectionFor','getGatewayWsUrl','getGatewayWsUrlFor','revalidateConnection','touchBackend','getVersion'];
+const methods = ['api','getConnection','getConnectionFor','getGatewayWsUrl','getGatewayWsUrlFor','revalidateConnection','touchBackend','getVersion','getBootProgress','getRecentLogs','getBootstrapState','resetBootstrap','revealLogs'];
 for (const method of methods) {
   try { await transport.invoke('hermes_host_request', {method,args:[]}); throw new Error('Unexpected success'); }
   catch (error) { assert(error.code === 'HERMES_HOST_CAPABILITY_UNAVAILABLE' && error.capability === method, `honest-unavailable:${method}`); }

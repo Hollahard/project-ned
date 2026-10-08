@@ -5,6 +5,7 @@
   "local": true,
   "permissions": [
     "allow-hermes-host-request",
+    "allow-hermes-control-request",
     "core:event:allow-listen",
     "core:event:allow-unlisten"
   ]

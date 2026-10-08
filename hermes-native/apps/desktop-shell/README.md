@@ -1,14 +1,51 @@
-# Tauri 2 native binding slice
+# Tauri 2 native shell and profile control
 
-This independent Windows shell embeds the retained renderer build and injects the typed transport before its entry point runs. It is a development proof, not a usable Hermes replacement or installer. It starts no Hermes backend or model. All eight forwarded host methods currently return an explicit capability-unavailable error because no production runtime owner is connected. It never invents connection/version/model state.
+This independent Windows shell embeds the retained Hermes renderer and injects its typed transport before entry-point side effects. The retained root and contribution shell have mounted with the real, readable backend-unavailable recovery dialog. The actual local-profile form has passed native IPC/SQLite checks using a separate, explicitly configured CPU worker. The shell starts no Hermes agent backend, Tabby runtime, model or GPU work. It is a development integration; installer packaging and complete desktop parity remain open.
 
-The default build exposes only the manifest-scoped `hermes_host_request` command and core event listen/unlisten permissions to the bundled `main` WebView. Native dispatch independently checks window label, bundled origin, method membership, argument count and a 64 KiB serialized argument bound. The latter is checked after Tauri deserialization; it is not a raw IPC allocation limit. Remote top-level navigation, popup creation and frames are denied. Frontend event emission is not granted. The transport is installed only in the top frame at a bundled origin. See [Tauri capabilities](https://v2.tauri.app/security/capabilities/) and [initialization scripts](https://docs.rs/tauri/2.12.1/tauri/webview/struct.WebviewWindowBuilder.html#method.initialization_script).
+## Host surfaces and ownership
 
-Fixture control, result-file writing and dynamic fixture ACL are compiled/granted only with `binding-fixture`. The default build does not register or permit that helper. Fixtures use a hidden window and a fresh explicit WebView profile; the external verifier starts the executable in the previously tested private Windows Job, applies a 90-second deadline and verifies root exit, pipe EOF and empty-job cleanup. OS and browser processes can still write their own system caches; this is not an OS sandbox.
+The default build grants the bundled `main` WebView only `hermes_host_request`, `hermes_control_request` and core event listen/unlisten permissions. Commands independently check the exact main label and bundled origin. Native process control also checks the bound native window identity. Remote top-level navigation, popups and frames are denied; frontend event emission is not granted. Injection runs only in the top frame at a bundled origin.
+
+The host adapter has **16 methods and 5 event subscriptions**, detailed in [the renderer capability manifest](../desktop-ui/host-capabilities.json). Thirteen backend/bootstrap methods explicitly reject as unavailable. Three preview methods reach the real Rust implementation: `watchPreviewFile`, `watchDirectory`, `stopPreviewFileWatch`. Subscribing to an event is valid without an active watch; registration never invents a file change.
+
+Preview watches require roots granted by native setup. The default shell currently grants none because native pickers/source routing are not connected. Fixture builds may grant one newly created private fixture root. Events are sent to the owning native WebView and document, not broadcast through Tauri's application event bus. Real stop, owner retirement and document replacement fence queued delivery; ordinary hash routing keeps the same owner. This does not implement general filesystem access or the native guest browser.
+
+Host requests enforce method membership, argument count and a 64 KiB serialized argument bound after Tauri deserialization. The profile command has its own exact request/result schemas and per-operation bounds. Neither check is a raw IPC allocation limit or OS sandbox. See [Tauri capabilities](https://v2.tauri.app/security/capabilities/) and [initialization scripts](https://docs.rs/tauri/2.12.1/tauri/webview/struct.WebviewWindowBuilder.html#method.initialization_script).
+
+## Separate local settings worker
+
+The shell's `ShellControl` owns a [Rust control host](../../services/control-host/README.md) for the exact main-window lifetime. It obtains a single request permit before scheduling a blocking task; excess requests return `CONTROL_BUSY` without building a queue. The owner creates Python suspended, assigns it to a private kill-on-close Job and supplies only the explicit standard handles and environment before execution resumes.
+
+The worker is a CPU-only, no-site Python service using the existing inference schema and a separate SQLite store. Its readiness identity is `hermes-control-v1 / hermes-control-worker`, never a Hermes gateway readiness record. Private LF-delimited JSON frames are bounded to 64 KiB; IDs are generated by Rust. No HTTP listener, shared bearer token, shell command or nested Python process supervisor is involved.
+
+The seven renderer operations are status/schema/validate/list/get/save/delete. The owner reserves describe and shutdown. A detached status stays detached; saved settings do not start a model. Normal validation or revision conflicts keep a healthy worker usable. Unknown responses, timeouts, crashes and protocol failures retire the generation without automatically retrying an uncertain mutation.
+
+Verified shutdown requires actual root exit, both pipe EOFs and empty Job membership. Cooperative success additionally requires a valid acknowledgment and no trailing complete or partial protocol data after EOF. Unverified cleanup remains an error even when kill-on-close containment runs. This proves process cleanup, not VRAM release.
+
+## Configure a development worker
+
+Activate the project virtual environment before automation. Select a trusted base Python executable and assembled worker/inference sources, plus an existing parent directory for new state and a new manifest. The helper creates state and a launch manifest; it does not launch Python:
+
+```powershell
+# From apps/desktop-shell, after activating the project .venv:
+python ../../services/control-host/scripts/prepare_config.py --python '<absolute trusted base python.exe>' --worker-root '<absolute services/control-worker>' --inference-src '<absolute services/inference/src>' --state-dir '<new absolute control-state directory>' --output '<new absolute launch.json>'
+$env:HERMES_NATIVE_CONTROL_CONFIG = '<absolute launch.json>'
+$env:HERMES_NATIVE_WEBVIEW_PROFILE = '<absolute existing dedicated WebView directory>'
+# Launch only the intended built development executable:
+./target/debug/hermes-native-shell.exe
+```
+
+Both output and state must be new for the preparation helper, and the manifest must be outside child state. State must not overlap either source root. Existing profiles can be reopened by launching with the same valid manifest; a second writer fails without stopping the first. Do not point these checks at installed Hermes state or another application's database.
+
+The manifest pins the base executable, bootstrap and finite public-package source files. The native host rejects unknown manifest fields, changed hashes, relative/parent-traversing paths, symlinks/junctions and mapped network drives. Python starts with `-I -S -B -X utf8`, explicit source/state paths, state as cwd, and a curated environment. The source-only loader ignores cached bytecode and native-extension shadows in the two package roots.
+
+No secrets belong in this manifest or SQLite profiles. Renderer requests cannot choose launch paths, environment or state. Source changes invalidate the existing receipt: prepare/review a replacement receipt as an explicit maintenance step. The current helper only creates fresh state; it must not silently replace a database containing saved profiles. State migration and packaged-runtime updates are future work.
+
+Without `HERMES_NATIVE_CONTROL_CONFIG`, settings remain unavailable and no worker is launched. An invalid configuration also stays unavailable with a fixed error. Hash verification is a launch-time integrity check, not an attestation of every Python DLL/stdlib byte or protection against concurrent privileged file replacement. Filesystem/kernel calls are not hard real-time operations.
 
 ## Build and verify
 
-Activate the project venv and rebuild the sibling renderer using its documented `HERMES_UPSTREAM_ROOT` setting. Use a new checkout or a fresh private asset directory; preparation refuses an existing output. From this package:
+Rebuild the sibling renderer using its documented `HERMES_UPSTREAM_ROOT`. Asset preparation refuses an existing output; use fresh private output or a clean build checkout rather than overwriting unrelated files. From this package:
 
 ```powershell
 python ./scripts/prepare_assets.py --renderer-dist ../desktop-ui/dist
@@ -21,11 +58,34 @@ cargo clippy --locked --offline --quiet --all-targets --all-features -- -D warni
 cargo fmt --all -- --check
 cargo build --locked --offline --quiet --features binding-fixture
 python ./scripts/verify_native.py --executable ./target/debug/hermes-native-shell.exe --backend-src ../../services/backend-host/src --state .checks/new-binding-proof
-python ./scripts/verify_native.py --executable ./target/debug/hermes-native-shell.exe --backend-src ../../services/backend-host/src --state .checks/new-retained-observation --mode retained
+python ./scripts/verify_native.py --executable ./target/debug/hermes-native-shell.exe --backend-src ../../services/backend-host/src --state .checks/new-retained-proof --mode retained
+python ./scripts/verify_native.py --executable ./target/debug/hermes-native-shell.exe --backend-src ../../services/backend-host/src --state .checks/new-preview-proof --mode preview
+python ./scripts/verify_native.py --executable ./target/debug/hermes-native-shell.exe --backend-src ../../services/backend-host/src --state .checks/new-preview-reload-proof --mode preview-reload
 ```
 
-Assets are copied byte-for-byte with pre/post hashes, plus the two fixture assets. The recorded renderer source baseline is checked against the expected revision/aggregate. Those metadata fields alone do not authenticate an existing bundle; rebuild the renderer with its source/dependency guards before packaging. The resulting receipt inventories the selected artifact bytes. Generated assets, profiles, logs, executables and targets are ignored. Cargo dependencies are pinned through the lockfile; offline builds require a previously populated Cargo cache.
+The outer verifier's `--backend-src` argument imports the existing Windows Job helper; it does not start a Hermes backend. Optional `--control-config <manifest>` passes one explicit worker configuration into the isolated native process. No ambient model/runtime environment is inherited. Fixtures require fresh explicit state/WebView directories and run hidden with an outer deadline. Their result requires root exit, pipe EOF, empty Job cleanup and, when configured, the worker's actual cleanup report.
 
-The retained-mode observation is diagnostic, not a passing UI bootstrap test: the wrapper and adapter evaluated, then the upstream import stopped at missing `onPreviewFileChanged`, leaving the root empty. The next native compatibility work must implement the preview-file event subscription with its real owning producer and then resolve subsequent missing host families. Do not turn missing methods into success stubs to make the window appear initialized. Full chat/settings/history, backend startup, source routing, browser/terminal binding, visual parity, durable profiles and model control remain open.
+Native control/profile modes use the same verifier. First prepare two distinct fresh manifests/stores: one for the create/reopen pair, one for the retained form. Reuse the persistence manifest only for its matching reopen step; every outer fixture state directory remains new:
 
-The unchanged upstream Windows icon is copied from Hermes `apps/desktop/assets/icon.ico` at `649d6c0391029f35959cfbc240eb3534a6667cf5`; SHA256 `41bfca2371bc0e6159038c7c78dd39f29c6272038b4a2ce38be2a568203d5f98`. Its [upstream MIT notice](icons/LICENSE) is retained. Product branding and installer packaging are not finalized.
+```powershell
+python ./scripts/verify_native.py --executable ./target/debug/hermes-native-shell.exe --backend-src ../../services/backend-host/src --state .checks/new-control-unavailable --mode control-unavailable
+python ./scripts/verify_native.py --executable ./target/debug/hermes-native-shell.exe --backend-src ../../services/backend-host/src --state .checks/new-control-create --mode control-create --control-config '<absolute fresh persistence launch.json>'
+python ./scripts/verify_native.py --executable ./target/debug/hermes-native-shell.exe --backend-src ../../services/backend-host/src --state .checks/new-control-reopen --mode control-reopen --control-config '<same absolute persistence launch.json>'
+python ./scripts/verify_native.py --executable ./target/debug/hermes-native-shell.exe --backend-src ../../services/backend-host/src --state .checks/new-profiles-proof --mode profiles --control-config '<absolute separate fresh form launch.json>'
+```
+
+Fixture controls, result-file writing and additional fixture capabilities exist only in `binding-fixture` builds. The default build does not register or permit the helper. Assets are copied byte-for-byte with pre/post hashes and a receipt, including the selected fixture assets. Receipt metadata alone does not authenticate an old bundle: rebuild through the renderer's source/dependency guards. Generated assets, state, logs and targets are ignored. Offline Cargo builds require a populated cache.
+
+## Evidence and open work
+
+Current native evidence covers typed dispatch/denials, genuine preview file/directory changes, ownership and queued-delivery fencing, hash-route versus document-reload behavior, and retained bootstrap with the real backend-unavailable panel. The independent profile UI integration suite passes nine jsdom cases; the control host's real Python/native tests cover persistence and bounded owner cleanup. These are distinct pieces of evidence.
+
+The consolidated native binary passes 19 binding checks, 11 retained-bootstrap checks, 14 preview checks and six document-reload checks. The shell also passes seven Rust tests, 11 transport tests and two asset-packaging tests, with strict Clippy in default and all-feature configurations. These counts belong to this continuation, not the historical foundation totals.
+
+Native control modes passed **4 unavailable, 13 create and 13 reopen checks**, proving honest absence without configuration, schema/validation/CRUD, optimistic conflicts and persistence across native shell launches. The actual retained profile form passed **22 checks**: the observer dismissed the real recovery dialog, navigated the real settings route, drove React controls and correlated saved fields/revisions/deletion with read-only Tauri calls. No backend connection was fabricated, and no React crash, uncaught error or unhandled rejection was observed.
+
+All configured runs verified cooperative control-worker shutdown, root exit code zero, empty Job membership and both output EOFs. The outer fixture Job verified its own process cleanup. Final worktree reports were produced under `.checks/*-worktree-01` and summarized in the [native checkpoint evidence](../../../docs/hermes-native-desktop/implementation-evidence/native-profiles-native-worktree.json); local diagnostic state remains ignored. Hidden DOM checks do not prove visual parity, keyboard/focus behavior or normal desktop usability.
+
+Hermes backend startup/JSON-RPC, live conversations/tools/history, source routing, guest browser, terminal, general filesystem/Git, credentials, remaining bridge families and normal packaging remain incomplete. Local model settings are implemented separately; runtime launch, artifact/VRAM checks, vector memory and Gaming Mode are not connected by this slice.
+
+The unchanged upstream Windows icon comes from Hermes `apps/desktop/assets/icon.ico` at the pinned revision; SHA256 `41bfca2371bc0e6159038c7c78dd39f29c6272038b4a2ce38be2a568203d5f98`. Its [upstream MIT notice](icons/LICENSE) is retained. Product branding, signed installer/executable distribution and immutable runtime packaging are not finalized.

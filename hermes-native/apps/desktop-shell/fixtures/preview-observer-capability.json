@@ -1,0 +1,7 @@
+{
+  "identifier": "preview-observer-fixture-only",
+  "description": "Adversarial ANY listener in an isolated hidden proof view; fixture builds only",
+  "webviews": ["preview-observer"],
+  "local": true,
+  "permissions": ["core:event:allow-listen", "core:event:allow-unlisten"]
+}

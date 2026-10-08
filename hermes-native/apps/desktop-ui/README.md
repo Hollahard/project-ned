@@ -1,48 +1,66 @@
-# Retained Hermes renderer feasibility slice
+# Retained Hermes renderer and local profile settings
 
-This package builds the **unchanged pinned Hermes renderer and shared client** with a small native-host compatibility entry. It does not start Hermes, TabbyAPI, a model, a browser window or a GPU worker. It is not a usable replacement desktop yet.
+This package builds the **unchanged pinned Hermes renderer and shared client**, then installs a typed native-host adapter and a separate local-model settings contribution. The Windows Tauri shell has mounted the retained root and contribution shell, displayed the real **backend unavailable** recovery dialog, and exercised the actual settings form through native IPC and SQLite. Hermes chat, agent execution and inference remain disconnected. This is a development integration, not a usable replacement desktop or visual-parity claim.
 
-The pinned source revision is `649d6c0391029f35959cfbc240eb3534a6667cf5`. Existing Project Friday UI and user modifications are outside this package. No upstream source or dependency installation is changed. Node 24's native TypeScript config loader uses the installed upstream build dependencies; 110 direct dependencies are checked against their exact package versions. Upstream lockfile and retained source hashes are checked before and after a build. This checks the direct dependency baseline and unchanged transitive lockfile, not every installed transitive package's integrity.
+The pinned upstream revision is `649d6c0391029f35959cfbc240eb3534a6667cf5`. Existing Project Friday UI and user modifications are outside this package. No upstream source or dependency installation is changed. Node 24 uses the already installed upstream build tools; 110 direct dependencies are checked against exact package versions. Retained sources and the transitive lockfile are hashed before and after a build. That does not attest every installed transitive package byte.
 
-## Run
+## Run and verify
+
+Activate the project environment and select the pinned upstream checkout. From this package:
 
 ```powershell
 . 'G:\Project_Ned\.venv\Scripts\Activate.ps1'
 if (-not $env:VIRTUAL_ENV) { throw 'Virtual environment inactive' }
 $env:HERMES_UPSTREAM_ROOT = 'G:\Personal_Assistant\hermes\hermes-agent'
-# From this package directory:
 npm test
 npm run verify:upstream
 npm run typecheck
+npm run test:integration
 npm run build
 ```
 
-No `npm install` is needed for this wrapper. It deliberately uses the pinned source checkout's already-installed dependencies; missing or mismatched versions fail with an actionable error. Untracked source and asset files, including gitignored files that Vite could still bundle, are rejected before baseline validation. Future packaging must create a reproducible immutable payload from the same upstream lock, rather than rely on an external user installation.
+No `npm install` is needed for the wrapper. Missing or mismatched installed dependencies fail validation. Untracked upstream source/assets, including ignored files that Vite could bundle, are rejected. Output stays in `dist/`, caches in `.cache/`, and generated typecheck configuration in `.checks/`. The integration suite uses its own ignored test state and caches.
 
-Build output is confined to `dist/`, cache to `.cache/` and typecheck configuration to `.checks/`. The Vite configuration is loaded unchanged, preserving React/ReactDOM resolution, compiler, Tailwind, emoji/public assets, code splitting and shared-client aliases. The only behavior changes are the wrapper entry, isolated output/cache, disabling dotenv reads and quiet logging. No Electron main process is bundled or started by this command.
+The upstream Vite configuration retains React/ReactDOM resolution, compiler, Tailwind, assets, code splitting and shared-client aliases. The wrapper changes the entry point, adds explicit native-module aliases and the settings contribution, isolates output/cache, disables dotenv reads and reduces build logging. Building does not start the Electron main process, Hermes backend or model.
 
-## Implemented subset and pending native binding
+## Native adapter boundary
 
-`src/host-adapter.ts` derives its subset from the pinned `Window['hermesDesktop']` TypeScript contract. It explicitly forwards these methods:
+`src/host-adapter.ts` derives its explicit subset from the pinned `Window['hermesDesktop']` contract. The [Tauri shell](../desktop-shell/README.md) injects `window.__HERMES_NATIVE_TRANSPORT__` before upstream module side effects run.
 
-- `api`
-- `getConnection`, `getConnectionFor`
-- `getGatewayWsUrl`, `getGatewayWsUrlFor`
-- `revalidateConnection`, `touchBackend`, `getVersion`
-- Event subscriptions: backend exit, connection applied, boot progress, power resume
+| Surface | Current behavior |
+| --- | --- |
+| 13 backend/bootstrap methods | `api`, `getConnection`, `getConnectionFor`, `getGatewayWsUrl`, `getGatewayWsUrlFor`, `revalidateConnection`, `touchBackend`, `getVersion`, `getBootProgress`, `getRecentLogs`, `getBootstrapState`, `resetBootstrap`, `revealLogs` are forwarded and explicitly reject as unavailable while their production owners remain absent. |
+| 3 preview methods | `watchPreviewFile`, `watchDirectory`, `stopPreviewFileWatch` reach a real Rust watcher and lifetime owner. Successful registration requires a native grant. The current default shell has no filesystem grants; fixtures use an explicit private root. |
+| 5 retained event subscriptions | `backend-exit`, `connection-applied`, `boot-progress`, `power-resume`, `preview-file-changed`. Subscription transport is real. Preview changes have a real watcher producer; the four lifecycle channels do not imply a running backend or power integration. |
 
-The future native integration injects `window.__HERMES_NATIVE_TRANSPORT__` before the wrapper starts. It uses command `hermes_host_request` with `{method,args}` and channel `hermes:host:event` with `{name,payload}`. **No Rust Tauri registration is present in this slice.** Native code must independently validate/authorize commands, route ownership, authentication and API endpoints; renderer validation is not a security boundary.
+Host requests use `hermes_host_request`. The injected transport adds a per-document identifier. Lifecycle events use `hermes:host:event`; preview events are delivered to the exact owning WebView/document and filtered out of the application-wide event bus. Full document replacement retires the preview owner; hash routing preserves it. Native validation and ownership checks remain necessary: renderer validation is not a security boundary.
 
-The adapter captures arguments before yielding so an active profile change cannot move a pending operation. It preserves native errors, multipart buffers and explicit null/false values. Subscriptions support unsubscribe and late-setup disposal. The integration may await `eventSubscriptionReady()` after registration; event setup failures are also reported to a diagnostic sink and never fabricated into backend-exit events. When no transport exists, supported-but-unbound methods throw/reject `HERMES_HOST_CAPABILITY_UNAVAILABLE`. Missing methods are absent. There is no catch-all success proxy, fake connection or fabricated GPU data. See `host-capabilities.json` for the explicit scope.
+Arguments are captured before yielding, preserving profile/connection scope, multipart buffers and explicit null/false values. Event subscriptions support unsubscribe and late-setup disposal. `eventSubscriptionReady()` exposes registration failure. Known serialized capability errors become JavaScript `Error` objects with a readable fixed message; arbitrary child text is not interpolated. Missing host families remain absent. There is no catch-all success proxy, fabricated connection or fabricated model state. [host-capabilities.json](host-capabilities.json) records the finite scope.
 
-The bridge is installed before upstream `main.tsx` evaluates its store side effects. An always-visible feasibility label describes the incomplete host. An upstream module may fail to initialize because a required host family is not implemented; that is an honest remaining compatibility failure, not a reason to fake a response.
+The wrapper's feasibility notice remains visible. A mounted shell and honest recovery panel establish bootstrap progress; they do not establish working chat, a backend connection or complete native compatibility.
 
-## Missing parity gates
+## Local model profiles
 
-Native WebView2 guest browser (partitions/navigation/capture/automation/popout), ConPTY terminal, filesystem/Git, profile and connection persistence, credentials/OAuth, windows/overlays/HUD/pets, notifications, clipboard/capture, themes, updates/install/recovery, and the remainder of the upstream native bridge are not implemented here. Backend JSON-RPC wiring and live Tauri binding remain separate gates. A successful bundle proves source/dependency feasibility only; it does not prove that Hermes boots, visual parity, native behavior, tool execution, inference or VRAM evacuation works.
+`src/model-profiles-plugin.tsx` registers **Local model profiles** through Hermes's existing plugin context, settings contribution registry and enable/disable inventory. Its route is:
 
-The 15 tests comprise 12 deterministic adapter contract tests and three baseline-guard tests. The latter create and remove only their own temporary Git repositories; they do not modify upstream. Adapter regressions cover repeated stale unsubscribe and explicit version-request connection/profile scope. `dist/feasibility-report.json` records the verified source and dependency baseline and explicitly unverified runtime/visual state.
+```text
+#/settings?tab=plugins&plugin=native-model-profiles%3Aprofiles
+```
 
-## Native binding continuation
+The contribution calls a separate `hermes_control_request {operation,payload}` command through `src/control-client.ts`. It does not supply a Hermes `getConnection` result or reuse the agent gateway. Its seven operations are `runtime.status`, `profiles.schema`, `profiles.validate`, `profiles.list`, `profiles.get`, `profiles.save` and `profiles.delete`.
 
-The independent [desktop-shell](../desktop-shell/README.md) now injects this transport in Tauri. Native methods remain explicitly unavailable while the runtime owner is absent. Actual retained import stops at missing `onPreviewFileChanged`; see the [native checkpoint](../../../docs/hermes-native-desktop/NATIVE-BINDING-CHECKPOINT.md). The source/dependency build evidence above remains unchanged.
+The [Rust control host](../../services/control-host/README.md) owns one [CPU Python worker](../../services/control-worker/README.md) in a private Windows Job. A permit is acquired before queueing work. Unknown methods/fields, malformed replies and uncertain transport failures are rejected; mutations are never automatically retried. The worker imports the existing inference `LoadProfile` schema and stores named settings in its own SQLite database, with optimistic revisions, bounded records and atomic initial schema creation. These records are separate from Hermes conversations, connection profiles and future vector memory.
+
+The form covers model name/folder, context, KV-cache size/precision, prefill chunk, batch size and vision. Validation checks schema only. Saving neither opens model files nor measures compatibility, available VRAM or speed. KV-cache precision is distinct from weight quantization; this UI does not quantize model weights or start an ExLlama runtime.
+
+No control service starts unless the native host has an explicit valid `HERMES_NATIVE_CONTROL_CONFIG`. Renderer input cannot choose the interpreter, source roots, database directory, environment or owner-only shutdown method. See the shell's configuration instructions. When unavailable or busy, the form reports a fixed error; Retry connection can recover transient admission contention. Generation fencing prevents stale asynchronous responses from replacing current component state.
+
+## Evidence and remaining gates
+
+The deterministic adapter/baseline tests check the contract, disposal, error normalization and unchanged upstream inputs. Nine integration cases use the real retained registry/route helpers and component; two use the actual isolated Python worker to verify CRUD, optimistic conflict handling and persistence across worker restart. Remaining cases cover plugin lifecycle, errors, busy retry and stale UI state. See [integration scope and invocation](tests/integration/README.md).
+
+Native hidden-WebView checks establish retained bootstrap with the real backend-unavailable dialog and native preview ownership/delivery behavior. The profile observer passed **22 checks**: actual recovery-dialog dismissal, retained settings navigation, React form input, validation, create/list/read/update, explicit delete confirmation and final absence of the fixture record. Read-only calls through the same native control channel confirmed normalized saved fields and advancing revisions. No React crash, uncaught error or unhandled rejection was observed.
+
+Separate native control modes passed **4 unavailable, 13 create and 13 reopen checks**, including persistence across native shell launches and optimistic conflicts. Each configured run verified cooperative worker shutdown, root exit code zero, empty Job membership and both pipe EOFs; the outer native fixture Job also cleaned up. These results exercise an explicitly configured CPU worker, not Hermes agent startup or inference. A hidden window and DOM checks do not prove visual fidelity, accessibility/focus behavior or normal desktop usability.
+
+Open gates include Hermes backend startup/JSON-RPC and source routing; guest browser/partitions/automation; ConPTY; general filesystem/Git; Hermes profile/connection persistence; credentials/OAuth; additional windows/overlays/HUD/pets; notifications/clipboard/capture; themes; update/install/recovery; real inference/catalog integration; vector memory; model profiling/benchmarking and Gaming Mode VRAM evacuation. Reproducible payloads, signed Windows packaging and the rest of the native bridge are also pending.

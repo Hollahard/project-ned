@@ -1,45 +1,54 @@
 # Hermes Native Desktop engineering specification
 
-**Start with [the complete architecture and roadmap](./ARCHITECTURE.md).** It covers the installed Hermes Desktop design, the implementation-agnostic behavior contract, and the proposed Python/Rust/Tauri 2 Windows application.
+**Start with [the complete architecture and roadmap](./ARCHITECTURE.md).** For current implementation progress, read [the native profiles checkpoint](./NATIVE-PROFILES-CHECKPOINT.md) and [the implementation overview](../../hermes-native/README.md).
 
-Prepared on 7 October 2026 from the installed official Hermes source at commit `649d6c0391029f35959cfbc240eb3534a6667cf5`, with research from the official Hermes, TabbyAPI, ExLlama, Tauri and database documentation. The separate `hermes-webui` installation is identified but is not used as the official desktop baseline.
+The original specification was prepared on 7 October 2026 from installed official Hermes source at `649d6c0391029f35959cfbc240eb3534a6667cf5`, with official Hermes, TabbyAPI, ExLlama, Tauri and database references. The separate `hermes-webui` installation is identified but is not the official desktop baseline.
 
 ## Selected approach
 
 - Keep the existing React/TypeScript interface, as agreed, and the Python agent core.
 - Replace Electron's host with Rust/Tauri 2 and explicit Windows browser, terminal and OS adapters.
-- Extend the existing Local Models interface with a dedicated broker over separately pinned ExLlamaV3 and legacy ExLlamaV2 TabbyAPI runtime packs.
-- Add SQLite/`sqlite-vec` memory through a provider plugin; PostgreSQL/pgvector remains an alternative storage adapter.
-- Add saved model profiles, manual inference tests, measurements and offline quantization jobs.
-- Add Gaming GPU-off and certified small-model modes with a persistent admission barrier, actual release verification and logical session restoration.
+- Add a dedicated broker over separately pinned ExLlamaV3 and legacy ExLlamaV2 TabbyAPI runtime packs.
+- Add SQLite/`sqlite-vec` memory through a provider plugin; retain PostgreSQL/pgvector as an alternative adapter.
+- Provide saved model settings, manual inference tests, measurements and offline quantization jobs.
+- Provide Gaming GPU-off and certified small-model modes with a persistent admission barrier, measured release and logical session restoration.
 
-Current TabbyAPI main rejects V2, so one unmodified current runtime cannot satisfy both engine requirements. The proposed pack split and its source evidence are detailed in sections 8–9. A native `.exe` is the distribution target; Tauri's interface is still a webview, and the large inference dependencies are versioned runtime packs.
+The selected TabbyAPI baseline rejects V2, so the proposed V3/V2 runtime-pack split remains necessary; source evidence and the design are in architecture sections 8–9. A native Windows `.exe` is the distribution target. Tauri renders the retained interface in a WebView; large inference dependencies remain separately versioned packs.
+
+## Current implementation boundary
+
+The retained renderer now mounts in the Tauri shell and shows a genuine backend-unavailable recovery dialog. Real preview watchers deliver changes to their owning native window/document. A separate Rust-owned CPU Python service persists local model settings with the reused inference schema, strict bounded IPC, optimistic revisions and atomic SQLite initialization.
+
+The actual retained settings form passed 22 native checks covering navigation, validation and CRUD with confirmed deletion. Separate native checks verified unavailable behavior and persistence across shell launches. Configured workers and their outer fixture Jobs verified process/pipe cleanup. The source guard still reports 2,986 unchanged retained inputs and 110 pinned direct dependencies.
+
+Hermes agent startup, chat/tools, integrated inference, browser/terminal parity, vector memory, Gaming Mode and installer packaging remain open. The earlier EXL3 GPU smoke test is a separate recorded observation, not a connection between the new settings UI and a running model. Hidden DOM checks and source reuse do not prove full visual or behavioral parity.
 
 ## Document map
 
 | Artifact | Purpose |
-|---|---|
-| [CHECKPOINT.md](./CHECKPOINT.md) | Completed documentation boundary, commit scope and instructions for a future explicit continuation |
-| [ARCHITECTURE.md](./ARCHITECTURE.md) | Twenty sections: current design, domain contracts, feature designs, Windows migration, twenty work packages, milestones, test matrix and risks |
-| [EVIDENCE.md](./EVIDENCE.md) | Source paths/line anchors, official references and source/comment discrepancies |
-| [FEATURE-REVIEW.md](./FEATURE-REVIEW.md) | Independent additional-feature review started after the first 15 planned sections; seven findings and follow-up verification |
-| [VERIFICATION.md](./VERIFICATION.md) | What was verified for this documentation deliverable and what remains future implementation testing |
-| [baseline-inventory.json](./baseline-inventory.json) | Static inventory of 252 RPC methods, 13 server requests, 77 notifications and 259 literal preload channels |
-| [contracts/gateway-baseline.openrpc.json](./contracts/gateway-baseline.openrpc.json) | Complete pinned baseline method/request/event schemas for implementation-independent reference; upstream license included beside it |
+| --- | --- |
+| [ARCHITECTURE.md](./ARCHITECTURE.md) | Current-design analysis, implementation-independent contracts, feature designs, Windows migration, twenty work packages and test gates |
+| [EVIDENCE.md](./EVIDENCE.md) | Source anchors, official references and source/comment discrepancies |
+| [FEATURE-REVIEW.md](./FEATURE-REVIEW.md) | Independent additional-feature review begun after the first 15 planned sections; seven findings and follow-up verification |
+| [CHECKPOINT.md](./CHECKPOINT.md) | Historical boundary of the completed research/specification deliverable |
+| [VERIFICATION.md](./VERIFICATION.md) | Verification scope of the original documentation deliverable |
+| [IMPLEMENTATION-CHECKPOINT.md](./IMPLEMENTATION-CHECKPOINT.md) | Historical implementation foundation and independent feasibility components |
+| [RECONCILIATION.md](./RECONCILIATION.md) | Relationship between the architecture and implementation milestones |
+| [LIVE-RUNTIME-CHECKPOINT.md](./LIVE-RUNTIME-CHECKPOINT.md) | One opt-in EXL3 GPU qualification and unchanged retained HTTP-handler subset |
+| [NATIVE-BINDING-CHECKPOINT.md](./NATIVE-BINDING-CHECKPOINT.md) | Historical first Tauri IPC/event/ACL proof and the then-observed missing-preview bootstrap gate |
+| [NATIVE-PROFILES-CHECKPOINT.md](./NATIVE-PROFILES-CHECKPOINT.md) | Latest integrated preview, retained bootstrap and Rust-owned CPU profile settings evidence |
+| [baseline-inventory.json](./baseline-inventory.json) | Static baseline of 252 RPC methods, 13 server requests, 77 notifications and 259 literal preload channels |
+| [contracts/gateway-baseline.openrpc.json](./contracts/gateway-baseline.openrpc.json) | Complete pinned method/request/event schemas; upstream license beside them |
 | [source-manifest.json](./source-manifest.json) | Hashes of inspected source evidence |
-| [retention-baseline.json](./retention-baseline.json) | Frozen file hashes and denominator for source-preservation measurement |
-| [review-checkpoint.json](./review-checkpoint.json) | Draft hash and section/word-count checkpoint at review dispatch |
+| [retention-baseline.json](./retention-baseline.json) | Frozen hashes and denominator for source-preservation measurement |
+| [review-checkpoint.json](./review-checkpoint.json) | Original draft hash and section/word-count checkpoint at review dispatch |
 
-## Important engineering conclusions
+## Engineering conclusions that remain applicable
 
-Browser guests, native terminals, desktop plugins and update behavior require explicit parity work. Keeping React alone does not preserve Electron APIs. Vector memory needs canonical-source validation and reconciliation because deletion/rewind paths can bypass provider callbacks. Gaming Mode must include local speech and auxiliary GPU consumers as well as the main LLM. Suspending a process or clearing an allocator cache is not equivalent to releasing its VRAM.
+Browser guests, native terminals, desktop plugins and updates require explicit parity work. Keeping React alone does not preserve Electron APIs. The preview-bootstrap blocker in the first native checkpoint has now been resolved; this closes that specific gate, not the remainder of the bridge.
 
-The independent review's seven findings are integrated in section 19. The plan targets all required Windows behavior, with a stronger proposed guardrail of at least 85% unchanged eligible Python/renderer files. Whole-application changes, including the replaced host, are reported separately; file reuse is not proof of behavioral parity.
+Vector memory needs canonical-source validation and reconciliation because deletion/rewind paths can bypass provider callbacks. Gaming Mode must account for local speech and auxiliary GPU consumers as well as the main LLM. Suspending a process, clearing an allocator cache or observing process exit is not itself proof of released VRAM.
 
-This package is the completed research/specification deliverable. It does not contain a built replacement `.exe`, downloaded models or verified GPU performance. No installed application code was changed. The implementation begins with the M0 baseline and M1 native/GPU feasibility gates defined in the roadmap.
+The independent feature review's seven findings are integrated in architecture section 19. The plan targets required Windows behavior with a proposed guardrail of at least 85% unchanged eligible Python/renderer files. Changes to the replaced host are reported separately; neither file reuse nor the current 2,986-input build guard demonstrates whole-application parity.
 
-Implementation continuation: [checkpoint](./IMPLEMENTATION-CHECKPOINT.md) and [reconciliation](./RECONCILIATION.md).
-
-The [live runtime checkpoint](LIVE-RUNTIME-CHECKPOINT.md) adds opt-in EXL3 GPU qualification and unchanged retained HTTP-handler evidence.
-
-The [native binding checkpoint](NATIVE-BINDING-CHECKPOINT.md) records the Tauri transport proof and actual retained-bootstrap compatibility gate.
+The original specification remains a completed research deliverable. Implementation now exists separately under `hermes-native/`, with the latest results and remaining gates recorded in dated checkpoints. Historical test counts and GPU observations remain attributed to their original runs.

@@ -1,13 +1,14 @@
 import type { HermesApiRequest } from '@hermes/upstream-global'
 
-/** Exact native transport seam; Rust registration is a later integration gate. */
+/** Exact command/event seam registered by the isolated Rust shell. */
 export interface NativeTransport {
   invoke<T>(command: 'hermes_host_request', payload: { method: string; args: unknown[] }): Promise<T>
   subscribe(channel: 'hermes:host:event', listener: (event: HostEvent) => void): Promise<() => void>
+  control?<T>(operation: string, payload: object): Promise<T>
 }
 
 export interface HostEvent {
-  name: 'backend-exit' | 'connection-applied' | 'boot-progress' | 'power-resume'
+  name: 'backend-exit' | 'connection-applied' | 'boot-progress' | 'power-resume' | 'preview-file-changed'
   payload: unknown
 }
 
@@ -16,7 +17,7 @@ export class CapabilityUnavailableError extends Error {
   readonly capability: string
 
   constructor(capability: string) {
-    super(`Hermes native feasibility host does not provide ${capability}. Native integration is pending.`)
+    super(`Hermes native host operation ${capability} is unavailable. Managed backend integration is pending.`)
     this.name = 'CapabilityUnavailableError'
     this.capability = capability
   }
@@ -24,13 +25,15 @@ export class CapabilityUnavailableError extends Error {
 
 export const HOST_METHODS = Object.freeze([
   'api', 'getConnection', 'getConnectionFor', 'getGatewayWsUrl',
-  'getGatewayWsUrlFor', 'revalidateConnection', 'touchBackend', 'getVersion'
+  'getGatewayWsUrlFor', 'revalidateConnection', 'touchBackend', 'getVersion',
+  'getBootProgress', 'getRecentLogs', 'getBootstrapState', 'resetBootstrap', 'revealLogs',
+  'watchPreviewFile', 'watchDirectory', 'stopPreviewFileWatch'
 ] as const)
 
 type Method = typeof HOST_METHODS[number]
 type UpstreamHost = Window['hermesDesktop']
 export type ImplementedHost = Pick<UpstreamHost,
-  Method | 'onBackendExit' | 'onConnectionApplied' | 'onBootProgress' | 'onPowerResume'>
+  Method | 'onBackendExit' | 'onConnectionApplied' | 'onBootProgress' | 'onPowerResume' | 'onPreviewFileChanged'>
 
 /** Explicit subset only. Missing methods remain missing, never synthetic successes. */
 export interface HostAdapter {
@@ -67,7 +70,16 @@ export function createHostAdapter(
     if (disposed || !transport) return Promise.reject(new CapabilityUnavailableError(method))
     // Freeze ownership at call time, before the transport can yield.
     const payload = structuredClone({ method, args })
-    return transport.invoke<T>('hermes_host_request', payload)
+    return transport.invoke<T>('hermes_host_request', payload).catch((error: unknown) => {
+      // Tauri serializes Rust errors. Convert only the expected, matching denial
+      // into an Error for retained UI catch paths. Do not stringify raw errors.
+      if (error && typeof error === 'object' && !(error instanceof Error)
+          && Object.getOwnPropertyDescriptor(error, 'code')?.value === 'HERMES_HOST_CAPABILITY_UNAVAILABLE'
+          && Object.getOwnPropertyDescriptor(error, 'capability')?.value === method) {
+        throw new CapabilityUnavailableError(method)
+      }
+      throw error
+    })
   }
 
   function subscribe(name: HostEvent['name'], callback: (payload: unknown) => void): () => void {
@@ -113,10 +125,19 @@ export function createHostAdapter(
     revalidateConnection: () => request('revalidateConnection', []),
     touchBackend: (profile, options) => request('touchBackend', [profile, options]),
     getVersion: scope => request('getVersion', [scope]),
+    getBootProgress: () => request('getBootProgress', []),
+    getRecentLogs: () => request('getRecentLogs', []),
+    getBootstrapState: () => request('getBootstrapState', []),
+    resetBootstrap: () => request('resetBootstrap', []),
+    revealLogs: () => request('revealLogs', []),
+    watchPreviewFile: url => request('watchPreviewFile', [url]),
+    watchDirectory: path => request('watchDirectory', [path]),
+    stopPreviewFileWatch: id => request('stopPreviewFileWatch', [id]),
     onBackendExit: callback => subscribe('backend-exit', callback as (payload: unknown) => void),
     onConnectionApplied: callback => subscribe('connection-applied', callback),
     onBootProgress: callback => subscribe('boot-progress', callback as (payload: unknown) => void),
-    onPowerResume: callback => subscribe('power-resume', callback)
+    onPowerResume: callback => subscribe('power-resume', callback),
+    onPreviewFileChanged: callback => subscribe('preview-file-changed', callback as (payload: unknown) => void)
   }
 
   return {

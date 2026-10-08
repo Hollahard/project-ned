@@ -19,6 +19,10 @@ const config = {
     paths: {
       ...Object.fromEntries(Object.entries(upstreamTsConfig.compilerOptions.paths).map(([key, values]) => [key, values.map(value => path.resolve(upstream.desktop, value))])),
       '@hermes/upstream-global': [path.join(upstream.desktop, 'src/global.d.ts')],
+      '@hermes-native/plugin-context': [path.join(upstream.desktop, 'src/contrib/plugin.ts')],
+      '@hermes-native/plugin-inventory': [path.join(upstream.desktop, 'src/contrib/plugins-store.ts')],
+      'react': [path.join(upstream.desktop, 'node_modules/@types/react/index.d.ts')],
+      'react/jsx-runtime': [path.join(upstream.desktop, 'node_modules/@types/react/jsx-runtime.d.ts')],
       '@/*': [path.join(upstream.desktop, 'src/*')],
       '@hermes/shared': [path.join(upstream.root, 'apps/shared/src/index.ts')],
       '@hermes/shared/*': [path.join(upstream.root, 'apps/shared/src/*')]

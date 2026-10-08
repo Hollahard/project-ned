@@ -51,7 +51,22 @@ def main():
     fixtures = Path(__file__).resolve().parents[1] / "fixtures"
     inputs += [
         (Path(name), fixtures / name)
-        for name in ("binding-proof.html", "binding-proof.js")
+        for name in (
+            "binding-proof.html",
+            "binding-proof.js",
+            "preview-proof.html",
+            "preview-proof-entry.js",
+            "preview-watch-proof.js",
+            "preview-observer.html",
+            "preview-observer.js",
+            "preview-reload-proof.html",
+            "preview-reload-proof.js",
+            "control-create-proof.html",
+            "control-reopen-proof.html",
+            "control-unavailable-proof.html",
+            "control-proof.js",
+            "control-expected.json",
+        )
     ]
     hashes = {}
     output.mkdir(parents=True)

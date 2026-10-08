@@ -1,0 +1,281 @@
+{
+  "verified_at_utc": "2026-10-08T17:37:58.681256+00:00",
+  "modes": {
+    "binding": {
+      "checks": [
+        "native-injection-before-entry",
+        "honest-unavailable:api",
+        "honest-unavailable:getConnection",
+        "honest-unavailable:getConnectionFor",
+        "honest-unavailable:getGatewayWsUrl",
+        "honest-unavailable:getGatewayWsUrlFor",
+        "honest-unavailable:revalidateConnection",
+        "honest-unavailable:touchBackend",
+        "honest-unavailable:getVersion",
+        "honest-unavailable:getBootProgress",
+        "honest-unavailable:getRecentLogs",
+        "honest-unavailable:getBootstrapState",
+        "honest-unavailable:resetBootstrap",
+        "honest-unavailable:revealLogs",
+        "native-unknown-method-rejected",
+        "window-create-acl-denied",
+        "event-emit-acl-denied",
+        "native-event-payload-delivered",
+        "native-event-unsubscribe"
+      ],
+      "control_cleanup": {
+        "report": null,
+        "verified": true
+      },
+      "control_worker_started": false,
+      "mode": "native-tauri-fixture",
+      "owned_job_empty_root_exit_pipe_eof_verified": true,
+      "seconds": 1.235,
+      "executable_sha256": "4c12259b375a50df9554baf3b7b3015ecabd365497af37a1189fcff8f09216ce",
+      "tauri_version": "2.12.1",
+      "hidden_window": true,
+      "retained_wrapper_runtime_observed": false,
+      "retained_ui_parity_verified": false,
+      "llm_inference_or_agent_backend_started": false
+    },
+    "retained": {
+      "checks": [
+        "retained-wrapper-evaluated",
+        "host-adapter-installed",
+        "retained-bootstrap-resolved",
+        "retained-root-mounted",
+        "retained-contrib-shell-mounted",
+        "retained-boot-failure-dialog",
+        "readable-backend-unavailable-message",
+        "react-crash-absent",
+        "uncaught-errors-absent",
+        "unhandled-rejections-absent",
+        "retained-state-stable"
+      ],
+      "control_cleanup": {
+        "report": null,
+        "verified": true
+      },
+      "control_worker_started": false,
+      "mode": "native-tauri-fixture",
+      "owned_job_empty_root_exit_pipe_eof_verified": true,
+      "seconds": 2.891,
+      "executable_sha256": "4c12259b375a50df9554baf3b7b3015ecabd365497af37a1189fcff8f09216ce",
+      "tauri_version": "2.12.1",
+      "hidden_window": true,
+      "retained_wrapper_runtime_observed": true,
+      "retained_ui_parity_verified": false,
+      "llm_inference_or_agent_backend_started": false
+    },
+    "preview": {
+      "checks": [
+        "preview-adversarial-any-listener-ready",
+        "preview-adversarial-any-listener-positive-control",
+        "preview-file-watch-real-receipt",
+        "preview-directory-watch-real-receipt",
+        "preview-registration-does-not-fabricate-change",
+        "preview-real-native-file-change-payload",
+        "preview-real-native-directory-change-payload",
+        "preview-native-stop-owned-watch",
+        "preview-native-stop-idempotent",
+        "preview-native-stop-directory",
+        "preview-stop-prevents-late-native-dispatch",
+        "preview-no-hidden-native-watch-faults",
+        "preview-native-events-do-not-reach-other-window-any-listener",
+        "preview-native-owner-retirement-permanent"
+      ],
+      "control_cleanup": {
+        "report": null,
+        "verified": true
+      },
+      "control_worker_started": false,
+      "mode": "native-tauri-fixture",
+      "owned_job_empty_root_exit_pipe_eof_verified": true,
+      "seconds": 2.375,
+      "executable_sha256": "4c12259b375a50df9554baf3b7b3015ecabd365497af37a1189fcff8f09216ce",
+      "tauri_version": "2.12.1",
+      "hidden_window": true,
+      "retained_wrapper_runtime_observed": false,
+      "retained_ui_parity_verified": false,
+      "llm_inference_or_agent_backend_started": false
+    },
+    "preview-reload": {
+      "checks": [
+        "preview-reload-real-file-event-before-navigation",
+        "preview-hash-navigation-preserves-owner",
+        "preview-hash-route-still-receives-real-changes",
+        "preview-document-reload-retires-same-native-owner",
+        "preview-reloaded-document-cannot-reuse-old-native-owner",
+        "preview-new-document-rejects-old-native-queued-envelope"
+      ],
+      "control_cleanup": {
+        "report": null,
+        "verified": true
+      },
+      "control_worker_started": false,
+      "mode": "native-tauri-fixture",
+      "owned_job_empty_root_exit_pipe_eof_verified": true,
+      "seconds": 1.531,
+      "executable_sha256": "4c12259b375a50df9554baf3b7b3015ecabd365497af37a1189fcff8f09216ce",
+      "tauri_version": "2.12.1",
+      "hidden_window": true,
+      "retained_wrapper_runtime_observed": false,
+      "retained_ui_parity_verified": false,
+      "llm_inference_or_agent_backend_started": false
+    },
+    "control-unavailable": {
+      "checks": [
+        "control-native-transport-installed",
+        "control-unconfigured-status-unavailable",
+        "control-unconfigured-schema-unavailable",
+        "control-unconfigured-list-unavailable"
+      ],
+      "control_cleanup": {
+        "report": null,
+        "verified": true
+      },
+      "control_worker_started": false,
+      "mode": "native-tauri-fixture",
+      "owned_job_empty_root_exit_pipe_eof_verified": true,
+      "seconds": 0.359,
+      "executable_sha256": "4c12259b375a50df9554baf3b7b3015ecabd365497af37a1189fcff8f09216ce",
+      "tauri_version": "2.12.1",
+      "hidden_window": true,
+      "retained_wrapper_runtime_observed": false,
+      "retained_ui_parity_verified": false,
+      "llm_inference_or_agent_backend_started": false
+    },
+    "control-create": {
+      "checks": [
+        "control-native-transport-installed",
+        "control-owned-worker-truthfully-detached",
+        "control-owner-describe-not-renderer-operation",
+        "control-owner-shutdown-not-renderer-operation",
+        "control-model-loading-unavailable",
+        "control-real-worker-schema",
+        "control-real-worker-profile-normalization",
+        "control-invalid-profile-leaves-worker-usable",
+        "control-profile-created-through-native-command",
+        "control-created-profile-listed",
+        "control-optimistic-conflict-does-not-overwrite",
+        "control-saved-profile-remains-normalized",
+        "control-worker-healthy-after-profile-operations"
+      ],
+      "control_cleanup": {
+        "report": {
+          "cooperative": true,
+          "job_empty": true,
+          "root_exit_code": 0,
+          "stderr_eof": true,
+          "stdout_eof": true
+        },
+        "verified": true
+      },
+      "control_worker_started": true,
+      "mode": "native-tauri-fixture",
+      "owned_job_empty_root_exit_pipe_eof_verified": true,
+      "seconds": 0.5,
+      "executable_sha256": "4c12259b375a50df9554baf3b7b3015ecabd365497af37a1189fcff8f09216ce",
+      "tauri_version": "2.12.1",
+      "hidden_window": true,
+      "retained_wrapper_runtime_observed": false,
+      "retained_ui_parity_verified": false,
+      "llm_inference_or_agent_backend_started": false
+    },
+    "control-reopen": {
+      "checks": [
+        "control-native-transport-installed",
+        "control-owned-worker-truthfully-detached",
+        "control-owner-describe-not-renderer-operation",
+        "control-owner-shutdown-not-renderer-operation",
+        "control-model-loading-unavailable",
+        "control-profile-persists-across-native-shell-launch",
+        "control-reopened-profile-rejects-stale-delete",
+        "control-profile-update-advances-revision",
+        "control-updated-profile-is-normalized",
+        "control-profile-deleted-through-native-command",
+        "control-profile-list-empty-after-delete",
+        "control-deleted-profile-is-unavailable",
+        "control-worker-healthy-after-profile-operations"
+      ],
+      "control_cleanup": {
+        "report": {
+          "cooperative": true,
+          "job_empty": true,
+          "root_exit_code": 0,
+          "stderr_eof": true,
+          "stdout_eof": true
+        },
+        "verified": true
+      },
+      "control_worker_started": true,
+      "mode": "native-tauri-fixture",
+      "owned_job_empty_root_exit_pipe_eof_verified": true,
+      "seconds": 0.563,
+      "executable_sha256": "4c12259b375a50df9554baf3b7b3015ecabd365497af37a1189fcff8f09216ce",
+      "tauri_version": "2.12.1",
+      "hidden_window": true,
+      "retained_wrapper_runtime_observed": false,
+      "retained_ui_parity_verified": false,
+      "llm_inference_or_agent_backend_started": false
+    },
+    "profiles": {
+      "checks": [
+        "profiles-retained-bootstrap-resolved",
+        "profiles-retained-contribution-registered",
+        "profiles-truthful-backend-unavailable",
+        "profiles-real-boot-dialog-dismissed",
+        "profiles-native-runtime-detached",
+        "profiles-fresh-store-confirmed",
+        "profiles-retained-settings-route-mounted",
+        "profiles-control-service-connected",
+        "profiles-react-form-input-applied",
+        "profiles-form-validation-confirmed",
+        "profiles-form-create-confirmed",
+        "profiles-form-list-confirmed",
+        "profiles-form-read-confirmed",
+        "profiles-form-update-confirmed",
+        "profiles-delete-requires-confirmation",
+        "profiles-form-delete-confirmed",
+        "profiles-fixture-record-cleaned",
+        "profiles-retained-state-stable",
+        "profiles-crud-complete",
+        "profiles-react-crash-absent",
+        "profiles-uncaught-errors-absent",
+        "profiles-unhandled-rejections-absent"
+      ],
+      "control_cleanup": {
+        "report": {
+          "cooperative": true,
+          "job_empty": true,
+          "root_exit_code": 0,
+          "stderr_eof": true,
+          "stdout_eof": true
+        },
+        "verified": true
+      },
+      "control_worker_started": true,
+      "mode": "native-tauri-fixture",
+      "owned_job_empty_root_exit_pipe_eof_verified": true,
+      "seconds": 4.719,
+      "executable_sha256": "4c12259b375a50df9554baf3b7b3015ecabd365497af37a1189fcff8f09216ce",
+      "tauri_version": "2.12.1",
+      "hidden_window": true,
+      "retained_wrapper_runtime_observed": true,
+      "retained_ui_parity_verified": false,
+      "llm_inference_or_agent_backend_started": false
+    }
+  },
+  "native_assertions": 102,
+  "component_tests": 379,
+  "shell_tests": {
+    "rust": 7,
+    "transport": 11,
+    "asset_packaging": 2
+  },
+  "foundation_groups": 36,
+  "packaged_assets": 1085,
+  "ui_parity_verified": false,
+  "hermes_backend_attached": false,
+  "inference_runtime_attached": false
+}

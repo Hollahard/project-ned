@@ -10,6 +10,14 @@ pub const METHODS: &[&str] = &[
     "revalidateConnection",
     "touchBackend",
     "getVersion",
+    "getBootProgress",
+    "getRecentLogs",
+    "getBootstrapState",
+    "resetBootstrap",
+    "revealLogs",
+    "watchPreviewFile",
+    "watchDirectory",
+    "stopPreviewFileWatch",
 ];
 
 #[derive(Debug, Serialize, PartialEq, Eq)]
@@ -26,7 +34,7 @@ pub fn local_origin(url: &tauri::Url) -> bool {
             || (url.scheme() == "tauri" && url.host_str() == Some("localhost")))
 }
 
-pub fn request(method: &str, args: &[Value]) -> Result<Value, HostError> {
+pub fn validate_request(method: &str, args: &[Value]) -> Result<(), HostError> {
     if !METHODS.contains(&method)
         || args.len() > 2
         || serde_json::to_vec(args).map_or(true, |bytes| bytes.len() > 65536)
@@ -36,6 +44,11 @@ pub fn request(method: &str, args: &[Value]) -> Result<Value, HostError> {
             capability: "host-request".into(),
         });
     }
+    Ok(())
+}
+
+pub fn request(method: &str, args: &[Value]) -> Result<Value, HostError> {
+    validate_request(method, args)?;
     // No runtime owner or source route exists yet. Never fabricate connection,
     // model state, version provenance or successful API responses.
     Err(HostError {

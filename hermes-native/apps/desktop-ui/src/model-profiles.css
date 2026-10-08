@@ -1,0 +1,20 @@
+.native-model-profiles { color: var(--ui-text-primary, inherit); max-width: 960px; padding: 16px; }
+.native-model-profiles h2 { font-size: 1.15rem; font-weight: 600; margin-bottom: 6px; }
+.native-model-profiles p { margin: 8px 0 16px; color: var(--ui-text-secondary, inherit); }
+.native-model-profiles [role="status"], .native-model-profiles [role="alert"] { padding: 10px; border: 1px solid var(--stroke-nous, #8886); border-radius: 6px; margin: 12px 0; }
+.native-model-profiles [role="alert"] { border-color: #b65646; }
+.native-model-layout { display: grid; grid-template-columns: minmax(150px, 1fr) minmax(280px, 3fr); gap: 24px; }
+.native-model-profiles fieldset { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; border: 1px solid var(--stroke-nous, #8886); padding: 12px; border-radius: 6px; margin: 0 0 18px; }
+.native-model-profiles legend { padding: 0 6px; font-weight: 600; }
+.native-model-profiles label { display: flex; flex-direction: column; gap: 5px; font-size: 13px; }
+.native-model-profiles input:not([type="checkbox"]), .native-model-profiles select { min-width: 0; width: 100%; padding: 7px; border: 1px solid var(--stroke-nous, #8886); border-radius: 4px; color: inherit; background: var(--ui-input-background, transparent); }
+.native-model-profiles button { border: 1px solid var(--stroke-nous, #8886); border-radius: 5px; padding: 7px 10px; cursor: pointer; color: inherit; background: var(--ui-chat-bubble-background, transparent); }
+.native-model-profiles button:disabled { opacity: .5; cursor: default; }
+.native-model-profiles button[aria-current="true"] { outline: 2px solid var(--ui-accent, #6f91f4); }
+.native-model-profiles :focus-visible { outline: 2px solid var(--ui-accent, #6f91f4); outline-offset: 2px; }
+.native-model-profiles nav > button { margin: 0 5px 10px 0; }
+.native-model-profiles li { margin: 6px 0; }
+.native-model-profiles li button { width: 100%; text-align: left; overflow-wrap: anywhere; }
+.native-model-profiles .native-model-checkbox { flex-direction: row; align-items: center; grid-column: 1 / -1; }
+.native-model-actions { display: flex; flex-wrap: wrap; gap: 8px; }
+@media (max-width: 700px) { .native-model-layout { grid-template-columns: 1fr; } .native-model-profiles fieldset { grid-template-columns: 1fr; } }

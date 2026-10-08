@@ -1197,13 +1197,42 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "2304e00983f87ffb38b55b444b5e3b60a884b5d30c0fca7d82fe33449bbe55ea"
 
 [[package]]
+name = "hermes-control-host"
+version = "0.1.0"
+dependencies = [
+ "hermes-resource-host",
+ "serde",
+ "serde_json",
+ "sha2",
+ "windows-sys 0.59.0",
+]
+
+[[package]]
 name = "hermes-native-shell"
 version = "0.1.0"
 dependencies = [
+ "hermes-control-host",
+ "hermes-preview-watch",
  "serde",
  "serde_json",
  "tauri",
  "tauri-build",
+]
+
+[[package]]
+name = "hermes-preview-watch"
+version = "0.1.0"
+dependencies = [
+ "serde",
+ "url",
+ "windows-sys 0.59.0",
+]
+
+[[package]]
+name = "hermes-resource-host"
+version = "0.1.0"
+dependencies = [
+ "windows-sys 0.59.0",
 ]
 
 [[package]]

@@ -3,8 +3,118 @@ use std::path::PathBuf;
 use std::time::Duration;
 
 fn main() -> Result<(), Box<dyn std::error::Error>> {
+    use std::io::{Read, Write};
     let mut arguments = std::env::args().skip(1);
     match arguments.next().as_deref() {
+        Some("framed-echo") => {
+            use std::io::BufRead;
+            std::io::stdout().write_all(b"{\"type\":\"ready\"}\n")?;
+            std::io::stdout().flush()?;
+            let mut reader = std::io::stdin().lock();
+            let mut frame = Vec::new();
+            while reader.read_until(b'\n', &mut frame)? != 0 {
+                if frame == b"shutdown\n" {
+                    std::io::stdout().write_all(b"{\"stopped\":true}\n")?;
+                    std::io::stdout().flush()?;
+                    break;
+                }
+                std::io::stdout().write_all(&frame)?;
+                std::io::stdout().flush()?;
+                frame.clear();
+            }
+        }
+        Some("framed-no-read") => {
+            std::io::stdout().write_all(b"{\"type\":\"ready\"}\n")?;
+            std::io::stdout().flush()?;
+            loop {
+                std::thread::sleep(Duration::from_secs(1));
+            }
+        }
+        Some("framed-overflow") => {
+            std::io::stdout().write_all(b"{}\n{}\n{}\n{}\n{}\n{}\n{}\n{}\n{}\n")?;
+            std::io::stdout().flush()?;
+            loop {
+                std::thread::sleep(Duration::from_secs(1));
+            }
+        }
+        Some("framed-long") => {
+            std::io::stdout().write_all(&[b'x'; 65_536])?;
+        }
+        Some("framed-invalid") => {
+            std::io::stdout().write_all(b"\xff\n")?;
+        }
+        Some("framed-partial") => {
+            std::io::stdout().write_all(b"{\"partial\":")?;
+        }
+        Some("ready") => {
+            assert_eq!(std::io::stdin().read(&mut [0u8; 1])?, 0);
+            println!("HERMES_BACKEND_READY port=31415");
+            std::io::stdout().flush()?;
+            loop {
+                std::thread::sleep(Duration::from_secs(1));
+            }
+        }
+        #[cfg(windows)]
+        Some("inheritance") => {
+            use windows_sys::Win32::System::Threading::SetEvent;
+            let handle: usize = arguments.next().ok_or("missing probe handle")?.parse()?;
+            let inherited = unsafe { SetEvent(handle as *mut std::ffi::c_void) } != 0;
+            println!("inherited={inherited}");
+            println!("HERMES_BACKEND_READY port=31415");
+            std::io::stdout().flush()?;
+            loop {
+                std::thread::sleep(Duration::from_secs(1));
+            }
+        }
+        Some("stderr-flood") => {
+            let bytes = [b'x'; 65_536];
+            for _ in 0..64 {
+                std::io::stderr().write_all(&bytes)?;
+            }
+            println!("HERMES_BACKEND_READY port=31415");
+            std::io::stdout().flush()?;
+            loop {
+                std::thread::sleep(Duration::from_secs(1));
+            }
+        }
+        Some("malformed") => {
+            println!("HERMES_BACKEND_READY port=31415 EXTRA");
+            std::io::stdout().flush()?;
+            loop {
+                std::thread::sleep(Duration::from_secs(1));
+            }
+        }
+        Some("conflict") => {
+            std::io::stdout()
+                .write_all(b"HERMES_BACKEND_READY port=31415\nHERMES_BACKEND_READY port=31416\n")?;
+            std::io::stdout().flush()?;
+            loop {
+                std::thread::sleep(Duration::from_secs(1));
+            }
+        }
+        Some("long-line") => {
+            std::io::stdout().write_all(&[b'x'; 65_536])?;
+            std::io::stdout().flush()?;
+            loop {
+                std::thread::sleep(Duration::from_secs(1));
+            }
+        }
+        Some("early-exit") => {
+            print!("HERMES_BACKEND_READY port=31415");
+        }
+        Some("descendant-output") => {
+            let destination = PathBuf::from(arguments.next().ok_or("missing output")?);
+            let mut command = std::process::Command::new(std::env::current_exe()?);
+            command.arg("sleep");
+            #[cfg(windows)]
+            {
+                use std::os::windows::process::CommandExt;
+                command.creation_flags(0x08000000);
+            }
+            let child = command.spawn()?;
+            std::fs::write(destination, child.id().to_string())?;
+            println!("HERMES_BACKEND_READY port=31415");
+        }
         Some("dump") => {
             let destination = PathBuf::from(arguments.next().ok_or("missing output")?);
             let payload = serde_json::json!({

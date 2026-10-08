@@ -40,7 +40,11 @@ const config = mergeConfig(upstreamConfig, {
   cacheDir,
   logLevel: 'warn',
   plugins: [wrapperPlugin],
-  resolve: { alias: { '@hermes-native/retained-entry': path.join(before.desktop, 'src/main.tsx') } },
+  resolve: { alias: {
+    '@hermes-native/retained-entry': path.join(before.desktop, 'src/main.tsx'),
+    '@hermes-native/plugin-context': path.join(before.desktop, 'src/contrib/plugin.ts'),
+    '@hermes-native/plugin-inventory': path.join(before.desktop, 'src/contrib/plugins-store.ts')
+  } },
   build: { outDir, emptyOutDir: true, reportCompressedSize: false }
 })
 try {
@@ -59,7 +63,7 @@ const report = {
   overrides: ['bootstrap entry', 'output/cache directory', 'disable dotenv reads', 'quiet build logging'],
   upstreamInputsUnchanged: true,
   runtimeStarted: false,
-  nativeHostBinding: 'pending',
+  nativeHostBinding: 'not exercised by this bundle command; verify sibling desktop-shell',
   visualParity: 'not tested',
   modelOrGpuOperation: false
 }

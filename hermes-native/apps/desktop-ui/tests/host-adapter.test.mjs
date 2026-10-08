@@ -95,6 +95,49 @@ test('declared methods route explicitly and propagate native errors', async () =
   await assert.rejects(denied.bridge.getConnection(), error => error === nativeError)
 })
 
+test('startup and recovery methods reject asynchronously with readable native denials', async () => {
+  const f = fixture()
+  const adapter = createHostAdapter({ ...f.transport, invoke: async (_, { method }) => {
+    throw { code: 'HERMES_HOST_CAPABILITY_UNAVAILABLE', capability: method, message: 'ignored raw text' }
+  } })
+  for (const method of ['getConnection', 'getBootProgress', 'getRecentLogs', 'getBootstrapState', 'resetBootstrap', 'revealLogs']) {
+    const pending = adapter.bridge[method]()
+    assert.ok(pending instanceof Promise)
+    await assert.rejects(pending, error => error instanceof CapabilityUnavailableError
+      && error.capability === method && error.message.includes('Managed backend integration is pending.')
+      && !error.message.includes('ignored raw text'))
+  }
+})
+
+test('foreign native errors retain identity without reading error getters', async () => {
+  const f = fixture()
+  const errors = [
+    { code: 'HERMES_HOST_CAPABILITY_UNAVAILABLE', capability: 'another-method' },
+    { get code() { throw new Error('must not read getter') } },
+    'transport failure', null
+  ]
+  for (const failure of errors) {
+    const adapter = createHostAdapter({ ...f.transport, invoke: async () => { throw failure } })
+    await assert.rejects(adapter.bridge.getConnection(), error => error === failure)
+  }
+})
+
+test('preview subscription receives only preview events and unregisters cleanly', async () => {
+  const f = fixture()
+  const adapter = createHostAdapter(f.transport)
+  const received = []
+  const off = adapter.bridge.onPreviewFileChanged(event => received.push(event))
+  await adapter.eventSubscriptionReady()
+  const payload = { id: 'owned-watch', path: 'C:/fixture/file.txt', url: 'file:///C:/fixture/file.txt' }
+  f.emit({ name: 'preview-file-changed', payload })
+  f.emit({ name: 'backend-exit', payload: {} })
+  off()
+  f.emit({ name: 'preview-file-changed', payload })
+  assert.deepEqual(received, [payload])
+  adapter.dispose()
+  assert.equal(f.offCalls(), 1)
+})
+
 test('event unsubscribe is scoped and disposal removes native subscription once', async () => {
   const f = fixture()
   const adapter = createHostAdapter(f.transport)

@@ -1,21 +1,116 @@
 {
   "schemaVersion": 1,
   "upstreamRevision": "649d6c0391029f35959cfbc240eb3534a6667cf5",
-  "status": "renderer-adapter-feasibility",
-  "nativeBinding": "pending",
+  "status": "retained-bootstrap-with-detached-profile-settings",
+  "nativeBinding": "partial-tauri-2",
   "transport": {
     "command": "hermes_host_request",
-    "request": "{ method, args }",
+    "request": "{ method, args, documentId }",
     "eventChannel": "hermes:host:event",
-    "event": "{ name, payload }"
+    "event": "{ name, payload }",
+    "previewDelivery": "exact owning WebView and document; preview payloads are excluded from the application-wide event bus"
   },
-  "adapterMethods": ["api", "getConnection", "getConnectionFor", "getGatewayWsUrl", "getGatewayWsUrlFor", "revalidateConnection", "touchBackend", "getVersion"],
-  "adapterEvents": ["backend-exit", "connection-applied", "boot-progress", "power-resume"],
-  "unimplementedFamilies": [
-    "native guest browser and partitions", "ConPTY and terminal", "filesystem and Git",
-    "profile and connection persistence", "credentials and OAuth", "windows and overlays",
-    "notifications and clipboard and capture", "themes", "install and update and recovery",
-    "runtime and inference control", "remaining Hermes native bridge"
+  "adapterMethods": [
+    "api",
+    "getConnection",
+    "getConnectionFor",
+    "getGatewayWsUrl",
+    "getGatewayWsUrlFor",
+    "revalidateConnection",
+    "touchBackend",
+    "getVersion",
+    "getBootProgress",
+    "getRecentLogs",
+    "getBootstrapState",
+    "resetBootstrap",
+    "revealLogs",
+    "watchPreviewFile",
+    "watchDirectory",
+    "stopPreviewFileWatch"
   ],
-  "proofLimits": ["bundle compilation only", "no live Tauri binding", "no visual parity proof", "no running model or backend"]
+  "adapterEvents": [
+    "backend-exit",
+    "connection-applied",
+    "boot-progress",
+    "power-resume",
+    "preview-file-changed"
+  ],
+  "nativePreview": {
+    "methods": [
+      "watchPreviewFile",
+      "watchDirectory",
+      "stopPreviewFileWatch"
+    ],
+    "producer": "real Rust filesystem watcher",
+    "grants": "native-selected roots only; default shell has no grants; fixtures use private fresh roots",
+    "lifecycle": "exact native-window/document ownership; hash routing preserved; full-document replacement retired",
+    "internalDiagnosticEvent": "preview-watch-failed"
+  },
+  "unavailableHostMethods": [
+    "api",
+    "getConnection",
+    "getConnectionFor",
+    "getGatewayWsUrl",
+    "getGatewayWsUrlFor",
+    "revalidateConnection",
+    "touchBackend",
+    "getVersion",
+    "getBootProgress",
+    "getRecentLogs",
+    "getBootstrapState",
+    "resetBootstrap",
+    "revealLogs"
+  ],
+  "controlService": {
+    "command": "hermes_control_request",
+    "request": "{ operation, payload }",
+    "operations": [
+      "runtime.status",
+      "profiles.schema",
+      "profiles.validate",
+      "profiles.list",
+      "profiles.get",
+      "profiles.save",
+      "profiles.delete"
+    ],
+    "owner": "Rust private Windows Job and bounded stdio; permit acquired before scheduling",
+    "configuration": "host-selected HERMES_NATIVE_CONTROL_CONFIG; renderer cannot choose executable/source/state/environment",
+    "readiness": "hermes-control-v1 / hermes-control-worker",
+    "runtimeState": "detached",
+    "persistence": "separate owned SQLite settings store with optimistic revisions and atomic schema creation",
+    "validation": "existing hermes_inference.LoadProfile schema only",
+    "rendererContribution": "native-model-profiles:profiles",
+    "nativeProfileUiVerification": "passed-hidden-WebView2-22-checks"
+  },
+  "verifiedScope": [
+    "retained root/contribution shell mounted with actual backend-unavailable recovery dialog",
+    "real native preview event producer and owner/document lifetime checks",
+    "retained settings registry/route/component integration with real Python worker persistence",
+    "actual retained settings form CRUD through Tauri and SQLite with 22 reviewed checks",
+    "native control unavailable/create/reopen modes and persistence across shell launches",
+    "standalone Rust-owned CPU worker protocol and process cleanup"
+  ],
+  "unimplementedFamilies": [
+    "Hermes backend startup, JSON-RPC and source routing",
+    "native guest browser and partitions",
+    "ConPTY and terminal",
+    "general filesystem and Git",
+    "Hermes profile and connection persistence",
+    "credentials and OAuth",
+    "additional windows, overlays, HUD and pets",
+    "notifications, clipboard and capture",
+    "themes",
+    "install, update and recovery",
+    "model/runtime launch, artifact validation and inference",
+    "vector memory, model benchmarks and Gaming Mode VRAM evacuation",
+    "remaining Hermes native bridge and production packaging"
+  ],
+  "proofLimits": [
+    "partial host compatibility only",
+    "no visual or accessibility/focus parity proof",
+    "no running Hermes backend or model",
+    "schema validation is not artifact, quantization or VRAM verification",
+    "process cleanup is not proof of VRAM release",
+    "launch-time source hashes are not an operating-system sandbox or full Python runtime attestation"
+  ]
 }

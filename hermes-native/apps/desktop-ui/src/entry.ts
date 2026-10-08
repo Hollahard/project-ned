@@ -1,4 +1,4 @@
-import { bootstrapRetainedRenderer } from './bootstrap.ts'
+import { bootstrapRetainedRenderer, type BootstrapTarget } from './bootstrap.ts'
 
 const notice = document.createElement('aside')
 notice.id = 'hermes-native-feasibility-notice'
@@ -10,9 +10,17 @@ Object.assign(notice.style, {
 })
 document.body.appendChild(notice)
 
-void bootstrapRetainedRenderer(window, () => import('@hermes-native/retained-entry')).then(adapter => {
-  window.addEventListener('pagehide', () => adapter.dispose(), { once: true })
+void bootstrapRetainedRenderer(window, () => import('@hermes-native/retained-entry')).then(async adapter => {
+  try {
+  const { registerModelProfiles } = await import('./model-profiles-plugin.tsx')
+  const transport = (window as BootstrapTarget).__HERMES_NATIVE_TRANSPORT__
+  const unregister = registerModelProfiles(transport?.control ? { control: transport.control.bind(transport) } : undefined)
+  notice.dataset.bootstrap = 'resolved'
+  notice.dataset.modelProfiles = 'registered'
+  window.addEventListener('pagehide', () => { unregister(); adapter.dispose() }, { once: true })
+  } catch (error) { adapter.dispose(); throw error }
 }).catch(error => {
+  notice.dataset.bootstrap = 'stopped'
   notice.textContent = `Hermes native feasibility initialization stopped: ${error instanceof Error ? error.message : String(error)}`
   console.error('[hermes-native-feasibility]', error)
 })

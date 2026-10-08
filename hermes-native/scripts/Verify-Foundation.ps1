@@ -1,4 +1,9 @@
 #Requires -Version 7.0
+# CPU-only foundation checks. -NativeFixtures includes owned harmless processes,
+# filesystem watches and the retained settings UI integration (npm test:integration).
+# Desktop-shell asset packaging, full Tauri builds and its bounded native UI modes
+# remain separate: apps/desktop-shell/scripts/verify_native.py. GPU/model tests are
+# never selected by this script.
 param(
     [Parameter(Mandatory = $true)][string]$UpstreamRoot,
     [Parameter(Mandatory = $true)][string]$TabbySource,
@@ -17,8 +22,14 @@ $logs = Join-Path $nativeRoot '.checks'
 New-Item -ItemType Directory -Path $logs -Force | Out-Null
 $node = (Get-Command node -ErrorAction Stop).Source
 $cargo = (Get-Command cargo -ErrorAction Stop).Source
-$oldUpstream = [Environment]::GetEnvironmentVariable('HERMES_UPSTREAM_ROOT', 'Process')
-$oldTabbySource = [Environment]::GetEnvironmentVariable('HERMES_TABBY_SOURCE', 'Process')
+$savedEnvironment = @{}
+foreach ($name in @(
+    'HERMES_UPSTREAM_ROOT', 'HERMES_TABBY_SOURCE', 'HERMES_CONTROL_PYTHON',
+    'HERMES_CONTROL_WORKER_ROOT', 'HERMES_CONTROL_INFERENCE_SRC',
+    'HERMES_BASE_PYTHON', 'HERMES_INFERENCE_SRC', 'HERMES_NATIVE_DESKTOP'
+)) {
+    $savedEnvironment[$name] = [Environment]::GetEnvironmentVariable($name, 'Process')
+}
 $resolvedUpstream = (Resolve-Path -LiteralPath $UpstreamRoot).Path
 $resolvedTabby = (Resolve-Path -LiteralPath $TabbySource).Path
 $env:HERMES_UPSTREAM_ROOT = $resolvedUpstream
@@ -68,6 +79,26 @@ function New-TestDirectory {
 
 try {
     $ui = Join-Path $nativeRoot 'apps/desktop-ui'
+    $inference = Join-Path $nativeRoot 'services/inference'
+    $control = Join-Path $nativeRoot 'services/control-worker'
+    if ($NativeFixtures) {
+        # Windows venv executables redirect to a base interpreter. The owned host
+        # and UI fixtures must pin that actual interpreter, not an ambient override.
+        $baseOutput = @(& $python -I -S -B -c 'import json, sys; print(json.dumps({"path": sys._base_executable, "version": list(sys.version_info[:2])}))')
+        if ($LASTEXITCODE -ne 0 -or $baseOutput.Count -ne 1) { throw 'Unable to discover the active virtual environment base interpreter.' }
+        $baseInfo = $baseOutput[0] | ConvertFrom-Json
+        if ($baseInfo.version[0] -ne 3 -or $baseInfo.version[1] -lt 12 -or $baseInfo.version[1] -ge 14) {
+            throw 'Control fixtures require the active virtual environment to use Python 3.12 or 3.13.'
+        }
+        $basePython = (Resolve-Path -LiteralPath $baseInfo.path).Path
+        if (-not (Test-Path -LiteralPath $basePython -PathType Leaf)) { throw 'The base interpreter is not a file.' }
+        $env:HERMES_CONTROL_PYTHON = $basePython
+        $env:HERMES_BASE_PYTHON = $basePython
+        $env:HERMES_CONTROL_WORKER_ROOT = (Resolve-Path -LiteralPath $control).Path
+        $env:HERMES_CONTROL_INFERENCE_SRC = (Resolve-Path -LiteralPath (Join-Path $inference 'src')).Path
+        $env:HERMES_INFERENCE_SRC = $env:HERMES_CONTROL_INFERENCE_SRC
+        $env:HERMES_NATIVE_DESKTOP = (Resolve-Path -LiteralPath $ui).Path
+    }
     $uiTests = @(Get-ChildItem -LiteralPath (Join-Path $ui 'tests') -Filter '*.test.mjs' -File | ForEach-Object FullName)
     if ($uiTests.Count -eq 0) { throw 'No retained-renderer tests found.' }
     Invoke-Check -Name 'renderer-tests' -Command $node -ToolArguments (@('--test') + $uiTests)
@@ -75,7 +106,6 @@ try {
     Invoke-Check -Name 'renderer-typecheck' -Command $node -ToolArguments @((Join-Path $ui 'scripts/typecheck.mjs'))
     Invoke-Check -Name 'gateway-contracts' -Command $node -ToolArguments @((Join-Path $nativeRoot 'tests/gateway/run.mjs'), $env:HERMES_UPSTREAM_ROOT)
 
-    $inference = Join-Path $nativeRoot 'services/inference'
     Invoke-Check -Name 'inference-tests' -Command $python -ToolArguments @('-m', 'pytest', '-c', (Join-Path $inference 'pyproject.toml'), '-o', 'addopts=', (Join-Path $inference 'tests'), '-q')
     Invoke-Check -Name 'inference-lint' -Command $python -ToolArguments @('-m', 'ruff', 'check', (Join-Path $inference 'src'), (Join-Path $inference 'tests'), '--output-format', 'concise')
     Invoke-Check -Name 'inference-format' -Command $python -ToolArguments @('-m', 'ruff', 'format', '--check', (Join-Path $inference 'src'), (Join-Path $inference 'tests'))
@@ -88,6 +118,16 @@ try {
     Invoke-Check -Name 'managed-pack-format' -Command $python -ToolArguments (@('-m', 'ruff', 'format', '--check') + $authCode)
     Invoke-Check -Name 'managed-pack-config' -Command $python -ToolArguments @((Join-Path $auth 'config/validate_template.py'), '--schema', (Join-Path $resolvedTabby 'common/config_models.py'))
 
+    $controlCode = @('src', 'bootstrap.py', 'tests') | ForEach-Object { Join-Path $control $_ }
+    Invoke-Check -Name 'control-worker-lint' -Command $python -ToolArguments (@('-m', 'ruff', 'check') + $controlCode)
+    Invoke-Check -Name 'control-worker-format' -Command $python -ToolArguments (@('-m', 'ruff', 'format', '--check') + $controlCode)
+    if ($NativeFixtures) {
+        $controlTemp = New-TestDirectory -Label 'control-pytest'
+        Invoke-Check -Name 'control-worker-tests' -Command $python -ToolArguments @('-m', 'pytest', '-c', (Join-Path $control 'pyproject.toml'), '-o', 'addopts=', (Join-Path $control 'tests'), '--basetemp', $controlTemp, '-q')
+        # Invoke the exact npm test:integration entry point without an npm shell.
+        Invoke-Check -Name 'renderer-integration' -Command $node -ToolArguments @((Join-Path $ui 'tests/integration/run.mjs'))
+    }
+
     $backend = Join-Path $nativeRoot 'services/backend-host'
     Invoke-Check -Name 'backend-host-lint' -Command $python -ToolArguments @('-m', 'ruff', 'check', (Join-Path $backend 'src'), (Join-Path $backend 'tests'))
     Invoke-Check -Name 'backend-host-format' -Command $python -ToolArguments @('-m', 'ruff', 'format', '--check', (Join-Path $backend 'src'), (Join-Path $backend 'tests'))
@@ -96,16 +136,18 @@ try {
         Invoke-Check -Name 'backend-host-tests' -Command $python -ToolArguments @('-m', 'pytest', '-c', (Join-Path $backend 'pyproject.toml'), (Join-Path $backend 'tests'), '--basetemp', $backendTemp, '-q')
     }
 
-    foreach ($package in @('services/resource-host', 'services/terminal-host', 'spikes/webview2-guest')) {
+    foreach ($package in @('services/resource-host', 'services/preview-watch', 'services/control-host', 'services/terminal-host', 'spikes/webview2-guest')) {
         $manifest = Join-Path (Join-Path $nativeRoot $package) 'Cargo.toml'
         $label = Split-Path -Leaf $package
         Invoke-Check -Name "$label-format" -Command $cargo -ToolArguments @('fmt', '--manifest-path', $manifest, '--check')
         $lintArgs = @('clippy', '--offline', '--locked', '--manifest-path', $manifest, '--all-targets', '--quiet')
-        if ($label -eq 'resource-host') { $lintArgs += @('--features', 'test-fixture') }
+        # resource-host enables owned, captured and framed worker suites; control-host
+        # enables its synthetic peers and actual Python worker tests with the env above.
+        if ($label -in @('resource-host', 'control-host')) { $lintArgs += @('--features', 'test-fixture') }
         Invoke-Check -Name "$label-lint" -Command $cargo -ToolArguments ($lintArgs + @('--', '-D', 'warnings'))
         if ($NativeFixtures) {
             $testArgs = @('test', '--offline', '--locked', '--manifest-path', $manifest, '--quiet')
-            if ($label -eq 'resource-host') { $testArgs += @('--features', 'test-fixture') }
+            if ($label -in @('resource-host', 'control-host')) { $testArgs += @('--features', 'test-fixture') }
             Invoke-Check -Name "$label-tests" -Command $cargo -ToolArguments ($testArgs + @('--', '--test-threads=1'))
         }
     }
@@ -121,8 +163,11 @@ try {
     $completed = $true
 }
 finally {
-    [Environment]::SetEnvironmentVariable('HERMES_UPSTREAM_ROOT', $oldUpstream, 'Process')
-    [Environment]::SetEnvironmentVariable('HERMES_TABBY_SOURCE', $oldTabbySource, 'Process')
+    foreach ($name in $savedEnvironment.Keys) {
+        # Preserve the difference between absent and empty on PowerShell 7.5+/.NET 9.
+        $value = if ($null -eq $savedEnvironment[$name]) { [NullString]::Value } else { $savedEnvironment[$name] }
+        [Environment]::SetEnvironmentVariable($name, $value, 'Process')
+    }
     [ordered]@{
         generated_at_utc = [DateTime]::UtcNow.ToString('o')
         completed = $completed
@@ -130,6 +175,7 @@ finally {
         renderer_build_requested = [bool]$BuildRenderer
         native_fixtures_requested = [bool]$NativeFixtures
         gpu_tests_requested = $false
+        separate_runners = @('desktop-shell-assets', 'desktop-shell-build', 'desktop-shell-native-ui')
         skipped_optional_groups = @(
             if (-not $BuildRenderer) { 'renderer-build' }
             if (-not $NativeFixtures) { 'native-fixtures' }
