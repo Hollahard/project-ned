@@ -21,7 +21,7 @@ The retained renderer now mounts in the Tauri shell and shows a genuine backend-
 
 The actual retained settings form passed 22 native checks covering navigation, validation and CRUD with confirmed deletion. Separate native checks verified unavailable behavior and persistence across shell launches. Configured workers and their outer fixture Jobs verified process/pipe cleanup. The source guard still reports 2,986 unchanged retained inputs and 110 pinned direct dependencies.
 
-Hermes agent startup, chat/tools, integrated inference, browser/terminal parity, vector memory, Gaming Mode and installer packaging remain open. The earlier EXL3 GPU smoke test is a separate recorded observation, not a connection between the new settings UI and a running model. Hidden DOM checks and source reuse do not prove full visual or behavioral parity.
+Hermes agent startup, chat/tools, integrated inference, browser/terminal parity, vector memory, Gaming Mode and installer packaging remain open. The Mistral and Qwen3 EXL3 GPU smoke tests are separate recorded observations, not connections between the new settings UI and a running model. Hidden DOM checks and source reuse do not prove full visual or behavioral parity.
 
 ## Document map
 
@@ -39,6 +39,7 @@ Hermes agent startup, chat/tools, integrated inference, browser/terminal parity,
 | [NATIVE-PROFILES-CHECKPOINT.md](./NATIVE-PROFILES-CHECKPOINT.md) | Integrated preview, retained bootstrap and Rust-owned CPU profile settings evidence |
 | [OWNED-BACKEND-CHECKPOINT.md](./OWNED-BACKEND-CHECKPOINT.md) | Rust-owned retained HTTP diagnostic, socket ownership before authentication and failure-cleanup evidence |
 | [MODEL-CATALOG-CHECKPOINT.md](./MODEL-CATALOG-CHECKPOINT.md) | Bounded read-only artifact metadata/header inspection, partial reports and actual model observations |
+| [QWEN3-RUNTIME-CHECKPOINT.md](./QWEN3-RUNTIME-CHECKPOINT.md) | Second opt-in EXL3 model load/generation/unload and measured owned cleanup |
 | [baseline-inventory.json](./baseline-inventory.json) | Static baseline of 252 RPC methods, 13 server requests, 77 notifications and 259 literal preload channels |
 | [contracts/gateway-baseline.openrpc.json](./contracts/gateway-baseline.openrpc.json) | Complete pinned method/request/event schemas; upstream license beside them |
 | [source-manifest.json](./source-manifest.json) | Hashes of inspected source evidence |

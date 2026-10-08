@@ -315,7 +315,7 @@ async def exercise(root, receipt, process, port, api_key, admin_key, evidence):
         transport=OwnedTransport(process, port),
     )
     profile = LoadProfile(
-        artifact_id="local-mistral-proof",
+        artifact_id="local-exl3-proof",
         revision=receipt["model_revision_sha256"],
         model_name=Path(receipt["model"]).name,
         expected_model_path=receipt["model"],

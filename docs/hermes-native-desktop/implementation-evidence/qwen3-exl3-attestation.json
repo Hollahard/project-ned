@@ -1,0 +1,42 @@
+{
+  "created_at_utc": "2026-10-08T18:29:47.630352+00:00",
+  "upstream_commit": "2fd6cc76203a66e13042daf7d76e5898b21c1ad8",
+  "runtime_pack_id": "tabby-v3:2fd6cc76203a66e13042daf7d76e5898b21c1ad8:hermes-native-observation-v1",
+  "python_sha256": "3bcdba7ad853f00890f1b8d58c8d673c22c26e60d6e50a8cb580114cee097f79",
+  "venv_redirector_used": false,
+  "model_revision_sha256": "5f66d8020f889c1a623a93e78f2bb1864028a55cd3f6cfb7256724dd802577a0",
+  "model_required_sha256": {
+    "config.json": "6f37e683bd165a73f227f657744cd226752f9c2e07b551c16407963805092c00",
+    "generation_config.json": "19d306dd769db12a9d710b44cf7f83b635efbe5166b84fb4358a08fb7d88bb53",
+    "model-00001-of-00003.safetensors": "93992ae721f51f714db73de556bc2b378ada4899cead4cd8df932a2b7b9e9aad",
+    "model-00002-of-00003.safetensors": "404e67ca1fbd639e9f3cdece10ec793454079563fdbc94679a8e0d0d6b73c929",
+    "model-00003-of-00003.safetensors": "1a9a5639368626ea1cfb7bbc19b0d384a1c30983c278efff6861dde9f298f942",
+    "model.safetensors.index.json": "fdcaf94b18d8a1ef176c182e544ff9512476f1ee2c7228026d3922871c40bbfa",
+    "quantization_config.json": "d1041573df8c78c860a08bf017a041025f3cea3f6050d4ab196dac81a272d2fd",
+    "tokenizer.json": "aeb13307a71acd8fe81861d94ad54ab689df773318809eed3cbe794b4492dae4",
+    "tokenizer_config.json": "a5036bfb48523661f15d50c664e8dfc0e9b0b4c9a20eba3180782d52a1b94a8d"
+  },
+  "triton_toolchain": {
+    "compiler": "G:\\Project_Ned\\runtime\\tabbyAPI\\.venv\\Lib\\site-packages\\triton\\runtime\\tcc\\tcc.exe",
+    "cuda_path": "G:\\Project_Ned\\runtime\\tabbyAPI\\.venv\\Lib\\site-packages\\triton\\backends\\nvidia",
+    "files": {
+      "G:\\Project_Ned\\runtime\\tabbyAPI\\.venv\\Lib\\site-packages\\triton\\runtime\\tcc\\tcc.exe": "cdbe68b97d668ce977cb9f059504a841965ef01f20d16c734fb59640e3ab1961",
+      "G:\\Project_Ned\\runtime\\tabbyAPI\\.venv\\Lib\\site-packages\\triton\\backends\\nvidia\\bin\\ptxas.exe": "bb89f22b3afe5d63141c5d83838c7aff9df66171a02d3c501376c8d7904eae0b",
+      "G:\\Project_Ned\\runtime\\tabbyAPI\\.venv\\Lib\\site-packages\\triton\\backends\\nvidia\\include\\cuda.h": "756c5d0b68c4bf33d279419d5db479d63263abe80c1e476f8899f4b077215bf5",
+      "G:\\Project_Ned\\runtime\\tabbyAPI\\.venv\\Lib\\site-packages\\triton\\backends\\nvidia\\lib\\x64\\cuda.lib": "a55203daeb1b04d348200e002d2f2dc77d9b31edcff7dad76cffa4497ee14265"
+    }
+  },
+  "limitations": [
+    "Dependency environment is reused read-only, not fully hashed",
+    "Filesystem attestation does not enforce immutable weights"
+  ],
+  "proof_source_sha256": {
+    "bootstrap.py": "f994ee2af48fa8054060646a779e9b4b00f4a9b7f82d36c4bd7d9ec6d987e07c",
+    "inventory.py": "9a2b069751c41fb800703c3517e1dfd16265647193a00814729cee647ffaecac",
+    "prepare.py": "462f8ed96afe3428e62d8f8d10e66228361d124d9930ce72335000ba7a0b6539",
+    "run_live.py": "ba9913fbd0ed8c89110864065534cbdf3dcf71a35e890f7a04d3cb3f18c7834d"
+  },
+  "weight_payloads_fully_hashed_before_launch": true,
+  "post_run_weight_payloads_rehashed": false,
+  "metadata_inspection_fingerprint": "fc8f174222c988d84300281b14893f37dce011cd90b9261c08e8a4aa05d04b11"
+}
