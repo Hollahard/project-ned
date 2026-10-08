@@ -1,0 +1,100 @@
+{
+  "created_at_utc": "2026-10-08T20:38:07.999636+00:00",
+  "status": "unfinished_isolated_candidates_not_integrated",
+  "base_commit": "2ffddc6fe6085cfa57c41b5f651a353fc5215a3f",
+  "archive": "socket-candidates-20261008.zip",
+  "archive_sha256": "4456aad2639be93f67aaa18840c3e8e4152b2ab6eb9fd7210cdc55544c168a3e",
+  "files": [
+    {
+      "path": "hermes-native/apps/desktop-ui/scripts/typecheck.mjs",
+      "bytes": 2433,
+      "sha256": "d68011aec53992db0163f2473d571e762ef5ca6fdf85407f2cbbc368e8fc2d41",
+      "base_sha256": "69ad05b4ada479d7e6097022646ccf5a08a0fc09890ef1f847c5352b2b67d2c2",
+      "local_source": "G:\\Project_Ned\\.soak_workspace\\hermes-native-client-stage\\hermes-native\\apps\\desktop-ui\\scripts\\typecheck.mjs"
+    },
+    {
+      "path": "hermes-native/apps/desktop-ui/src/native-gateway-socket.ts",
+      "bytes": 18211,
+      "sha256": "104fc8c6168722cd7fb0527e02ab456275a487c4c90db3d24ccac757c765db34",
+      "base_sha256": null,
+      "local_source": "G:\\Project_Ned\\.soak_workspace\\hermes-native-client-stage\\hermes-native\\apps\\desktop-ui\\src\\native-gateway-socket.ts"
+    },
+    {
+      "path": "hermes-native/scripts/Verify-Foundation.ps1",
+      "bytes": 15293,
+      "sha256": "50c13008988d232279ee600b108b50da67ad6d8bcedaf065ce17e99fcc8b9230",
+      "base_sha256": "09c256f036c75253f71167d5f8219e71c6b2fc368b3e072949a8a2cb6550aef0",
+      "local_source": "G:\\Project_Ned\\.soak_workspace\\hermes-socket-checkpoint-stage\\Verify-Foundation.ps1"
+    },
+    {
+      "path": "hermes-native/services/owned-ws/tests/input_progress.rs",
+      "bytes": 9849,
+      "sha256": "24c733666fc8225330e93ccd85dea9b03e22b616d602183b1cf36666918f5147",
+      "base_sha256": null,
+      "local_source": "G:\\Project_Ned\\.soak_workspace\\hermes-ws-progress-stage\\hermes-native\\services\\owned-ws\\tests\\input_progress.rs"
+    },
+    {
+      "path": "hermes-native/services/owned-ws/tests/test_vendor_integrity.py",
+      "bytes": 2996,
+      "sha256": "b1b542e7b1d68f42d6419c703a0c8dec6b40200f37122235ddf386865e55f204",
+      "base_sha256": null,
+      "local_source": "G:\\Project_Ned\\.soak_workspace\\hermes-ws-progress-stage\\hermes-native\\services\\owned-ws\\tests\\test_vendor_integrity.py"
+    },
+    {
+      "path": "hermes-native/services/owned-ws/vendor-patch-receipt.json",
+      "bytes": 8997,
+      "sha256": "516389ab46529031ef70dc6db6a039d23d8bec280cc8a189b23ebdce17aa3235",
+      "base_sha256": "e7bf19a9c586fc30355c6d104c94f7990c115d1236d9b58f8816515ae360a837",
+      "local_source": "G:\\Project_Ned\\.soak_workspace\\hermes-ws-progress-stage\\hermes-native\\services\\owned-ws\\vendor-patch-receipt.json"
+    },
+    {
+      "path": "hermes-native/services/owned-ws/vendor-progress-patch.json",
+      "bytes": 22211,
+      "sha256": "aedf801d1a660480e3a36f2529d8ded7ee0877a6ecbf6b701936d39d1bed434b",
+      "base_sha256": null,
+      "local_source": "G:\\Project_Ned\\.soak_workspace\\hermes-ws-progress-stage\\hermes-native\\services\\owned-ws\\vendor-progress-patch.json"
+    },
+    {
+      "path": "hermes-native/services/owned-ws/vendor-progress.diff",
+      "bytes": 10844,
+      "sha256": "c76d5f076b19b39b22a399ab015482a02f29fcab99633d30b91719355623c7f4",
+      "base_sha256": null,
+      "local_source": "G:\\Project_Ned\\.soak_workspace\\hermes-ws-progress-stage\\hermes-native\\services\\owned-ws\\vendor-progress.diff"
+    },
+    {
+      "path": "hermes-native/services/owned-ws/vendor/tungstenite/src/protocol/frame/mod.rs",
+      "bytes": 13396,
+      "sha256": "0ca5950198e0e12f4e696c87c311783bc61e3b7e8733c0f26fb23594de4c4d09",
+      "base_sha256": "e036c36262bfb8e3dad2249ceb24ff9147c294592104542562a5259651cee898",
+      "local_source": "G:\\Project_Ned\\.soak_workspace\\hermes-ws-progress-stage\\hermes-native\\services\\owned-ws\\vendor\\tungstenite\\src\\protocol\\frame\\mod.rs"
+    },
+    {
+      "path": "hermes-native/services/owned-ws/vendor/tungstenite/src/protocol/mod.rs",
+      "bytes": 37637,
+      "sha256": "0c8fee1820f482c59a7235c5e319774cc2a4b82061496a8b6c11b7ce8363d04b",
+      "base_sha256": "61b6b0f1ec257d51921caaaa5f7c6d770f747091366b31135ff24010095b4c97",
+      "local_source": "G:\\Project_Ned\\.soak_workspace\\hermes-ws-progress-stage\\hermes-native\\services\\owned-ws\\vendor\\tungstenite\\src\\protocol\\mod.rs"
+    },
+    {
+      "path": "hermes-native/services/owned-ws/vendor/tungstenite/src/protocol/progress.rs",
+      "bytes": 3645,
+      "sha256": "2793af71d5b0b21e5bac750516be9f7204f00bc0f1185f1b3960a8469d8d9009",
+      "base_sha256": null,
+      "local_source": "G:\\Project_Ned\\.soak_workspace\\hermes-ws-progress-stage\\hermes-native\\services\\owned-ws\\vendor\\tungstenite\\src\\protocol\\progress.rs"
+    },
+    {
+      "path": "hermes-native/services/owned-ws/verify_vendor.py",
+      "bytes": 8706,
+      "sha256": "bba3dde07e58f5a5f4c3771778ec884b264644bd3ed986dd2845ca19957db5e2",
+      "base_sha256": "1c5fc7391ad18691e1738413fa61729ef3942ed8591604fd9f23e5032ac8b85c",
+      "local_source": "G:\\Project_Ned\\.soak_workspace\\hermes-ws-progress-stage\\hermes-native\\services\\owned-ws\\verify_vendor.py"
+    }
+  ],
+  "verified_at_checkpoint": {
+    "parser_in_memory_tests": 8,
+    "vendor_tamper_tests": 8,
+    "vendor_reconstruction_files": 28,
+    "adapter_typecheck": "FAILED TS2367 at native-gateway-socket.ts:152",
+    "foundation_candidate_powershell_parse": "passed"
+  }
+}

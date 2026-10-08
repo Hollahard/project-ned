@@ -1,5 +1,7 @@
 # Hermes Native Desktop engineering specification
 
+**Latest resume point:** [8 October afternoon checkpoint](RESUME-CHECKPOINT-20261008.md). Unfinished parser/client candidates are archived with exact hashes; the integrated application remains at the prior passing implementation.
+
 **Start with [the complete architecture and roadmap](./ARCHITECTURE.md).** For the latest transport boundary, read [the owned WebSocket checkpoint](./OWNED-WEBSOCKET-CHECKPOINT.md). For current UI implementation progress, read [the native catalog checkpoint](./NATIVE-CATALOG-CHECKPOINT.md), [the model catalog checkpoint](./MODEL-CATALOG-CHECKPOINT.md), [the owned backend checkpoint](./OWNED-BACKEND-CHECKPOINT.md), [the native profiles checkpoint](./NATIVE-PROFILES-CHECKPOINT.md) and [the implementation overview](../../hermes-native/README.md).
 
 The original specification was prepared on 7 October 2026 from installed official Hermes source at `649d6c0391029f35959cfbc240eb3534a6667cf5`, with official Hermes, TabbyAPI, ExLlama, Tauri and database references. The separate `hermes-webui` installation is identified but is not the official desktop baseline.
@@ -19,7 +21,7 @@ The selected TabbyAPI baseline rejects V2, so the proposed V3/V2 runtime-pack sp
 
 The retained renderer now mounts in the Tauri shell and shows a genuine backend-unavailable recovery dialog. Real preview watchers deliver changes to their owning native window/document. A separate Rust-owned CPU Python service persists local model settings with the reused inference schema, strict bounded IPC, optimistic revisions and atomic SQLite initialization.
 
-The actual retained settings form passed 29 native checks covering navigation, validation, CRUD with confirmed deletion and separate owned metadata inspection. The full native suite passed 142 assertions; the foundation runner passed 48 groups and 478 component tests. Separate native checks verified unavailable behavior and persistence across shell launches. Configured workers and their outer fixture Jobs verified process/pipe cleanup. The source guard still reports 2,986 unchanged retained inputs and 110 pinned direct dependencies.
+The actual retained settings form passed 29 native checks covering navigation, validation, CRUD with confirmed deletion and separate owned metadata inspection. The full native suite passed 142 assertions; the latest integrated foundation runner passed 52 groups and 489 component tests. Separate native checks verified unavailable behavior and persistence across shell launches. Configured workers and their outer fixture Jobs verified process/pipe cleanup. The source guard still reports 2,986 unchanged retained inputs and 110 pinned direct dependencies.
 
 Hermes agent startup, chat/tools, integrated inference, browser/terminal parity, vector memory, Gaming Mode and installer packaging remain open. The Mistral and Qwen3 EXL3 GPU smoke tests are separate recorded observations, not connections between the new settings UI and a running model. Hidden DOM checks and source reuse do not prove full visual or behavioral parity.
 
