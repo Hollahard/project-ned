@@ -1,0 +1,21 @@
+[package]
+name = "hermes-owned-http"
+version = "0.1.0"
+edition = "2021"
+rust-version = "1.82"
+publish = false
+description = "Bounded diagnostic HTTP tied to an owned Windows Job socket"
+
+[features]
+test-fixture = []
+
+[dependencies]
+hermes-resource-host = { path = "../resource-host" }
+
+[target.'cfg(windows)'.dependencies]
+windows-sys = { version = "=0.59.0", features = ["Win32_Foundation", "Win32_NetworkManagement_IpHelper", "Win32_Networking_WinSock"] }
+
+[[bin]]
+name = "owned-http-fixture"
+path = "tests/fixtures/server.rs"
+required-features = ["test-fixture"]

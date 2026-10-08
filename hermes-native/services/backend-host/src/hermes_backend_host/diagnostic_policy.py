@@ -7,6 +7,22 @@ import sys
 from pathlib import Path
 from urllib.parse import unquote, urlsplit
 
+PATH_POLICY_VERSION = "resolved-drive-comparison-v2"
+
+
+def comparison_path(path: Path) -> Path:
+    """Compare resolved Windows drive paths in one namespace, without stripping it.
+
+    A verbatim executable can give CPython a verbatim base prefix while stdlib
+    module paths use ordinary DOS spelling. Add a prefix only after resolution;
+    never remove a prefix or alter significant trailing dots/spaces in a name.
+    This is a comparison representation, not a path used to launch a process.
+    """
+    resolved = path.resolve()
+    if os.name == "nt" and len(resolved.drive) == 2 and resolved.drive[1] == ":":
+        return Path("\\\\?\\" + str(resolved))
+    return resolved
+
 
 class PolicyViolation(RuntimeError):
     """A diagnostic operation exceeded its audited subset."""
@@ -48,7 +64,8 @@ class DiagnosticPolicy:
         }:
             self.deny("credential_file")
         roots = [self.state] if write else self.read_roots
-        if not any(p.is_relative_to(root) for root in roots):
+        comparable = comparison_path(p)
+        if not any(comparable.is_relative_to(comparison_path(root)) for root in roots):
             self.deny("write_outside_state" if write else "read_outside_roots")
 
     def check(self, event: str, args: tuple) -> None:

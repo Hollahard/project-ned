@@ -136,18 +136,19 @@ try {
         Invoke-Check -Name 'backend-host-tests' -Command $python -ToolArguments @('-m', 'pytest', '-c', (Join-Path $backend 'pyproject.toml'), (Join-Path $backend 'tests'), '--basetemp', $backendTemp, '-q')
     }
 
-    foreach ($package in @('services/resource-host', 'services/preview-watch', 'services/control-host', 'services/terminal-host', 'spikes/webview2-guest')) {
+    foreach ($package in @('services/resource-host', 'services/preview-watch', 'services/control-host', 'services/owned-http', 'services/terminal-host', 'spikes/webview2-guest')) {
         $manifest = Join-Path (Join-Path $nativeRoot $package) 'Cargo.toml'
         $label = Split-Path -Leaf $package
         Invoke-Check -Name "$label-format" -Command $cargo -ToolArguments @('fmt', '--manifest-path', $manifest, '--check')
         $lintArgs = @('clippy', '--offline', '--locked', '--manifest-path', $manifest, '--all-targets', '--quiet')
         # resource-host enables owned, captured and framed worker suites; control-host
         # enables its synthetic peers and actual Python worker tests with the env above.
-        if ($label -in @('resource-host', 'control-host')) { $lintArgs += @('--features', 'test-fixture') }
+        # owned-http enables harmless loopback peers; the retained real-handler proof is separate.
+        if ($label -in @('resource-host', 'control-host', 'owned-http')) { $lintArgs += @('--features', 'test-fixture') }
         Invoke-Check -Name "$label-lint" -Command $cargo -ToolArguments ($lintArgs + @('--', '-D', 'warnings'))
         if ($NativeFixtures) {
             $testArgs = @('test', '--offline', '--locked', '--manifest-path', $manifest, '--quiet')
-            if ($label -in @('resource-host', 'control-host')) { $testArgs += @('--features', 'test-fixture') }
+            if ($label -in @('resource-host', 'control-host', 'owned-http')) { $testArgs += @('--features', 'test-fixture') }
             Invoke-Check -Name "$label-tests" -Command $cargo -ToolArguments ($testArgs + @('--', '--test-threads=1'))
         }
     }
@@ -175,7 +176,7 @@ finally {
         renderer_build_requested = [bool]$BuildRenderer
         native_fixtures_requested = [bool]$NativeFixtures
         gpu_tests_requested = $false
-        separate_runners = @('desktop-shell-assets', 'desktop-shell-build', 'desktop-shell-native-ui')
+        separate_runners = @('desktop-shell-assets', 'desktop-shell-build', 'desktop-shell-native-ui', 'retained-rust-http-diagnostic')
         skipped_optional_groups = @(
             if (-not $BuildRenderer) { 'renderer-build' }
             if (-not $NativeFixtures) { 'native-fixtures' }

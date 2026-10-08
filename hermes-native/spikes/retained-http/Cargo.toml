@@ -1,0 +1,25 @@
+[package]
+name = "hermes-retained-http-proof"
+version = "0.1.0"
+edition = "2021"
+rust-version = "1.82"
+publish = false
+description = "Opt-in Rust-owned retained Hermes HTTP diagnostic subset"
+
+[[bin]]
+name = "hermes-retained-http-proof"
+path = "src/main.rs"
+required-features = ["retained-fixture"]
+
+[features]
+retained-fixture = []
+
+[dependencies]
+hermes-resource-host = { path = "../../services/resource-host" }
+hermes-owned-http = { path = "../../services/owned-http" }
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
+sha2 = "0.10"
+
+[target.'cfg(windows)'.dependencies]
+windows-sys = { version = "=0.59.0", features = ["Win32_Foundation", "Win32_Security_Cryptography", "Win32_Storage_FileSystem", "Win32_System_SystemInformation"] }

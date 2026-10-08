@@ -1,0 +1,48 @@
+{
+  "schema": 1,
+  "verified_utc": "2026-10-08T17:41:40.2022803Z",
+  "tests": 7,
+  "validation": [
+    "cargo test --offline --locked --features test-fixture --quiet",
+    "cargo clippy --offline --locked --features test-fixture --all-targets --quiet -- -D warnings",
+    "cargo fmt --all --check"
+  ],
+  "files": [
+    {
+      "path": ".gitignore",
+      "sha256": "af418dbd3a52d894a556736e7180a5acf8c79189290bd452e637c73913bc8e7c"
+    },
+    {
+      "path": "Cargo.lock",
+      "sha256": "0131fd9fa8a620477977a5b0fb3f128b96afd74b6bae83ded22ee58be6c70e3a"
+    },
+    {
+      "path": "Cargo.toml",
+      "sha256": "d8cbec3751dfdcde8a69db37f9980c3a5b39a14a742d9abd064b944b9835b18c"
+    },
+    {
+      "path": "README.md",
+      "sha256": "59449eb93978e27478aefa6433f0bf512f4d64f042282fea3eee9ca32340e85b"
+    },
+    {
+      "path": "src/http.rs",
+      "sha256": "171c58b362da81b61227da4e04d145a68472820bd1df8b1610cd1ed00df7f605"
+    },
+    {
+      "path": "src/lib.rs",
+      "sha256": "f7974b4caa35d64be6d567ad41b8bac3738d326561415ca90a7ec2911e45667a"
+    },
+    {
+      "path": "src/ownership.rs",
+      "sha256": "0da320485441df92b5293010e0add06d9eb0b96106f75b01bb3d5ee93b3d3e29"
+    },
+    {
+      "path": "tests/fixtures/server.rs",
+      "sha256": "ce6d693e041163b189a7307b73a12faee4f3a1025c3f54c575316602ed9b2d6f"
+    },
+    {
+      "path": "tests/native_http.rs",
+      "sha256": "b05d0cd76db9c483af6f1d95d60350f9168ca4192d48514743025c31362c7b99"
+    }
+  ]
+}

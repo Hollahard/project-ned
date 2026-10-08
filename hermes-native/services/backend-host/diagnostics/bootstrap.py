@@ -30,9 +30,8 @@ def main() -> None:
     parser.add_argument("--state", type=Path, required=True)
     args = parser.parse_args()
     state = args.state.resolve(strict=True)
-    if (
-        Path.cwd().resolve() != state
-        or Path(os.environ["HERMES_HOME"]).resolve() != state
+    if not Path.cwd().samefile(state) or not Path(os.environ["HERMES_HOME"]).samefile(
+        state
     ):
         raise ValueError("Synthetic home must equal working directory")
     token = os.environ.pop("HERMES_DIAGNOSTIC_SESSION_TOKEN", "")

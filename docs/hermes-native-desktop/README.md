@@ -1,6 +1,6 @@
 # Hermes Native Desktop engineering specification
 
-**Start with [the complete architecture and roadmap](./ARCHITECTURE.md).** For current implementation progress, read [the native profiles checkpoint](./NATIVE-PROFILES-CHECKPOINT.md) and [the implementation overview](../../hermes-native/README.md).
+**Start with [the complete architecture and roadmap](./ARCHITECTURE.md).** For current implementation progress, read [the owned backend checkpoint](./OWNED-BACKEND-CHECKPOINT.md), [the native profiles checkpoint](./NATIVE-PROFILES-CHECKPOINT.md) and [the implementation overview](../../hermes-native/README.md).
 
 The original specification was prepared on 7 October 2026 from installed official Hermes source at `649d6c0391029f35959cfbc240eb3534a6667cf5`, with official Hermes, TabbyAPI, ExLlama, Tauri and database references. The separate `hermes-webui` installation is identified but is not the official desktop baseline.
 
@@ -36,7 +36,8 @@ Hermes agent startup, chat/tools, integrated inference, browser/terminal parity,
 | [RECONCILIATION.md](./RECONCILIATION.md) | Relationship between the architecture and implementation milestones |
 | [LIVE-RUNTIME-CHECKPOINT.md](./LIVE-RUNTIME-CHECKPOINT.md) | One opt-in EXL3 GPU qualification and unchanged retained HTTP-handler subset |
 | [NATIVE-BINDING-CHECKPOINT.md](./NATIVE-BINDING-CHECKPOINT.md) | Historical first Tauri IPC/event/ACL proof and the then-observed missing-preview bootstrap gate |
-| [NATIVE-PROFILES-CHECKPOINT.md](./NATIVE-PROFILES-CHECKPOINT.md) | Latest integrated preview, retained bootstrap and Rust-owned CPU profile settings evidence |
+| [NATIVE-PROFILES-CHECKPOINT.md](./NATIVE-PROFILES-CHECKPOINT.md) | Integrated preview, retained bootstrap and Rust-owned CPU profile settings evidence |
+| [OWNED-BACKEND-CHECKPOINT.md](./OWNED-BACKEND-CHECKPOINT.md) | Rust-owned retained HTTP diagnostic, socket ownership before authentication and failure-cleanup evidence |
 | [baseline-inventory.json](./baseline-inventory.json) | Static baseline of 252 RPC methods, 13 server requests, 77 notifications and 259 literal preload channels |
 | [contracts/gateway-baseline.openrpc.json](./contracts/gateway-baseline.openrpc.json) | Complete pinned method/request/event schemas; upstream license beside them |
 | [source-manifest.json](./source-manifest.json) | Hashes of inspected source evidence |

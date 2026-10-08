@@ -15,6 +15,7 @@ The retained renderer now mounts in the Tauri shell and shows its actual backend
 | [control-worker](services/control-worker/README.md) | Existing inference schema reused without HTTP/CUDA imports; named SQLite settings, optimistic revisions and atomic initialization | Model-file validation, benchmarks, weight quantization or vector memory |
 | [gateway contracts](tests/gateway/README.md) | Original shared client exercised with deterministic fixtures and real loopback WebSocket exchange | Full Python handler parity, authentication or production route ownership |
 | [resource-host](services/resource-host/README.md) | Rust Job ownership, suspended startup, explicit environment, bounded captured/framed I/O and permanent retirement | A complete durable coordinator or measured GPU release |
+| [owned-http](services/owned-http/README.md) | Socket-to-Job ownership before credentials, finite bounded HTTP and a Rust-owned retained-handler diagnostic | Production HTTP/streaming chat or a Hermes gateway connection |
 | [backend-host](services/backend-host/README.md) | Atomic Windows process ownership, captured I/O, authenticated fixture readiness and cleanup | Stock Hermes startup or full retained HTTP/WebSocket behavior |
 | [terminal-host](services/terminal-host/README.md) | Real ConPTY Unicode I/O, resizing, bounded buffering and owned tree cleanup | Retained xterm/Tauri integration or a hard native teardown deadline |
 | [WebView2 guest](spikes/webview2-guest/README.md) | Hidden child views, storage isolation, navigation, popup denial and native state readbacks | Visible composition, focus, capture, docking or browser parity |
@@ -23,7 +24,7 @@ The retained renderer now mounts in the Tauri shell and shows its actual backend
 
 ## Current integration and evidence
 
-[The native profiles checkpoint](../docs/hermes-native-desktop/NATIVE-PROFILES-CHECKPOINT.md) is the latest implementation record. The new settings service is separate from Hermes's gateway and from its conversation/connection-profile stores. It never fabricates a successful `getConnection`, loads a model, or treats schema validation as artifact/VRAM verification.
+[The owned backend checkpoint](../docs/hermes-native-desktop/OWNED-BACKEND-CHECKPOINT.md) records the latest Rust-owned retained HTTP diagnostic: 12 live assertions and verified cleanup after intentional failure. The production shell remains backend-unavailable. [The native profiles checkpoint](../docs/hermes-native-desktop/NATIVE-PROFILES-CHECKPOINT.md) records the retained UI milestone. The new settings service is separate from Hermes's gateway and from its conversation/connection-profile stores. It never fabricates a successful `getConnection`, loads a model, or treats schema validation as artifact/VRAM verification.
 
 The real native profile run dismissed the actual recovery dialog, navigated the retained settings route, entered React controls and verified create/list/read/update/confirmed delete through Tauri and SQLite. Separate native runs verified unavailable behavior and profile persistence across shell launches. Configured workers stopped cooperatively with root exit zero, empty Job membership and both pipe EOFs. The outer fixture Job also verified cleanup.
 
@@ -33,7 +34,7 @@ The pinned source/dependency guard still reports **2,986 unchanged retained sour
 
 Use Windows, an activated Python 3.12 development environment, Node 24, Rust and the pinned Hermes checkout with its dependencies provisioned. Scripts do not install into upstream. Cargo lockfiles are committed; use `cargo fetch --locked` separately when a machine lacks cached dependencies for offline checks.
 
-The foundation runner remains available for its historical component groups:
+The foundation runner covers the current component groups; the retained HTTP diagnostic and full native UI suite have separate runners:
 
 ```powershell
 . 'G:\Project_Ned\.venv\Scripts\Activate.ps1'

@@ -8,6 +8,8 @@ This Rust library is an isolated M1 feasibility slice for the Hermes native arch
 
 `Worker` retains a stable process handle for bounded exit observation. `terminate()` starts termination only for the group's owned tree and permanently closes its admission. `wait_timeout()` and `active_count()` observe completion. Neither operation proves VRAM release. Killing a job is an escalation after cooperative cancellation/unload, not a substitute for saving session state.
 
+`contains_observed_pid(pid)` is a read-only membership snapshot for a PID returned by a trusted operating-system observation, such as the exact established TCP socket query in [owned-http](../owned-http/README.md). It opens only a non-inheritable `PROCESS_QUERY_LIMITED_INFORMATION` handle, tests that handle against this exact Job and closes it. It never adopts or terminates the PID. It rejects zero, inaccessible processes, unrelated processes, a busy lifecycle fence and retirement already requested. Descendant membership is valid; the observed server need not be the original root. This snapshot does not authenticate code or freeze concurrent retirement.
+
 ## Captured backend process API
 
 `spawn_captured(&WorkerSpec, CaptureLimits)` supplies closed NUL stdin and continuously drains stdout/stderr from exclusive reader threads. It starts these readers before child execution. Only NUL/stdout/stderr child handles are inherited; parent readers, the Job, and unrelated inheritable handles are excluded. The original create-suspended, assign, resume sequence and failure guard remain shared by both launch modes.

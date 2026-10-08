@@ -19,9 +19,10 @@ use windows_sys::Win32::System::JobObjects::{
     JOB_OBJECT_LIMIT_KILL_ON_JOB_CLOSE,
 };
 use windows_sys::Win32::System::Threading::{
-    CreateProcessW, GetExitCodeProcess, ResumeThread, TerminateProcess, WaitForSingleObject,
-    CREATE_NO_WINDOW, CREATE_SUSPENDED, CREATE_UNICODE_ENVIRONMENT, EXTENDED_STARTUPINFO_PRESENT,
-    PROCESS_INFORMATION, STARTUPINFOW,
+    CreateProcessW, GetExitCodeProcess, OpenProcess, ResumeThread, TerminateProcess,
+    WaitForSingleObject, CREATE_NO_WINDOW, CREATE_SUSPENDED, CREATE_UNICODE_ENVIRONMENT,
+    EXTENDED_STARTUPINFO_PRESENT, PROCESS_INFORMATION, PROCESS_QUERY_LIMITED_INFORMATION,
+    STARTUPINFOW,
 };
 
 use crate::capture::{CaptureLimits, CapturedSetup, CapturedWorker};
@@ -228,6 +229,46 @@ impl WorkerGroup {
         Ok(contained != 0)
     }
 
+    /// Read-only membership snapshot for a PID observed by a trusted OS query.
+    /// Never adopts, controls, or terminates the observed process. A descendant
+    /// may own a socket even when its PID differs from the originally spawned
+    /// root. Admission fails closed once retirement is requested or while the
+    /// lifecycle fence is busy; this query never waits behind process creation.
+    pub fn contains_observed_pid(&self, pid: u32) -> io::Result<bool> {
+        if pid == 0 || self.retirement_requested.load(Ordering::Acquire) {
+            return Ok(false);
+        }
+        let retired = match self.retired.try_lock() {
+            Ok(guard) => guard,
+            Err(TryLockError::WouldBlock) => return Ok(false),
+            Err(TryLockError::Poisoned(_)) => {
+                return Err(io::Error::other("worker group lifecycle lock poisoned"));
+            }
+        };
+        if *retired || self.retirement_requested.load(Ordering::Acquire) {
+            return Ok(false);
+        }
+        // SAFETY: query-only, non-inheritable process handle. It is closed once
+        // by OwnedHandle and never used for termination or memory inspection.
+        let raw = unsafe { OpenProcess(PROCESS_QUERY_LIMITED_INFORMATION, 0, pid) };
+        if raw.is_null() {
+            return Ok(false);
+        }
+        let process = unsafe { OwnedHandle::from_raw_handle(raw) };
+        let mut contained = 0;
+        if unsafe {
+            IsProcessInJob(
+                process.as_raw_handle(),
+                self.job.as_raw_handle(),
+                &mut contained,
+            )
+        } == 0
+        {
+            return Err(io::Error::last_os_error());
+        }
+        Ok(contained != 0 && !self.retirement_requested.load(Ordering::Acquire))
+    }
+
     /// Escalation after cooperative cancellation/unload. Observe completion via
     /// wait_timeout/active_count; termination alone does not prove VRAM release.
     pub fn terminate(&self, exit_code: u32) -> io::Result<()> {
@@ -403,6 +444,19 @@ fn environment_block(environment: &BTreeMap<String, OsString>) -> io::Result<Vec
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    #[test]
+    fn observed_membership_never_waits_on_lifecycle_or_admits_retirement() {
+        let group = WorkerGroup::new().unwrap();
+        let held = group.retired.lock().unwrap();
+        let start = Instant::now();
+        assert!(!group.contains_observed_pid(std::process::id()).unwrap());
+        assert!(start.elapsed() < Duration::from_millis(100));
+        drop(held);
+        group.retirement_requested.store(true, Ordering::Release);
+        assert!(!group.contains_observed_pid(std::process::id()).unwrap());
+        assert!(!group.contains_observed_pid(0).unwrap());
+    }
 
     #[test]
     fn environment_rejects_case_duplicates_and_nul() {
