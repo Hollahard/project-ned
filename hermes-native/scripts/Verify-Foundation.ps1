@@ -160,7 +160,9 @@ try {
         Invoke-Check -Name 'backend-host-tests' -Command $python -ToolArguments @('-m', 'pytest', '-c', (Join-Path $backend 'pyproject.toml'), (Join-Path $backend 'tests'), '--basetemp', $backendTemp, '-q')
     }
 
-    foreach ($package in @('services/resource-host', 'services/preview-watch', 'services/control-host', 'services/catalog-host', 'services/owned-http', 'services/terminal-host', 'spikes/webview2-guest')) {
+    Invoke-Check -Name 'owned-ws-vendor' -Command $python -ToolArguments @((Join-Path $nativeRoot 'services/owned-ws/verify_vendor.py'))
+
+    foreach ($package in @('services/resource-host', 'services/preview-watch', 'services/control-host', 'services/catalog-host', 'services/owned-http', 'services/owned-ws', 'services/terminal-host', 'spikes/webview2-guest')) {
         $manifest = Join-Path (Join-Path $nativeRoot $package) 'Cargo.toml'
         $label = Split-Path -Leaf $package
         Invoke-Check -Name "$label-format" -Command $cargo -ToolArguments @('fmt', '--manifest-path', $manifest, '--check')
@@ -171,10 +173,12 @@ try {
         # output root; its one-shot tests do not load engines or user models.
         # owned-http enables harmless loopback peers; the retained real-handler proof is separate.
         if ($label -in @('resource-host', 'control-host', 'owned-http')) { $lintArgs += @('--features', 'test-fixture') }
+        if ($label -eq 'owned-ws') { $lintArgs += '--all-features' }
         Invoke-Check -Name "$label-lint" -Command $cargo -ToolArguments ($lintArgs + @('--', '-D', 'warnings'))
         if ($NativeFixtures) {
             $testArgs = @('test', '--offline', '--locked', '--manifest-path', $manifest, '--quiet')
             if ($label -in @('resource-host', 'control-host', 'owned-http')) { $testArgs += @('--features', 'test-fixture') }
+            if ($label -eq 'owned-ws') { $testArgs += '--all-features' }
             Invoke-Check -Name "$label-tests" -Command $cargo -ToolArguments ($testArgs + @('--', '--test-threads=1'))
         }
     }

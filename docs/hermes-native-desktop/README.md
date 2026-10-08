@@ -1,6 +1,6 @@
 # Hermes Native Desktop engineering specification
 
-**Start with [the complete architecture and roadmap](./ARCHITECTURE.md).** For current implementation progress, read [the native catalog checkpoint](./NATIVE-CATALOG-CHECKPOINT.md), [the model catalog checkpoint](./MODEL-CATALOG-CHECKPOINT.md), [the owned backend checkpoint](./OWNED-BACKEND-CHECKPOINT.md), [the native profiles checkpoint](./NATIVE-PROFILES-CHECKPOINT.md) and [the implementation overview](../../hermes-native/README.md).
+**Start with [the complete architecture and roadmap](./ARCHITECTURE.md).** For the latest transport boundary, read [the owned WebSocket checkpoint](./OWNED-WEBSOCKET-CHECKPOINT.md). For current UI implementation progress, read [the native catalog checkpoint](./NATIVE-CATALOG-CHECKPOINT.md), [the model catalog checkpoint](./MODEL-CATALOG-CHECKPOINT.md), [the owned backend checkpoint](./OWNED-BACKEND-CHECKPOINT.md), [the native profiles checkpoint](./NATIVE-PROFILES-CHECKPOINT.md) and [the implementation overview](../../hermes-native/README.md).
 
 The original specification was prepared on 7 October 2026 from installed official Hermes source at `649d6c0391029f35959cfbc240eb3534a6667cf5`, with official Hermes, TabbyAPI, ExLlama, Tauri and database references. The separate `hermes-webui` installation is identified but is not the official desktop baseline.
 
@@ -40,6 +40,7 @@ Hermes agent startup, chat/tools, integrated inference, browser/terminal parity,
 | [OWNED-BACKEND-CHECKPOINT.md](./OWNED-BACKEND-CHECKPOINT.md) | Rust-owned retained HTTP diagnostic, socket ownership before authentication and failure-cleanup evidence |
 | [MODEL-CATALOG-CHECKPOINT.md](./MODEL-CATALOG-CHECKPOINT.md) | Bounded read-only artifact metadata/header inspection, partial reports and actual model observations |
 | [NATIVE-CATALOG-CHECKPOINT.md](./NATIVE-CATALOG-CHECKPOINT.md) | Integrated owned inspection, retained profile-form behavior and final regression evidence |
+| [OWNED-WEBSOCKET-CHECKPOINT.md](./OWNED-WEBSOCKET-CHECKPOINT.md) | Finite owned socket transport, pinned protocol source, 52/489 regression evidence and the required live event loop |
 | [NEXT-BACKEND-INTEGRATION.md](./NEXT-BACKEND-INTEGRATION.md) | Proposed retained backend/gateway integration sequence and source-side-effect audit |
 | [NATIVE-SOCKET-TEST-PLAN.md](./NATIVE-SOCKET-TEST-PLAN.md) | Proposed socket/ownership/client acceptance boundaries |
 | [QWEN3-RUNTIME-CHECKPOINT.md](./QWEN3-RUNTIME-CHECKPOINT.md) | Second opt-in EXL3 model load/generation/unload and measured owned cleanup |

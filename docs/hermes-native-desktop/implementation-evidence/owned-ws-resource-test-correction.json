@@ -1,0 +1,12 @@
+{
+  "path": "hermes-native/services/resource-host/tests/framed_workers.rs",
+  "sha256": "1785036290b452e4c63b0b65e80a8ce3ff963e5ec88f45a9df66bee97dc3d297",
+  "baseline_sha256": "f9fba65d0c90bf59906877998d061f67ae13c1b1df8d3a70a58b68af04b204ef",
+  "production_and_fixture_source_unchanged": true,
+  "framed_suite_tests": 5,
+  "targeted_repetitions_passed": 30,
+  "clippy": true,
+  "rustfmt": true,
+  "root_exit_assertion_remains_zero": true,
+  "full_resource_tests": 29
+}

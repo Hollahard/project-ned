@@ -16,6 +16,7 @@ The retained renderer now mounts in the Tauri shell and shows its actual backend
 | [gateway contracts](tests/gateway/README.md) | Original shared client exercised with deterministic fixtures and real loopback WebSocket exchange | Full Python handler parity, authentication or production route ownership |
 | [resource-host](services/resource-host/README.md) | Rust Job ownership, suspended startup, explicit environment, bounded captured/framed I/O and permanent retirement | A complete durable coordinator or measured GPU release |
 | [owned-http](services/owned-http/README.md) | Socket-to-Job ownership before credentials, finite bounded HTTP and a Rust-owned retained-handler diagnostic | Production HTTP/streaming chat or a Hermes gateway connection |
+| [owned-ws](services/owned-ws/README.md) | Owned same-socket upgrade and finite WebSocket exchanges with pinned log-safe protocol code | Full-duplex live event loop, idle/heartbeat parity or a Hermes gateway connection |
 | [backend-host](services/backend-host/README.md) | Atomic Windows process ownership, captured I/O, authenticated fixture readiness and cleanup | Stock Hermes startup or full retained HTTP/WebSocket behavior |
 | [terminal-host](services/terminal-host/README.md) | Real ConPTY Unicode I/O, resizing, bounded buffering and owned tree cleanup | Retained xterm/Tauri integration or a hard native teardown deadline |
 | [WebView2 guest](spikes/webview2-guest/README.md) | Hidden child views, storage isolation, navigation, popup denial and native state readbacks | Visible composition, focus, capture, docking or browser parity |
@@ -25,6 +26,8 @@ The retained renderer now mounts in the Tauri shell and shows its actual backend
 | [managed V3 overlay](runtime-packs/tabby-v3/README.md) | Environment-only authentication, safe request logging and explicit observations in a hash-guarded candidate | A deployed runtime pack or whole-system secrecy/compatibility certification |
 
 ## Current integration and evidence
+
+[The owned WebSocket checkpoint](../docs/hermes-native-desktop/OWNED-WEBSOCKET-CHECKPOINT.md) adds the finite diagnostic transport and records 52 passing foundation groups/489 tests. A live read/write event loop and retained gateway integration remain open.
 
 [The native catalog checkpoint](../docs/hermes-native-desktop/NATIVE-CATALOG-CHECKPOINT.md) records integrated profile-form inspection, 142 native assertions and 478 foundation tests. [The model catalog checkpoint](../docs/hermes-native-desktop/MODEL-CATALOG-CHECKPOINT.md) records the latest read-only artifact inspection and three user-model observations. [The owned backend checkpoint](../docs/hermes-native-desktop/OWNED-BACKEND-CHECKPOINT.md) records the Rust-owned retained HTTP diagnostic: 12 live assertions and verified cleanup after intentional failure. The production shell remains backend-unavailable. [The native profiles checkpoint](../docs/hermes-native-desktop/NATIVE-PROFILES-CHECKPOINT.md) records the retained UI milestone. The new settings service is separate from Hermes's gateway and from its conversation/connection-profile stores. It never fabricates a successful `getConnection`, loads a model, or treats schema validation as artifact/VRAM verification.
 

@@ -97,13 +97,7 @@ impl<'a> OwnedHttpClient<'a> {
     ) -> Result<Response, HttpError> {
         validate_request(method, path, headers, body)?;
         let deadline = Instant::now() + self.limits.timeout;
-        let address = SocketAddr::V4(SocketAddrV4::new(Ipv4Addr::LOCALHOST, self.port));
-        let mut stream = TcpStream::connect_timeout(&address, remaining(deadline)?)
-            .map_err(|_| HttpError("HTTP_CONNECT_FAILED"))?;
-        // A TCP handshake contains no application bytes. Validate the actual
-        // connected socket, never a listener-port lookup, before serializing or
-        // transmitting any credential-bearing HTTP request.
-        ownership::verify(&stream, self.group)?;
+        let mut stream = connect_owned(self.group, self.port, remaining(deadline)?)?;
         remaining(deadline)?;
         let mut request = format!("{} {path} HTTP/1.1\r\nHost: 127.0.0.1:{}\r\nConnection: close\r\nAccept: application/json\r\n", if method == Method::Get { "GET" } else { "POST" }, self.port).into_bytes();
         for (_, value) in headers {
@@ -121,6 +115,30 @@ impl<'a> OwnedHttpClient<'a> {
         http::write_request(&mut stream, &request, deadline)?;
         http::read_response(&mut stream, self.limits, deadline)
     }
+}
+
+/// Connect only to fixed loopback IPv4 and verify the exact established peer
+/// tuple against the private Job before returning any application-byte channel.
+pub fn connect_owned(
+    group: &WorkerGroup,
+    port: u16,
+    timeout: Duration,
+) -> Result<TcpStream, HttpError> {
+    if port == 0 || timeout.is_zero() || timeout > Duration::from_secs(30) {
+        return Err(HttpError("HTTP_INVALID_LIMITS"));
+    }
+    let deadline = Instant::now() + timeout;
+    let address = SocketAddr::V4(SocketAddrV4::new(Ipv4Addr::LOCALHOST, port));
+    let stream = TcpStream::connect_timeout(&address, remaining(deadline)?)
+        .map_err(|_| HttpError("HTTP_CONNECT_FAILED"))?;
+    ownership::verify(&stream, group)?;
+    remaining(deadline)?;
+    Ok(stream)
+}
+/// Read-only observation for a just-connected stream. The PID is never a kill
+/// target: callers retain the same stream and use only query-only Job checks.
+pub fn observed_owned_peer_pid(stream: &TcpStream, group: &WorkerGroup) -> Result<u32, HttpError> {
+    ownership::verify(stream, group)
 }
 
 fn validate_request(

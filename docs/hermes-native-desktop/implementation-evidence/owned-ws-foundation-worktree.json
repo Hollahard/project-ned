@@ -1,0 +1,350 @@
+{
+  "generated_at_utc": "2026-10-08T19:37:06.6988167Z",
+  "completed": true,
+  "passed": true,
+  "renderer_build_requested": true,
+  "native_fixtures_requested": true,
+  "gpu_tests_requested": false,
+  "separate_runners": [
+    "desktop-shell-assets",
+    "desktop-shell-build",
+    "desktop-shell-native-ui",
+    "retained-rust-http-diagnostic"
+  ],
+  "skipped_optional_groups": [
+    "gpu-runtime"
+  ],
+  "checks": [
+    {
+      "check": "renderer-tests",
+      "passed": true,
+      "elapsed_seconds": 0.452,
+      "log": "hermes-native/.checks/renderer-tests.log",
+      "passed_component_tests": 23
+    },
+    {
+      "check": "upstream-baseline",
+      "passed": true,
+      "elapsed_seconds": 1.286,
+      "log": "hermes-native/.checks/upstream-baseline.log"
+    },
+    {
+      "check": "renderer-typecheck",
+      "passed": true,
+      "elapsed_seconds": 11.643,
+      "log": "hermes-native/.checks/renderer-typecheck.log"
+    },
+    {
+      "check": "gateway-contracts",
+      "passed": true,
+      "elapsed_seconds": 0.214,
+      "log": "hermes-native/.checks/gateway-contracts.log",
+      "passed_component_tests": 19
+    },
+    {
+      "check": "inference-tests",
+      "passed": true,
+      "elapsed_seconds": 1.141,
+      "log": "hermes-native/.checks/inference-tests.log",
+      "passed_component_tests": 115
+    },
+    {
+      "check": "inference-lint",
+      "passed": true,
+      "elapsed_seconds": 0.105,
+      "log": "hermes-native/.checks/inference-lint.log"
+    },
+    {
+      "check": "inference-format",
+      "passed": true,
+      "elapsed_seconds": 0.101,
+      "log": "hermes-native/.checks/inference-format.log"
+    },
+    {
+      "check": "model-catalog-tests",
+      "passed": true,
+      "elapsed_seconds": 1.041,
+      "log": "hermes-native/.checks/model-catalog-tests.log",
+      "passed_component_tests": 57
+    },
+    {
+      "check": "model-catalog-lint",
+      "passed": true,
+      "elapsed_seconds": 0.102,
+      "log": "hermes-native/.checks/model-catalog-lint.log"
+    },
+    {
+      "check": "model-catalog-format",
+      "passed": true,
+      "elapsed_seconds": 0.102,
+      "log": "hermes-native/.checks/model-catalog-format.log"
+    },
+    {
+      "check": "catalog-host-python-lint",
+      "passed": true,
+      "elapsed_seconds": 0.099,
+      "log": "hermes-native/.checks/catalog-host-python-lint.log"
+    },
+    {
+      "check": "catalog-host-python-format",
+      "passed": true,
+      "elapsed_seconds": 0.129,
+      "log": "hermes-native/.checks/catalog-host-python-format.log"
+    },
+    {
+      "check": "catalog-host-python-tests",
+      "passed": true,
+      "elapsed_seconds": 0.905,
+      "log": "hermes-native/.checks/catalog-host-python-tests.log",
+      "passed_component_tests": 6
+    },
+    {
+      "check": "managed-pack-tests",
+      "passed": true,
+      "elapsed_seconds": 1.215,
+      "log": "hermes-native/.checks/managed-pack-tests.log",
+      "passed_component_tests": 61
+    },
+    {
+      "check": "managed-pack-lint",
+      "passed": true,
+      "elapsed_seconds": 0.101,
+      "log": "hermes-native/.checks/managed-pack-lint.log"
+    },
+    {
+      "check": "managed-pack-format",
+      "passed": true,
+      "elapsed_seconds": 0.099,
+      "log": "hermes-native/.checks/managed-pack-format.log"
+    },
+    {
+      "check": "managed-pack-config",
+      "passed": true,
+      "elapsed_seconds": 0.268,
+      "log": "hermes-native/.checks/managed-pack-config.log"
+    },
+    {
+      "check": "control-worker-lint",
+      "passed": true,
+      "elapsed_seconds": 0.1,
+      "log": "hermes-native/.checks/control-worker-lint.log"
+    },
+    {
+      "check": "control-worker-format",
+      "passed": true,
+      "elapsed_seconds": 0.1,
+      "log": "hermes-native/.checks/control-worker-format.log"
+    },
+    {
+      "check": "control-worker-tests",
+      "passed": true,
+      "elapsed_seconds": 2.013,
+      "log": "hermes-native/.checks/control-worker-tests.log",
+      "passed_component_tests": 34
+    },
+    {
+      "check": "renderer-integration",
+      "passed": true,
+      "elapsed_seconds": 5.305,
+      "log": "hermes-native/.checks/renderer-integration.log",
+      "passed_component_tests": 12
+    },
+    {
+      "check": "backend-host-lint",
+      "passed": true,
+      "elapsed_seconds": 0.099,
+      "log": "hermes-native/.checks/backend-host-lint.log"
+    },
+    {
+      "check": "backend-host-format",
+      "passed": true,
+      "elapsed_seconds": 0.115,
+      "log": "hermes-native/.checks/backend-host-format.log"
+    },
+    {
+      "check": "backend-host-tests",
+      "passed": true,
+      "elapsed_seconds": 2.838,
+      "log": "hermes-native/.checks/backend-host-tests.log",
+      "passed_component_tests": 56
+    },
+    {
+      "check": "owned-ws-vendor",
+      "passed": true,
+      "elapsed_seconds": 0.12,
+      "log": "hermes-native/.checks/owned-ws-vendor.log"
+    },
+    {
+      "check": "resource-host-format",
+      "passed": true,
+      "elapsed_seconds": 0.126,
+      "log": "hermes-native/.checks/resource-host-format.log"
+    },
+    {
+      "check": "resource-host-lint",
+      "passed": true,
+      "elapsed_seconds": 0.244,
+      "log": "hermes-native/.checks/resource-host-lint.log"
+    },
+    {
+      "check": "resource-host-tests",
+      "passed": true,
+      "elapsed_seconds": 1.551,
+      "log": "hermes-native/.checks/resource-host-tests.log",
+      "passed_component_tests": 29
+    },
+    {
+      "check": "preview-watch-format",
+      "passed": true,
+      "elapsed_seconds": 0.114,
+      "log": "hermes-native/.checks/preview-watch-format.log"
+    },
+    {
+      "check": "preview-watch-lint",
+      "passed": true,
+      "elapsed_seconds": 0.297,
+      "log": "hermes-native/.checks/preview-watch-lint.log"
+    },
+    {
+      "check": "preview-watch-tests",
+      "passed": true,
+      "elapsed_seconds": 4.274,
+      "log": "hermes-native/.checks/preview-watch-tests.log",
+      "passed_component_tests": 16
+    },
+    {
+      "check": "control-host-format",
+      "passed": true,
+      "elapsed_seconds": 0.205,
+      "log": "hermes-native/.checks/control-host-format.log"
+    },
+    {
+      "check": "control-host-lint",
+      "passed": true,
+      "elapsed_seconds": 0.217,
+      "log": "hermes-native/.checks/control-host-lint.log"
+    },
+    {
+      "check": "control-host-tests",
+      "passed": true,
+      "elapsed_seconds": 2.169,
+      "log": "hermes-native/.checks/control-host-tests.log",
+      "passed_component_tests": 14
+    },
+    {
+      "check": "catalog-host-format",
+      "passed": true,
+      "elapsed_seconds": 0.116,
+      "log": "hermes-native/.checks/catalog-host-format.log"
+    },
+    {
+      "check": "catalog-host-lint",
+      "passed": true,
+      "elapsed_seconds": 0.188,
+      "log": "hermes-native/.checks/catalog-host-lint.log"
+    },
+    {
+      "check": "catalog-host-tests",
+      "passed": true,
+      "elapsed_seconds": 2.795,
+      "log": "hermes-native/.checks/catalog-host-tests.log",
+      "passed_component_tests": 17
+    },
+    {
+      "check": "owned-http-format",
+      "passed": true,
+      "elapsed_seconds": 0.106,
+      "log": "hermes-native/.checks/owned-http-format.log"
+    },
+    {
+      "check": "owned-http-lint",
+      "passed": true,
+      "elapsed_seconds": 0.398,
+      "log": "hermes-native/.checks/owned-http-lint.log"
+    },
+    {
+      "check": "owned-http-tests",
+      "passed": true,
+      "elapsed_seconds": 2.603,
+      "log": "hermes-native/.checks/owned-http-tests.log",
+      "passed_component_tests": 7
+    },
+    {
+      "check": "owned-ws-format",
+      "passed": true,
+      "elapsed_seconds": 0.11,
+      "log": "hermes-native/.checks/owned-ws-format.log"
+    },
+    {
+      "check": "owned-ws-lint",
+      "passed": true,
+      "elapsed_seconds": 2.891,
+      "log": "hermes-native/.checks/owned-ws-lint.log"
+    },
+    {
+      "check": "owned-ws-tests",
+      "passed": true,
+      "elapsed_seconds": 5.887,
+      "log": "hermes-native/.checks/owned-ws-tests.log",
+      "passed_component_tests": 11
+    },
+    {
+      "check": "terminal-host-format",
+      "passed": true,
+      "elapsed_seconds": 0.112,
+      "log": "hermes-native/.checks/terminal-host-format.log"
+    },
+    {
+      "check": "terminal-host-lint",
+      "passed": true,
+      "elapsed_seconds": 0.183,
+      "log": "hermes-native/.checks/terminal-host-lint.log"
+    },
+    {
+      "check": "terminal-host-tests",
+      "passed": true,
+      "elapsed_seconds": 0.755,
+      "log": "hermes-native/.checks/terminal-host-tests.log",
+      "passed_component_tests": 7
+    },
+    {
+      "check": "webview2-guest-format",
+      "passed": true,
+      "elapsed_seconds": 0.106,
+      "log": "hermes-native/.checks/webview2-guest-format.log"
+    },
+    {
+      "check": "webview2-guest-lint",
+      "passed": true,
+      "elapsed_seconds": 1.032,
+      "log": "hermes-native/.checks/webview2-guest-lint.log"
+    },
+    {
+      "check": "webview2-guest-tests",
+      "passed": true,
+      "elapsed_seconds": 0.426,
+      "log": "hermes-native/.checks/webview2-guest-tests.log",
+      "passed_component_tests": 5
+    },
+    {
+      "check": "renderer-build",
+      "passed": true,
+      "elapsed_seconds": 24.459,
+      "log": "hermes-native/.checks/renderer-build.log"
+    },
+    {
+      "check": "webview-native-build",
+      "passed": true,
+      "elapsed_seconds": 0.213,
+      "log": "hermes-native/.checks/webview-native-build.log"
+    },
+    {
+      "check": "webview-native-run",
+      "passed": true,
+      "elapsed_seconds": 1.123,
+      "log": "hermes-native/.checks/webview-native-run.log"
+    }
+  ],
+  "passed_groups": 52,
+  "passed_component_tests": 489
+}

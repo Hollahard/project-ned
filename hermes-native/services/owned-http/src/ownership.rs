@@ -7,7 +7,7 @@ use windows_sys::Win32::NetworkManagement::IpHelper::{
 };
 use windows_sys::Win32::Networking::WinSock::AF_INET;
 
-pub(crate) fn verify(stream: &TcpStream, group: &WorkerGroup) -> Result<(), HttpError> {
+pub(crate) fn verify(stream: &TcpStream, group: &WorkerGroup) -> Result<u32, HttpError> {
     let local = ipv4(
         stream
             .local_addr()
@@ -28,7 +28,7 @@ pub(crate) fn verify(stream: &TcpStream, group: &WorkerGroup) -> Result<(), Http
     {
         return Err(HttpError("HTTP_OWNER_DENIED"));
     }
-    Ok(())
+    Ok(pid)
 }
 
 fn ipv4(address: SocketAddr) -> Result<SocketAddrV4, HttpError> {

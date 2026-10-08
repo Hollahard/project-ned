@@ -1,0 +1,120 @@
+--- upstream-0.30.0/src/client.rs
++++ hermes-logsafe-1/src/client.rs
+@@ -95,7 +95,7 @@
+             Err(Error::Http(res)) if res.status().is_redirection() && attempt < max_redirects => {
+                 if let Some(location) = res.headers().get("Location") {
+                     uri = location.to_str()?.parse::<Uri>()?;
+-                    debug!("Redirecting to {uri:?}");
++                    debug!("WebSocket protocol event.");
+                     continue;
+                 } else {
+                     warn!("No `Location` found in redirect");
+@@ -129,7 +129,7 @@
+ 
+ fn connect_to_some(addrs: &[SocketAddr], uri: &Uri) -> Result<TcpStream> {
+     for addr in addrs {
+-        debug!("Trying to contact {uri} at {addr}...");
++        debug!("WebSocket protocol event.");
+         if let Ok(stream) = TcpStream::connect(addr) {
+             return Ok(stream);
+         }
+--- upstream-0.30.0/src/handshake/client.rs
++++ hermes-logsafe-1/src/handshake/client.rs
+@@ -194,7 +194,7 @@
+     }
+ 
+     req.extend_from_slice(b"\r\n");
+-    trace!("Request: {:?}", String::from_utf8_lossy(&req));
++    trace!("WebSocket protocol event.");
+     Ok((req, key))
+ }
+ 
+--- upstream-0.30.0/src/protocol/mod.rs
++++ hermes-logsafe-1/src/protocol/mod.rs
+@@ -472,7 +472,7 @@
+             // If we get here, either write blocks or we have nothing to write.
+             // Thus if read blocks, just let it return WouldBlock.
+             if let Some(message) = self.read_message_frame(stream)? {
+-                trace!("Received message {message}");
++                trace!("WebSocket protocol event.");
+                 return Ok(message);
+             }
+         }
+@@ -716,7 +716,7 @@
+     /// Received a close frame. Tells if we need to return a close frame to the user.
+     #[allow(clippy::option_option)]
+     fn do_close(&mut self, close: Option<CloseFrame>) -> Option<Option<CloseFrame>> {
+-        debug!("Received close frame: {close:?}");
++        debug!("WebSocket protocol event.");
+         match self.state {
+             WebSocketState::Active => {
+                 self.state = WebSocketState::ClosedByPeer;
+@@ -733,7 +733,7 @@
+                 });
+ 
+                 let reply = Frame::close(close.clone());
+-                debug!("Replying to close with {reply:?}");
++                debug!("WebSocket protocol event.");
+                 self.set_additional(reply);
+ 
+                 Some(close)
+@@ -765,7 +765,7 @@
+             }
+         }
+ 
+-        trace!("Sending frame: {frame:?}");
++        trace!("WebSocket protocol event.");
+         self.frame.buffer_frame(stream, frame).check_connection_reset(self.state)
+     }
+ 
+--- upstream-0.30.0/src/protocol/frame/mod.rs
++++ hermes-logsafe-1/src/protocol/frame/mod.rs
+@@ -226,7 +226,7 @@
+         }
+ 
+         let frame = Frame::from_payload(header, payload.freeze());
+-        trace!("received frame {frame}");
++        trace!("WebSocket protocol event.");
+         Ok(Some(frame))
+     }
+ 
+@@ -255,7 +255,7 @@
+             return Err(Error::WriteBufferFull(Message::Frame(frame).into()));
+         }
+ 
+-        trace!("writing frame {frame}");
++        trace!("WebSocket protocol event.");
+ 
+         self.out_buffer.reserve(frame.len());
+         frame.format_into_buf(&mut self.out_buffer).expect("Bug: can't write to vector");
+--- upstream-0.30.0/src/protocol/frame/frame.rs
++++ hermes-logsafe-1/src/protocol/frame/frame.rs
+@@ -141,12 +141,12 @@
+             if cursor.read(&mut head)? != 2 {
+                 return Ok(None);
+             }
+-            trace!("Parsed headers {head:?}");
++            trace!("WebSocket protocol event.");
+             (head[0], head[1])
+         };
+ 
+-        trace!("First: {first:b}");
+-        trace!("Second: {second:b}");
++        trace!("WebSocket protocol event.");
++        trace!("WebSocket protocol event.");
+ 
+         let is_final = first & 0x80 != 0;
+ 
+@@ -155,10 +155,10 @@
+         let rsv3 = first & 0x10 != 0;
+ 
+         let opcode = OpCode::from(first & 0x0F);
+-        trace!("Opcode: {opcode:?}");
++        trace!("WebSocket protocol event.");
+ 
+         let masked = second & 0x80 != 0;
+-        trace!("Masked: {masked:?}");
++        trace!("WebSocket protocol event.");
+ 
+         let length = {
+             let length_byte = second & 0x7F;

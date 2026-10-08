@@ -1,0 +1,4 @@
+# Preserve the exact upstream/archive-derived bytes used by vendor receipts.
+vendor/** -text
+vendor-patch-receipt.json text eol=lf
+vendor-log-sanitization.diff text eol=lf

@@ -6,6 +6,8 @@ This Windows-only library implements the finite retained-backend diagnostic cont
 
 The underlying Windows contracts are [GetExtendedTcpTable](https://learn.microsoft.com/en-us/windows/win32/api/iphlpapi/nf-iphlpapi-getextendedtcptable), [OpenProcess](https://learn.microsoft.com/en-us/windows/win32/api/processthreadsapi/nf-processthreadsapi-openprocess), and [IsProcessInJob](https://learn.microsoft.com/en-us/windows/win32/api/jobapi/nf-jobapi-isprocessinjob). The TCP table is capped at 4 MiB and three size-adjustment attempts. Busy lifecycle state or requested retirement fails closed. Membership is an observation, not code attestation or a freeze of concurrent process termination; synchronous kernel queries have no hard real-time cancellation guarantee.
 
+The trusted Rust-only `connect_owned` primitive now returns that same verified TCP stream for the separate [finite WebSocket diagnostic](../owned-ws/README.md). `observed_owned_peer_pid` is query-only and never grants a PID termination operation. HTTP requests still retain their original total deadline and fixed request contract; this shared primitive is not a renderer capability or process supervisor.
+
 ## Finite request contract
 
 The allowed paths are `/api/config`, `/api/config?include_defaults=invalid`, `/api/config?profile=default`, `/api/sessions?limit=20&order=recent`, `/api/sessions?order=invalid`, `/api/sessions?limit=101`, `/diagnostic/identity`, and `/api/env`. Query spelling and ordering are exact. GET accepts no body. POST permits only `/api/config` with exactly `{}` to test backend method rejection. There is no `/health` assumption.

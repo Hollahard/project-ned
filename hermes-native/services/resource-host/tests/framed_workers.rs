@@ -35,7 +35,16 @@ fn framed_roundtrip_unicode_and_exact_maximum_size_then_stdin_eof() {
     assert_eq!(worker.recv_frame(WAIT).unwrap(), maximum);
     worker.close_stdin();
     assert_eq!(worker.capture().finish_capture(WAIT).unwrap().exit_code, 0);
-    assert_eq!(group.active_count().unwrap(), 0);
+    // A signaled root handle and captured EOF can precede Windows Job accounting.
+    // Keep a separate bounded empty-Job proof instead of assuming one snapshot.
+    let empty_deadline = Instant::now() + WAIT;
+    while group.active_count().unwrap() != 0 {
+        assert!(
+            Instant::now() < empty_deadline,
+            "owned Job did not become empty"
+        );
+        std::thread::sleep(Duration::from_millis(2));
+    }
     assert_eq!(
         worker.write_frame(b"{}", WAIT).unwrap_err().kind(),
         ErrorKind::BrokenPipe

@@ -1,0 +1,188 @@
+{
+  "generated_at_utc": "2026-10-08T19:31:19.5241182Z",
+  "completed": false,
+  "passed": false,
+  "renderer_build_requested": true,
+  "native_fixtures_requested": true,
+  "gpu_tests_requested": false,
+  "separate_runners": [
+    "desktop-shell-assets",
+    "desktop-shell-build",
+    "desktop-shell-native-ui",
+    "retained-rust-http-diagnostic"
+  ],
+  "skipped_optional_groups": [
+    "gpu-runtime"
+  ],
+  "checks": [
+    {
+      "check": "renderer-tests",
+      "passed": true,
+      "elapsed_seconds": 0.427,
+      "original_log_filename": "renderer-tests.log"
+    },
+    {
+      "check": "upstream-baseline",
+      "passed": true,
+      "elapsed_seconds": 1.268,
+      "original_log_filename": "upstream-baseline.log"
+    },
+    {
+      "check": "renderer-typecheck",
+      "passed": true,
+      "elapsed_seconds": 11.811,
+      "original_log_filename": "renderer-typecheck.log"
+    },
+    {
+      "check": "gateway-contracts",
+      "passed": true,
+      "elapsed_seconds": 0.223,
+      "original_log_filename": "gateway-contracts.log"
+    },
+    {
+      "check": "inference-tests",
+      "passed": true,
+      "elapsed_seconds": 1.131,
+      "original_log_filename": "inference-tests.log"
+    },
+    {
+      "check": "inference-lint",
+      "passed": true,
+      "elapsed_seconds": 0.102,
+      "original_log_filename": "inference-lint.log"
+    },
+    {
+      "check": "inference-format",
+      "passed": true,
+      "elapsed_seconds": 0.101,
+      "original_log_filename": "inference-format.log"
+    },
+    {
+      "check": "model-catalog-tests",
+      "passed": true,
+      "elapsed_seconds": 1.141,
+      "original_log_filename": "model-catalog-tests.log"
+    },
+    {
+      "check": "model-catalog-lint",
+      "passed": true,
+      "elapsed_seconds": 0.101,
+      "original_log_filename": "model-catalog-lint.log"
+    },
+    {
+      "check": "model-catalog-format",
+      "passed": true,
+      "elapsed_seconds": 0.107,
+      "original_log_filename": "model-catalog-format.log"
+    },
+    {
+      "check": "catalog-host-python-lint",
+      "passed": true,
+      "elapsed_seconds": 0.098,
+      "original_log_filename": "catalog-host-python-lint.log"
+    },
+    {
+      "check": "catalog-host-python-format",
+      "passed": true,
+      "elapsed_seconds": 0.097,
+      "original_log_filename": "catalog-host-python-format.log"
+    },
+    {
+      "check": "catalog-host-python-tests",
+      "passed": true,
+      "elapsed_seconds": 0.95,
+      "original_log_filename": "catalog-host-python-tests.log"
+    },
+    {
+      "check": "managed-pack-tests",
+      "passed": true,
+      "elapsed_seconds": 1.277,
+      "original_log_filename": "managed-pack-tests.log"
+    },
+    {
+      "check": "managed-pack-lint",
+      "passed": true,
+      "elapsed_seconds": 0.107,
+      "original_log_filename": "managed-pack-lint.log"
+    },
+    {
+      "check": "managed-pack-format",
+      "passed": true,
+      "elapsed_seconds": 0.103,
+      "original_log_filename": "managed-pack-format.log"
+    },
+    {
+      "check": "managed-pack-config",
+      "passed": true,
+      "elapsed_seconds": 0.282,
+      "original_log_filename": "managed-pack-config.log"
+    },
+    {
+      "check": "control-worker-lint",
+      "passed": true,
+      "elapsed_seconds": 0.151,
+      "original_log_filename": "control-worker-lint.log"
+    },
+    {
+      "check": "control-worker-format",
+      "passed": true,
+      "elapsed_seconds": 0.11,
+      "original_log_filename": "control-worker-format.log"
+    },
+    {
+      "check": "control-worker-tests",
+      "passed": true,
+      "elapsed_seconds": 2.126,
+      "original_log_filename": "control-worker-tests.log"
+    },
+    {
+      "check": "renderer-integration",
+      "passed": true,
+      "elapsed_seconds": 5.865,
+      "original_log_filename": "renderer-integration.log"
+    },
+    {
+      "check": "backend-host-lint",
+      "passed": true,
+      "elapsed_seconds": 0.099,
+      "original_log_filename": "backend-host-lint.log"
+    },
+    {
+      "check": "backend-host-format",
+      "passed": true,
+      "elapsed_seconds": 0.099,
+      "original_log_filename": "backend-host-format.log"
+    },
+    {
+      "check": "backend-host-tests",
+      "passed": true,
+      "elapsed_seconds": 2.903,
+      "original_log_filename": "backend-host-tests.log"
+    },
+    {
+      "check": "owned-ws-vendor",
+      "passed": true,
+      "elapsed_seconds": 0.128,
+      "original_log_filename": "owned-ws-vendor.log"
+    },
+    {
+      "check": "resource-host-format",
+      "passed": true,
+      "elapsed_seconds": 0.15,
+      "original_log_filename": "resource-host-format.log"
+    },
+    {
+      "check": "resource-host-lint",
+      "passed": true,
+      "elapsed_seconds": 0.306,
+      "original_log_filename": "resource-host-lint.log"
+    },
+    {
+      "check": "resource-host-tests",
+      "passed": false,
+      "elapsed_seconds": 1.034,
+      "original_log_filename": "resource-host-tests.log"
+    }
+  ],
+  "diagnosis": "Existing test required immediate empty Job accounting after successful root exit and pipe EOF; isolated reproduction confirmed delayed accounting. Test now waits within a fixed deadline for actual zero membership."
+}
