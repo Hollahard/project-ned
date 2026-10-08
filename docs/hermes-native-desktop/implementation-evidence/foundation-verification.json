@@ -1,0 +1,554 @@
+{
+  "schema_version": 1,
+  "scope": "Independent foundation components, not a working desktop or GPU qualification",
+  "verified_at_utc": "2026-10-08T03:19:38.3833881Z",
+  "completed": true,
+  "passed": true,
+  "test_counts": {
+    "renderer": 15,
+    "gateway": 19,
+    "inference": 112,
+    "managed_pack": 61,
+    "backend_host": 29,
+    "resource_host": 8,
+    "terminal_host": 7,
+    "webview_guest": 5
+  },
+  "total_component_tests": 256.0,
+  "check_group_count": 26,
+  "renderer_build_requested": true,
+  "native_fixtures_requested": true,
+  "gpu_tests_requested": false,
+  "upstream_hermes_commit": "649d6c0391029f35959cfbc240eb3534a6667cf5",
+  "upstream_tabby_commit": "2fd6cc76203a66e13042daf7d76e5898b21c1ad8",
+  "managed_contract": "hermes-native-observation-v1",
+  "environment": {
+    "os": "Microsoft Windows NT 10.0.26200.0",
+    "powershell": "7.6.6",
+    "node": "v24.21.0",
+    "rust": "rustc 1.99.0 (b940084d7 2026-09-28)",
+    "cargo": "cargo 1.99.0 (5f94df478 2026-08-27)",
+    "python_packages": {
+      "python": "3.12.13",
+      "httpx": "0.28.1",
+      "fastapi": "0.142.2",
+      "pydantic": "2.13.5",
+      "pytest": "9.1.1",
+      "pytest-asyncio": "1.4.0",
+      "ruff": "0.16.10"
+    }
+  },
+  "limitations": [
+    "No installed Hermes/Tabby runtime was launched by these checks.",
+    "No LLM, GPU evacuation, V2, vector-memory, saved-profile UI or installer qualification.",
+    "Source hashes use UTF-8 content with Git LF newline normalization.",
+    "External upstream dependency tree was provisioned before this run; it is not fully attested.",
+    "Native output/readback assertions are not visible desktop interaction or screenshot evidence."
+  ],
+  "checks": [
+    {
+      "check": "renderer-tests",
+      "passed": true,
+      "elapsed_seconds": 0.473,
+      "log": "hermes-native/.checks/renderer-tests.log",
+      "log_sha256": "6a49836202a8e71ddd0fa0dc08958b93abb2436b41aa57e05f4d833b05abacf4"
+    },
+    {
+      "check": "upstream-baseline",
+      "passed": true,
+      "elapsed_seconds": 1.423,
+      "log": "hermes-native/.checks/upstream-baseline.log",
+      "log_sha256": "979325bd0e66e49a7a08540721f331d160096189c26947c302f8effd0da7707a"
+    },
+    {
+      "check": "renderer-typecheck",
+      "passed": true,
+      "elapsed_seconds": 13.778,
+      "log": "hermes-native/.checks/renderer-typecheck.log",
+      "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "check": "gateway-contracts",
+      "passed": true,
+      "elapsed_seconds": 0.226,
+      "log": "hermes-native/.checks/gateway-contracts.log",
+      "log_sha256": "46273fe56bfb36c07a4f89fe9dd95c1a58d8a23c224a6b82572ffb8e7ea4dd65"
+    },
+    {
+      "check": "inference-tests",
+      "passed": true,
+      "elapsed_seconds": 0.926,
+      "log": "hermes-native/.checks/inference-tests.log",
+      "log_sha256": "7082876c37e4cb239a11a5d41789ef5a61da98e1711d02c85570ef719f965dd2"
+    },
+    {
+      "check": "inference-lint",
+      "passed": true,
+      "elapsed_seconds": 0.11,
+      "log": "hermes-native/.checks/inference-lint.log",
+      "log_sha256": "a4443afdcfb6d7363adb285762515ccf7cf50473b1a05c20c1a50f6bed4d26b0"
+    },
+    {
+      "check": "inference-format",
+      "passed": true,
+      "elapsed_seconds": 0.112,
+      "log": "hermes-native/.checks/inference-format.log",
+      "log_sha256": "a69837e5076ef12241581591171de529fd26d5157fc32761175f83b0501cd41d"
+    },
+    {
+      "check": "managed-pack-tests",
+      "passed": true,
+      "elapsed_seconds": 1.258,
+      "log": "hermes-native/.checks/managed-pack-tests.log",
+      "log_sha256": "93619767bbe001e56a2e4ef7730bf80e1fea0f39d6bc7918c8dd3fae08e023bd"
+    },
+    {
+      "check": "managed-pack-lint",
+      "passed": true,
+      "elapsed_seconds": 0.143,
+      "log": "hermes-native/.checks/managed-pack-lint.log",
+      "log_sha256": "a4443afdcfb6d7363adb285762515ccf7cf50473b1a05c20c1a50f6bed4d26b0"
+    },
+    {
+      "check": "managed-pack-format",
+      "passed": true,
+      "elapsed_seconds": 0.12,
+      "log": "hermes-native/.checks/managed-pack-format.log",
+      "log_sha256": "f57152af69ed696672a20f7a07dc500ce85005053092505a680768f611957e48"
+    },
+    {
+      "check": "managed-pack-config",
+      "passed": true,
+      "elapsed_seconds": 0.323,
+      "log": "hermes-native/.checks/managed-pack-config.log",
+      "log_sha256": "87fa00bb650ac5c7cd13a3b393b14a6e78384193237bd98558158243ced1e686"
+    },
+    {
+      "check": "backend-host-lint",
+      "passed": true,
+      "elapsed_seconds": 0.118,
+      "log": "hermes-native/.checks/backend-host-lint.log",
+      "log_sha256": "a4443afdcfb6d7363adb285762515ccf7cf50473b1a05c20c1a50f6bed4d26b0"
+    },
+    {
+      "check": "backend-host-format",
+      "passed": true,
+      "elapsed_seconds": 0.133,
+      "log": "hermes-native/.checks/backend-host-format.log",
+      "log_sha256": "f57152af69ed696672a20f7a07dc500ce85005053092505a680768f611957e48"
+    },
+    {
+      "check": "backend-host-tests",
+      "passed": true,
+      "elapsed_seconds": 2.635,
+      "log": "hermes-native/.checks/backend-host-tests.log",
+      "log_sha256": "a01f7e8a689e484757328ecc89bf0de2d258ed58ac386ce86bdab9d4800ade8f"
+    },
+    {
+      "check": "resource-host-format",
+      "passed": true,
+      "elapsed_seconds": 0.152,
+      "log": "hermes-native/.checks/resource-host-format.log",
+      "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "check": "resource-host-lint",
+      "passed": true,
+      "elapsed_seconds": 1.93,
+      "log": "hermes-native/.checks/resource-host-lint.log",
+      "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "check": "resource-host-tests",
+      "passed": true,
+      "elapsed_seconds": 3.22,
+      "log": "hermes-native/.checks/resource-host-tests.log",
+      "log_sha256": "95113f652f63bc2034490124d20d27b66d53da5d347c2d829bddf8ab7dbb8ac9"
+    },
+    {
+      "check": "terminal-host-format",
+      "passed": true,
+      "elapsed_seconds": 0.145,
+      "log": "hermes-native/.checks/terminal-host-format.log",
+      "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "check": "terminal-host-lint",
+      "passed": true,
+      "elapsed_seconds": 1.153,
+      "log": "hermes-native/.checks/terminal-host-lint.log",
+      "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "check": "terminal-host-tests",
+      "passed": true,
+      "elapsed_seconds": 3.199,
+      "log": "hermes-native/.checks/terminal-host-tests.log",
+      "log_sha256": "6712e1eae494935e81940feddb015137444b68793bb1687f188fa751cf95d23f"
+    },
+    {
+      "check": "webview2-guest-format",
+      "passed": true,
+      "elapsed_seconds": 0.13,
+      "log": "hermes-native/.checks/webview2-guest-format.log",
+      "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "check": "webview2-guest-lint",
+      "passed": true,
+      "elapsed_seconds": 16.963,
+      "log": "hermes-native/.checks/webview2-guest-lint.log",
+      "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "check": "webview2-guest-tests",
+      "passed": true,
+      "elapsed_seconds": 17.51,
+      "log": "hermes-native/.checks/webview2-guest-tests.log",
+      "log_sha256": "6f305f95ac599884740031fb55e7a2144050a98751712e8ee0d09c2cec14cec2"
+    },
+    {
+      "check": "renderer-build",
+      "passed": true,
+      "elapsed_seconds": 22.27,
+      "log": "hermes-native/.checks/renderer-build.log",
+      "log_sha256": "155c0d674aec203f9ddcb5eee25dc71fb91dde87badb9aadb05b4249b09c99e0"
+    },
+    {
+      "check": "webview-native-build",
+      "passed": true,
+      "elapsed_seconds": 1.715,
+      "log": "hermes-native/.checks/webview-native-build.log",
+      "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "check": "webview-native-run",
+      "passed": true,
+      "elapsed_seconds": 1.288,
+      "log": "hermes-native/.checks/webview-native-run.log",
+      "log_sha256": "9d9cf75671bfd4c61a9d4ae4b69be3e2366770ddae3b71850a808c983241c0bf"
+    }
+  ],
+  "source_files": [
+    {
+      "path": "hermes-native/.gitattributes",
+      "git_lf_sha256": "0e5932992ad95e95f217c498992fb97a6ec95de13b04ce7a145ea855c9eddd5b"
+    },
+    {
+      "path": "hermes-native/.gitignore",
+      "git_lf_sha256": "45aaeac3a5ce521dd150e101928eda5dd90364449738482914011358ab1cbfa0"
+    },
+    {
+      "path": "hermes-native/apps/desktop-ui/.gitignore",
+      "git_lf_sha256": "e95c8988f9eb4a3ce1d3dcb754c2f0def55c70926d99601edacfd55a8223faa6"
+    },
+    {
+      "path": "hermes-native/apps/desktop-ui/host-capabilities.json",
+      "git_lf_sha256": "26e6d69ca975d5efbf87e479fe91c2616107417c588fe0fcf9b33e630bc8d54c"
+    },
+    {
+      "path": "hermes-native/apps/desktop-ui/package.json",
+      "git_lf_sha256": "d445485868c544e8d31c09675fd5d52a97181e2582a7fe0685af8a197c0d4a29"
+    },
+    {
+      "path": "hermes-native/apps/desktop-ui/README.md",
+      "git_lf_sha256": "c74ffc1b5fbe1e0547e455a64b4a489816bac24ef0c314cb320c4c848dda0333"
+    },
+    {
+      "path": "hermes-native/apps/desktop-ui/scripts/build.mjs",
+      "git_lf_sha256": "8975dd2513e9e2b037d792bdcac7e50711c46732e2d08fad6b0f2688fae124bf"
+    },
+    {
+      "path": "hermes-native/apps/desktop-ui/scripts/typecheck.mjs",
+      "git_lf_sha256": "395a9680ebb7cf9f736cd6b6b0efc6ba9df13030ed2269b790cfd0fe1c7cef62"
+    },
+    {
+      "path": "hermes-native/apps/desktop-ui/scripts/upstream.mjs",
+      "git_lf_sha256": "ba13f416499906d183588ac327a4c9fd1738104d343af9eb6e8bc39a4375b9ef"
+    },
+    {
+      "path": "hermes-native/apps/desktop-ui/src/bootstrap.ts",
+      "git_lf_sha256": "c9c4090c528567dfb18217b321d61b08fc65580dee59f2ced61f7611d5261914"
+    },
+    {
+      "path": "hermes-native/apps/desktop-ui/src/entry.ts",
+      "git_lf_sha256": "cc3f038e8ec5b11873fb810752f9b7750a0d936949bcbc4749c668486f3fab5f"
+    },
+    {
+      "path": "hermes-native/apps/desktop-ui/src/host-adapter.ts",
+      "git_lf_sha256": "385242c2968290fdf679c1dd57bc22cf7f07737a8ca41cf732e469aeeadf8eb5"
+    },
+    {
+      "path": "hermes-native/apps/desktop-ui/src/virtual.d.ts",
+      "git_lf_sha256": "53eae9552143cd4113cb8e812f9bafaf85439b707d14b1c3560c9aa6d9ba57e9"
+    },
+    {
+      "path": "hermes-native/apps/desktop-ui/tests/host-adapter.test.mjs",
+      "git_lf_sha256": "1401da22d46a0ad2bca370972a07a1ef98faf3b985ff10781d275ec8951772e7"
+    },
+    {
+      "path": "hermes-native/apps/desktop-ui/tests/upstream-guard.test.mjs",
+      "git_lf_sha256": "837c852a357b8e7ad1ba991d438fde57cca1aeb3ad63a3528c221cf9ee09b433"
+    },
+    {
+      "path": "hermes-native/README.md",
+      "git_lf_sha256": "70b5e60fa36117fd7e7e9d6bdd5fdb18cee5dde374d4e17ded6a6bd47910c7d8"
+    },
+    {
+      "path": "hermes-native/runtime-packs/tabby-v3/.gitignore",
+      "git_lf_sha256": "96738f15dc8819cdaffb1511a7c6fb745604272f4aace734bdd5e2dacf755356"
+    },
+    {
+      "path": "hermes-native/runtime-packs/tabby-v3/build_overlay.py",
+      "git_lf_sha256": "69ecd2958e386f300c7b63d8b7b4754193fd6dbc2d4ac5dd66aabdf89ad5159e"
+    },
+    {
+      "path": "hermes-native/runtime-packs/tabby-v3/config/managed-tabby-v3.yml",
+      "git_lf_sha256": "472df2ee3ad9c1ecd01691bd3c83c7046a2cb1def329ea43202fea6e8ba96a7c"
+    },
+    {
+      "path": "hermes-native/runtime-packs/tabby-v3/config/validate_template.py",
+      "git_lf_sha256": "4fb95334b4fedab08aec7a80643a94f5bfb70cc4d30c212c5d876fb11ee36a2b"
+    },
+    {
+      "path": "hermes-native/runtime-packs/tabby-v3/overlay/common/auth.py",
+      "git_lf_sha256": "6ea91429c9b7cf9e5d5bc476f3dbc19607b8f6a9e84c93fd06bbca1cb0a061ff"
+    },
+    {
+      "path": "hermes-native/runtime-packs/tabby-v3/pytest.ini",
+      "git_lf_sha256": "01eea9383692e63ba73ad63f379d09ffd2d52137766dce4d009a643e1c2f383b"
+    },
+    {
+      "path": "hermes-native/runtime-packs/tabby-v3/README.md",
+      "git_lf_sha256": "434935edce785969c7218f8fe939714e0e71bbc7e8ae721ffeb28f63fd21bdd4"
+    },
+    {
+      "path": "hermes-native/runtime-packs/tabby-v3/ruff.toml",
+      "git_lf_sha256": "d8a9bf583cea683c2965e0102eefb5db3cdb359f9d28120a1e7139b3dc720ea2"
+    },
+    {
+      "path": "hermes-native/runtime-packs/tabby-v3/tests/test_auth.py",
+      "git_lf_sha256": "3cc780be64aea2b8b9ece4adee1c821efa726f2fe0c8f503cdfebbeb636d7c4d"
+    },
+    {
+      "path": "hermes-native/runtime-packs/tabby-v3/tests/test_observation.py",
+      "git_lf_sha256": "1cb846c1408df844c1ed080bb96761414f61c0e586fcddae5d14591e70a99141"
+    },
+    {
+      "path": "hermes-native/runtime-packs/tabby-v3/tests/test_overlay.py",
+      "git_lf_sha256": "fd5482038aa813642135050d74388e3ca190141e6f50ab6e102eebc0e01ae3dd"
+    },
+    {
+      "path": "hermes-native/scripts/Verify-Foundation.ps1",
+      "git_lf_sha256": "6e8a30a8ef4723d4a8fc1d9703d917fc776081ce924ccb357aa427281bb25c29"
+    },
+    {
+      "path": "hermes-native/services/backend-host/pyproject.toml",
+      "git_lf_sha256": "c9c152a6497cabfb64d6eb03d12fa88d06455e40da834fe332e2fb8558277419"
+    },
+    {
+      "path": "hermes-native/services/backend-host/README.md",
+      "git_lf_sha256": "6c92c466cd9593c4532e4ed8b68af56f2bebeea714d46dea4def2e256890e9c4"
+    },
+    {
+      "path": "hermes-native/services/backend-host/source-audit.json",
+      "git_lf_sha256": "e4048bc6443bc1dbfd976611a55c910ba8646b9f00f6ac88943ed7eea3bf4d9a"
+    },
+    {
+      "path": "hermes-native/services/backend-host/src/hermes_backend_host/__init__.py",
+      "git_lf_sha256": "c25339a23634ff6e4a2c1ded7a6731b0716e4851a43be65267376894e3a66fa8"
+    },
+    {
+      "path": "hermes-native/services/backend-host/src/hermes_backend_host/readiness.py",
+      "git_lf_sha256": "70851cfac48f8e89a7b61f2f119d878dadc8d9f52a6eddf9846ace3937c5d07e"
+    },
+    {
+      "path": "hermes-native/services/backend-host/src/hermes_backend_host/windows_process.py",
+      "git_lf_sha256": "313c8ddd3b05c57661d78b5da1e5be157c1d5273305c342d78e42577a1ddb7fb"
+    },
+    {
+      "path": "hermes-native/services/backend-host/tests/fixture_backend.py",
+      "git_lf_sha256": "5aa5510832d5e228a2acc9bb592e30d9801feac16f33dc00930f8979bcc312e6"
+    },
+    {
+      "path": "hermes-native/services/backend-host/tests/test_readiness.py",
+      "git_lf_sha256": "4ca0c806b5fadaef418f105a66193cfcb4977eb625e873eb406a9728babb02f5"
+    },
+    {
+      "path": "hermes-native/services/backend-host/tests/test_windows_process.py",
+      "git_lf_sha256": "deb31c60707cec0aed2a504ce7bc0d2fe79af999e52feba18b0e39cc9a19a672"
+    },
+    {
+      "path": "hermes-native/services/inference/pyproject.toml",
+      "git_lf_sha256": "1b86f220f13ae3f5f5b01920bc7c3156f2ff0e4ea0bfb4feca3218e78c65e62c"
+    },
+    {
+      "path": "hermes-native/services/inference/README.md",
+      "git_lf_sha256": "fd5b3e78737c8b16525995ea30b97a75c5ccd97634fe90343d8058d00a49ed43"
+    },
+    {
+      "path": "hermes-native/services/inference/src/hermes_inference/__init__.py",
+      "git_lf_sha256": "4bf7ad585f1eba28e30d6a051cb48d5d88d7cf2211a281e8851d542d1ad0bf7d"
+    },
+    {
+      "path": "hermes-native/services/inference/src/hermes_inference/admission.py",
+      "git_lf_sha256": "a82a4effa6f6769e69399629f8380f26602a3fb66e8f32489480bb9644e92420"
+    },
+    {
+      "path": "hermes-native/services/inference/src/hermes_inference/control.py",
+      "git_lf_sha256": "7f72f06dd7d1bc4fbb262b7c04b7ef6c02c520514d9ebe49276abdde84733c4b"
+    },
+    {
+      "path": "hermes-native/services/inference/src/hermes_inference/errors.py",
+      "git_lf_sha256": "2037cbb750a9d9557a7dab9d46c95d9d1d799f026ab7431ee9d7ff6a17a8e790"
+    },
+    {
+      "path": "hermes-native/services/inference/src/hermes_inference/profiles.py",
+      "git_lf_sha256": "90a51fdee693ec14a43c1ec8bc54fa77cdf06c3c496a4d7bdaf60ea1e07ba48a"
+    },
+    {
+      "path": "hermes-native/services/inference/src/hermes_inference/sse.py",
+      "git_lf_sha256": "49136fee15a7ed50402b9b35b088b59712eb5812b4eb190640503d6064b24e4b"
+    },
+    {
+      "path": "hermes-native/services/inference/tests/conftest.py",
+      "git_lf_sha256": "e8d18805f051062a213a15fd9c14ed380b1b1268a5033153f77abdb7cca6e5e7"
+    },
+    {
+      "path": "hermes-native/services/inference/tests/test_control.py",
+      "git_lf_sha256": "99ad0e5e0fabe43b880b82e61124f89978b7a7119db2ec7304623ead3288bb7a"
+    },
+    {
+      "path": "hermes-native/services/inference/tests/test_profiles.py",
+      "git_lf_sha256": "b6bf33e4271d9ae00b772080fe8935377bd43a9dcd1bc419128ccab7d6661d98"
+    },
+    {
+      "path": "hermes-native/services/inference/tests/test_upstream_contract.py",
+      "git_lf_sha256": "5a9f2622c663e662d950bfab0cca6c337604fe6950d22e5cc145fec31f0d81ad"
+    },
+    {
+      "path": "hermes-native/services/resource-host/.gitignore",
+      "git_lf_sha256": "b0714d56cba1f7fee70756e26ad544405a926b320030f9a3f29d4ed2dab21315"
+    },
+    {
+      "path": "hermes-native/services/resource-host/Cargo.lock",
+      "git_lf_sha256": "111c808f9e2490c1292964f95b7f3df1a67d7f52e1a22c7fd7052522a22f4498"
+    },
+    {
+      "path": "hermes-native/services/resource-host/Cargo.toml",
+      "git_lf_sha256": "8230efb8bf3caac77438cd45c9afce53e045a021d7949e05daf798cabf68a624"
+    },
+    {
+      "path": "hermes-native/services/resource-host/README.md",
+      "git_lf_sha256": "d880d0491effa53407e49806f5619ccec185176be35906738dc94db35919a12d"
+    },
+    {
+      "path": "hermes-native/services/resource-host/src/bin/worker_fixture.rs",
+      "git_lf_sha256": "5dcb509f4828e1adc43839c99926c88365676f627ad84d3381cb249c4e1831d0"
+    },
+    {
+      "path": "hermes-native/services/resource-host/src/lib.rs",
+      "git_lf_sha256": "5611ac9e6ce489d4b6d0703e2ec1f458a509d313dcdca951eba8fffe4c46166e"
+    },
+    {
+      "path": "hermes-native/services/resource-host/src/windows.rs",
+      "git_lf_sha256": "b9f8169009310c410cb6d344d0de3211af0d1bf879fe146bb5fcd6440fb46031"
+    },
+    {
+      "path": "hermes-native/services/resource-host/tests/owned_workers.rs",
+      "git_lf_sha256": "3a1a6c1f7b38b30ba0b88a71a739d3eb91fcbaa049fd4a7a7037c5dcf8ac50eb"
+    },
+    {
+      "path": "hermes-native/services/terminal-host/.gitignore",
+      "git_lf_sha256": "af418dbd3a52d894a556736e7180a5acf8c79189290bd452e637c73913bc8e7c"
+    },
+    {
+      "path": "hermes-native/services/terminal-host/Cargo.lock",
+      "git_lf_sha256": "e666bd5744a47bc810bf72e06502f338356fd234d7bdb47f8267fc58d9628579"
+    },
+    {
+      "path": "hermes-native/services/terminal-host/Cargo.toml",
+      "git_lf_sha256": "54210f700a885dfd1dd69b13d57cf10a13b1a0b7c478ded1be04db9bd604ca1c"
+    },
+    {
+      "path": "hermes-native/services/terminal-host/README.md",
+      "git_lf_sha256": "ae2c273b712d102f79cab7e76d25ef15655473b872ceffe1b9d64c71eef56fb4"
+    },
+    {
+      "path": "hermes-native/services/terminal-host/run-tests.ps1",
+      "git_lf_sha256": "2ee1b2ff2b3e936661cd4a2ca784f9187553f5691cd75ecbe91f6cc9f2da6c5a"
+    },
+    {
+      "path": "hermes-native/services/terminal-host/src/bin/terminal-fixture.rs",
+      "git_lf_sha256": "aa635c6d6acb1e8d09e7ba79c993e871d77246f0d055e24523a8581aa2352671"
+    },
+    {
+      "path": "hermes-native/services/terminal-host/src/lib.rs",
+      "git_lf_sha256": "a061f2925dd2cc74977d822422dab735bdb01651a6bdd67ac31a7d4f4ee8b3f8"
+    },
+    {
+      "path": "hermes-native/services/terminal-host/tests/conpty.rs",
+      "git_lf_sha256": "ceed38b3ed7374bd4154df2e599921a40d6772ff33078beb6df5f7ce1ddc7d8d"
+    },
+    {
+      "path": "hermes-native/spikes/webview2-guest/.gitignore",
+      "git_lf_sha256": "af418dbd3a52d894a556736e7180a5acf8c79189290bd452e637c73913bc8e7c"
+    },
+    {
+      "path": "hermes-native/spikes/webview2-guest/Cargo.lock",
+      "git_lf_sha256": "f90bdcde1b7f431b62eda5f04cca917808356a50b3483d4fc6f9f821c2ac342a"
+    },
+    {
+      "path": "hermes-native/spikes/webview2-guest/Cargo.toml",
+      "git_lf_sha256": "2d97ae2364d9bdba9fd73f869cb5f77da6a5c97c6e2e33dcbf1a32fa89e265fc"
+    },
+    {
+      "path": "hermes-native/spikes/webview2-guest/evidence/native-run.json",
+      "git_lf_sha256": "e16cad0117e5d0b9736eedf66b0d9cef8d53bee4b18dd877ff152d31194bd019"
+    },
+    {
+      "path": "hermes-native/spikes/webview2-guest/README.md",
+      "git_lf_sha256": "e809fe6806f27cabdf6fddf83f2b2e8ea8b90c420e80384f9ba4fa21b14a0812"
+    },
+    {
+      "path": "hermes-native/spikes/webview2-guest/Run-Fixture.ps1",
+      "git_lf_sha256": "80ff5d02eb6c9f2260c7e75bdc1a3c3d2a346f3e870f96b52726095c25c99cee"
+    },
+    {
+      "path": "hermes-native/spikes/webview2-guest/src/lib.rs",
+      "git_lf_sha256": "6683f9eab8e013b3d130f290df5557415baaf719fe925cc2c11572d9af73a1ef"
+    },
+    {
+      "path": "hermes-native/spikes/webview2-guest/src/main.rs",
+      "git_lf_sha256": "51b725898f24da451ede23f38dbb0c80a90af34ad70d2248ce980e52bc56efc0"
+    },
+    {
+      "path": "hermes-native/spikes/webview2-guest/src/windows_fixture.rs",
+      "git_lf_sha256": "d3d8c49ad7d2a059bb350797d2703a05fafb54daad369f513039664fbf88d0a5"
+    },
+    {
+      "path": "hermes-native/tests/gateway/fixtures.mjs",
+      "git_lf_sha256": "e9e720d595d43d172147ca2718e6d623789c769f2a68bc2a353d82c6faa835c4"
+    },
+    {
+      "path": "hermes-native/tests/gateway/README.md",
+      "git_lf_sha256": "4466ac2ee3c3f3f093b390cd10516fd7c98ac9b401f5e271cb59865f4746c4b5"
+    },
+    {
+      "path": "hermes-native/tests/gateway/run.mjs",
+      "git_lf_sha256": "d21e2dcf08b37fd4bbab0e8748cfd8c82fbbab5b911cef45f74b7c686cbeaaca"
+    },
+    {
+      "path": "hermes-native/tests/gateway/transport.test.mjs",
+      "git_lf_sha256": "346fb67088ffdd7c928bf75fb3fd3f214968607f25d785c15be3b689adfe1006"
+    },
+    {
+      "path": "hermes-native/tests/gateway/upstream-lock.json",
+      "git_lf_sha256": "7886a9ffd12a823a0fee8225d1d0b18a3b5071c0dfbd9f8a9d5a3c767e01b353"
+    },
+    {
+      "path": "hermes-native/tests/gateway/upstream.mjs",
+      "git_lf_sha256": "13d465f57f31da60f75636fa7195787505b442e549a93a380dc4f2b8edb4998b"
+    }
+  ]
+}

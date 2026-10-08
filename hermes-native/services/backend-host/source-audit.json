@@ -1,0 +1,15 @@
+{
+  "schema_version": 1,
+  "upstream_commit": "649d6c0391029f35959cfbc240eb3534a6667cf5",
+  "actual_runtime_launched": false,
+  "audit_scope": "Selected startup sources only; import closure not certified",
+  "source_sha256": {
+    "hermes_cli/main.py": "1491ff17d20b54c024c052003d394798cb2e673c8b9565b4a8be4c1fd6b21dae",
+    "hermes_cli/web_server.py": "3557c4213f416eae814e893143e540fc4a82b7b0f0848bdc9f7fb1c412061a3b",
+    "gateway/host_rendezvous.py": "e7db91afa9d77a791e753ef314b9e332dc54fbed144fe6f328a4873d6f75496f",
+    "hermes_bootstrap.py": "ef827fba947d33dc29fe4afd587264b982a37e5b1da2130a4806c8d84e58ee6c",
+    "hermes_cli/venv_sync.py": "6de0d12b3de57f4425279589be5d2f39e02e2bec98ba04ef8169e1e9d2b982e9",
+    "tui_gateway/server.py": "03b0f70c3652fe0a0be03898c27737ecbf07373b56619b684dae21aaf4094ec8",
+    "hermes_cli/web_routers/chat_ws.py": "6381f1fb1987d12b4a5e3f5663ba129b35342f50355f2eee3efa2fd597da6814"
+  }
+}

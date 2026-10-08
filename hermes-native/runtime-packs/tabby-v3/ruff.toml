@@ -1,0 +1,9 @@
+target-version = "py310"
+line-length = 88
+src = ["."]
+
+[lint]
+select = ["E4", "E7", "E9", "F", "I", "B"]
+
+[lint.isort]
+known-first-party = ["build_overlay"]

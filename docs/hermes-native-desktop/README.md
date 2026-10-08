@@ -37,3 +37,5 @@ Browser guests, native terminals, desktop plugins and update behavior require ex
 The independent review's seven findings are integrated in section 19. The plan targets all required Windows behavior, with a stronger proposed guardrail of at least 85% unchanged eligible Python/renderer files. Whole-application changes, including the replaced host, are reported separately; file reuse is not proof of behavioral parity.
 
 This package is the completed research/specification deliverable. It does not contain a built replacement `.exe`, downloaded models or verified GPU performance. No installed application code was changed. The implementation begins with the M0 baseline and M1 native/GPU feasibility gates defined in the roadmap.
+
+Implementation continuation: [checkpoint](./IMPLEMENTATION-CHECKPOINT.md) and [reconciliation](./RECONCILIATION.md).

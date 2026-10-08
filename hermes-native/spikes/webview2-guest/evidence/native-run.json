@@ -1,0 +1,146 @@
+{
+  "elapsed_ms": 612,
+  "failure": null,
+  "fixture_http_requests": [
+    "/initial",
+    "/initial",
+    "/navigated"
+  ],
+  "fixture_origin": "http://127.0.0.1:60671",
+  "guest_bridge_policy": "No IPC handler or Hermes/Tauri bridge installed. Only host-controlled JS evaluation reads fixture results.",
+  "native_controls": {
+    "bounds_pixels": {
+      "height": 211,
+      "width": 301,
+      "x": 13,
+      "y": 17
+    },
+    "hidden_readback": true,
+    "parent_hidden_readback": true,
+    "shown_readback": true,
+    "visually_verified": false
+  },
+  "navigation_events": [
+    {
+      "allowed": true,
+      "guest": 0,
+      "url": "http://127.0.0.1:60671/initial"
+    },
+    {
+      "allowed": true,
+      "guest": 1,
+      "url": "http://127.0.0.1:60671/initial"
+    },
+    {
+      "allowed": true,
+      "guest": 0,
+      "url": "http://127.0.0.1:60671/navigated"
+    },
+    {
+      "allowed": false,
+      "guest": 0,
+      "url": "http://127.0.0.1:9/outside-fixture"
+    }
+  ],
+  "popup_denial": {
+    "callback_response": "deny",
+    "requested_url": "http://127.0.0.1:60671/popup"
+  },
+  "scope": "hidden-native-webview2-fixture-only",
+  "separate_owned_data_directories": [
+    "profile-a",
+    "profile-b"
+  ],
+  "snapshots": {
+    "a_recheck": {
+      "cookie": "partition=A",
+      "document_url": "http://127.0.0.1:60671/initial",
+      "hermes_bridge": "undefined",
+      "ipc_bridge": "undefined",
+      "origin": "http://127.0.0.1:60671",
+      "path": "/initial",
+      "storage": "A",
+      "tauri_bridge": "undefined"
+    },
+    "a_written": {
+      "cookie": "partition=A",
+      "document_url": "http://127.0.0.1:60671/initial",
+      "hermes_bridge": "undefined",
+      "ipc_bridge": "undefined",
+      "origin": "http://127.0.0.1:60671",
+      "path": "/initial",
+      "storage": "A",
+      "tauri_bridge": "undefined"
+    },
+    "after_blocked_navigation": {
+      "cookie": "partition=A",
+      "document_url": "http://127.0.0.1:60671/navigated",
+      "hermes_bridge": "undefined",
+      "ipc_bridge": "undefined",
+      "origin": "http://127.0.0.1:60671",
+      "path": "/navigated",
+      "storage": "A",
+      "tauri_bridge": "undefined"
+    },
+    "after_navigation": {
+      "cookie": "partition=A",
+      "document_url": "http://127.0.0.1:60671/navigated",
+      "hermes_bridge": "undefined",
+      "ipc_bridge": "undefined",
+      "origin": "http://127.0.0.1:60671",
+      "path": "/navigated",
+      "storage": "A",
+      "tauri_bridge": "undefined"
+    },
+    "b_clean": {
+      "cookie": "",
+      "document_url": "http://127.0.0.1:60671/initial",
+      "hermes_bridge": "undefined",
+      "ipc_bridge": "undefined",
+      "origin": "http://127.0.0.1:60671",
+      "path": "/initial",
+      "storage": null,
+      "tauri_bridge": "undefined"
+    },
+    "b_written": {
+      "cookie": "partition=B",
+      "document_url": "http://127.0.0.1:60671/initial",
+      "hermes_bridge": "undefined",
+      "ipc_bridge": "undefined",
+      "origin": "http://127.0.0.1:60671",
+      "path": "/initial",
+      "storage": "B",
+      "tauri_bridge": "undefined"
+    }
+  },
+  "status": "passed",
+  "tao_version": "0.37.1",
+  "unverified": [
+    "visual composition",
+    "focus and shortcuts",
+    "input forwarding",
+    "screenshots",
+    "dock placement",
+    "downloads",
+    "authentication",
+    "production renderer integration",
+    "Tauri command ACL integration"
+  ],
+  "webview2_runtime": "154.0.4258.62",
+  "wry_version": "0.57.0",
+  "source_sha256": {
+    "src/lib.rs": "6683f9eab8e013b3d130f290df5557415baaf719fe925cc2c11572d9af73a1ef",
+    "src/windows_fixture.rs": "d3d8c49ad7d2a059bb350797d2703a05fafb54daad369f513039664fbf88d0a5",
+    "src/main.rs": "51b725898f24da451ede23f38dbb0c80a90af34ad70d2248ce980e52bc56efc0",
+    "Run-Fixture.ps1": "80ff5d02eb6c9f2260c7e75bdc1a3c3d2a346f3e870f96b52726095c25c99cee",
+    "Cargo.toml": "2d97ae2364d9bdba9fd73f869cb5f77da6a5c97c6e2e33dcbf1a32fa89e265fc",
+    "Cargo.lock": "f90bdcde1b7f431b62eda5f04cca917808356a50b3483d4fc6f9f821c2ac342a"
+  },
+  "verification": {
+    "native_run": "passed, hidden bounded process; HTTP requests sampled after teardown and drain",
+    "compile": "passed, offline locked",
+    "unit_tests": "5 passed: 4 snapshot/policy and 1 speculative/partial HTTP fixture regression",
+    "clippy": "passed, -D warnings",
+    "format": "passed, cargo fmt --check"
+  }
+}

@@ -1,0 +1,21 @@
+{
+  "schemaVersion": 1,
+  "upstreamRevision": "649d6c0391029f35959cfbc240eb3534a6667cf5",
+  "status": "renderer-adapter-feasibility",
+  "nativeBinding": "pending",
+  "transport": {
+    "command": "hermes_host_request",
+    "request": "{ method, args }",
+    "eventChannel": "hermes:host:event",
+    "event": "{ name, payload }"
+  },
+  "adapterMethods": ["api", "getConnection", "getConnectionFor", "getGatewayWsUrl", "getGatewayWsUrlFor", "revalidateConnection", "touchBackend", "getVersion"],
+  "adapterEvents": ["backend-exit", "connection-applied", "boot-progress", "power-resume"],
+  "unimplementedFamilies": [
+    "native guest browser and partitions", "ConPTY and terminal", "filesystem and Git",
+    "profile and connection persistence", "credentials and OAuth", "windows and overlays",
+    "notifications and clipboard and capture", "themes", "install and update and recovery",
+    "runtime and inference control", "remaining Hermes native bridge"
+  ],
+  "proofLimits": ["bundle compilation only", "no live Tauri binding", "no visual parity proof", "no running model or backend"]
+}

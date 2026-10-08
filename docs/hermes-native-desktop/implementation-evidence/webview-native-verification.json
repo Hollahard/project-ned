@@ -1,0 +1,131 @@
+{
+  "elapsed_ms": 491,
+  "failure": null,
+  "fixture_http_requests": [
+    "/initial",
+    "/initial",
+    "/navigated"
+  ],
+  "fixture_origin": "http://127.0.0.1:61224",
+  "guest_bridge_policy": "No IPC handler or Hermes/Tauri bridge installed. Only host-controlled JS evaluation reads fixture results.",
+  "native_controls": {
+    "bounds_pixels": {
+      "height": 211,
+      "width": 301,
+      "x": 13,
+      "y": 17
+    },
+    "hidden_readback": true,
+    "parent_hidden_readback": true,
+    "shown_readback": true,
+    "visually_verified": false
+  },
+  "navigation_events": [
+    {
+      "allowed": true,
+      "guest": 0,
+      "url": "http://127.0.0.1:61224/initial"
+    },
+    {
+      "allowed": true,
+      "guest": 1,
+      "url": "http://127.0.0.1:61224/initial"
+    },
+    {
+      "allowed": true,
+      "guest": 0,
+      "url": "http://127.0.0.1:61224/navigated"
+    },
+    {
+      "allowed": false,
+      "guest": 0,
+      "url": "http://127.0.0.1:9/outside-fixture"
+    }
+  ],
+  "popup_denial": {
+    "callback_response": "deny",
+    "requested_url": "http://127.0.0.1:61224/popup"
+  },
+  "scope": "hidden-native-webview2-fixture-only",
+  "separate_owned_data_directories": [
+    "profile-a",
+    "profile-b"
+  ],
+  "snapshots": {
+    "a_recheck": {
+      "cookie": "partition=A",
+      "document_url": "http://127.0.0.1:61224/initial",
+      "hermes_bridge": "undefined",
+      "ipc_bridge": "undefined",
+      "origin": "http://127.0.0.1:61224",
+      "path": "/initial",
+      "storage": "A",
+      "tauri_bridge": "undefined"
+    },
+    "a_written": {
+      "cookie": "partition=A",
+      "document_url": "http://127.0.0.1:61224/initial",
+      "hermes_bridge": "undefined",
+      "ipc_bridge": "undefined",
+      "origin": "http://127.0.0.1:61224",
+      "path": "/initial",
+      "storage": "A",
+      "tauri_bridge": "undefined"
+    },
+    "after_blocked_navigation": {
+      "cookie": "partition=A",
+      "document_url": "http://127.0.0.1:61224/navigated",
+      "hermes_bridge": "undefined",
+      "ipc_bridge": "undefined",
+      "origin": "http://127.0.0.1:61224",
+      "path": "/navigated",
+      "storage": "A",
+      "tauri_bridge": "undefined"
+    },
+    "after_navigation": {
+      "cookie": "partition=A",
+      "document_url": "http://127.0.0.1:61224/navigated",
+      "hermes_bridge": "undefined",
+      "ipc_bridge": "undefined",
+      "origin": "http://127.0.0.1:61224",
+      "path": "/navigated",
+      "storage": "A",
+      "tauri_bridge": "undefined"
+    },
+    "b_clean": {
+      "cookie": "",
+      "document_url": "http://127.0.0.1:61224/initial",
+      "hermes_bridge": "undefined",
+      "ipc_bridge": "undefined",
+      "origin": "http://127.0.0.1:61224",
+      "path": "/initial",
+      "storage": null,
+      "tauri_bridge": "undefined"
+    },
+    "b_written": {
+      "cookie": "partition=B",
+      "document_url": "http://127.0.0.1:61224/initial",
+      "hermes_bridge": "undefined",
+      "ipc_bridge": "undefined",
+      "origin": "http://127.0.0.1:61224",
+      "path": "/initial",
+      "storage": "B",
+      "tauri_bridge": "undefined"
+    }
+  },
+  "status": "passed",
+  "tao_version": "0.37.1",
+  "unverified": [
+    "visual composition",
+    "focus and shortcuts",
+    "input forwarding",
+    "screenshots",
+    "dock placement",
+    "downloads",
+    "authentication",
+    "production renderer integration",
+    "Tauri command ACL integration"
+  ],
+  "webview2_runtime": "154.0.4258.62",
+  "wry_version": "0.57.0"
+}

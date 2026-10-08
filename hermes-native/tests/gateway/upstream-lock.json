@@ -1,0 +1,87 @@
+{
+  "baseline_commit": "649d6c0391029f35959cfbc240eb3534a6667cf5",
+  "node_minimum_major": 24,
+  "fixture_dependency": {
+    "name": "ws",
+    "version": "8.21.1",
+    "optional_native_extensions": "disabled via WS_NO_BUFFER_UTIL and WS_NO_UTF_8_VALIDATE"
+  },
+  "files": [
+    {
+      "path": "apps/shared/src/json-rpc-channel.ts",
+      "sha256": "5f2a753e862572f7e1721aa670d70b294073321dd8e4913d01b7d48b6150fa7a"
+    },
+    {
+      "path": "apps/shared/src/json-rpc-gateway.ts",
+      "sha256": "c70142d979b55d54072265e2d08004aa7e8cd601978118de9396ee80d9c4e9cc"
+    },
+    {
+      "path": "apps/shared/src/gateway-events.ts",
+      "sha256": "f2172b313c2002d15784d0d74c988cb00e15011220fa9d26d5ce38222d2611e0"
+    },
+    {
+      "path": "apps/shared/src/gateway-contract.generated.ts",
+      "sha256": "f740ca50ad910276abd3e2b5068d9385acfb2bcc89f5ce0882620c72491b172c"
+    },
+    {
+      "path": "node_modules/ws/package.json",
+      "sha256": "5d9fcf3bb6aaa7c789b4a020b79e208e76fbc32b1989caf2c275db8cb04329de"
+    },
+    {
+      "path": "node_modules/ws/index.js",
+      "sha256": "924564d5be26d59b9682c4263f68320e48dde7240bd2d1ad17ec305537429dd2"
+    },
+    {
+      "path": "node_modules/ws/lib/buffer-util.js",
+      "sha256": "8b0a45739132f82e25ea13163780abf547ccfe989267f3eb7abb475beec92da3"
+    },
+    {
+      "path": "node_modules/ws/lib/constants.js",
+      "sha256": "391e823142b8b370e55a2fd32b022deaf03b8415c56000009674ebc86a0b4f86"
+    },
+    {
+      "path": "node_modules/ws/lib/event-target.js",
+      "sha256": "c45d3c6e12d170c860c0c3f1a050aa0f864d9806632b609a1e607d675aba128c"
+    },
+    {
+      "path": "node_modules/ws/lib/extension.js",
+      "sha256": "852564f0f6b460287043803eae732666fb5610f676874354fc89f06aa4e986ed"
+    },
+    {
+      "path": "node_modules/ws/lib/limiter.js",
+      "sha256": "e0469d4b83f6ba764b15f80e1766b75c136fbff68f048f4c050f0b1c7f065f69"
+    },
+    {
+      "path": "node_modules/ws/lib/permessage-deflate.js",
+      "sha256": "02c31796f0132a335d4efe7b7adcebadbb69543a1ce65ae04aaccc3530e27ab9"
+    },
+    {
+      "path": "node_modules/ws/lib/receiver.js",
+      "sha256": "a6ada33c9a2d54eaf595824b821ea89ca2c6395f89aa06755c52142148274884"
+    },
+    {
+      "path": "node_modules/ws/lib/sender.js",
+      "sha256": "d0791d30c3defd44dcabbddb879a901c757993fea2c00a7ffea01d53b23b4b77"
+    },
+    {
+      "path": "node_modules/ws/lib/stream.js",
+      "sha256": "a56fcb6e2b152097ee820b6f5410b1f71e59819b45d08d9f8bda588fe39070ec"
+    },
+    {
+      "path": "node_modules/ws/lib/subprotocol.js",
+      "sha256": "be3f6323d6f549568577dcba9004c1479d95c65a7abb0fe0c582875b9fac0b7c"
+    },
+    {
+      "path": "node_modules/ws/lib/validation.js",
+      "sha256": "41ce8e83d0d434132e1704895fedb91f6703a701b42d91c80954ab29b2845593"
+    },
+    {
+      "path": "node_modules/ws/lib/websocket-server.js",
+      "sha256": "6d8dd89a841748c80445fd5fcdb5ba8005369b53cc3525135e11304c8b9c55e5"
+    },
+    {
+      "path": "node_modules/ws/lib/websocket.js",
+      "sha256": "de5add831db49e159d3ee0adb1c5e042eba3af13166374c5584f4fc520d1e734"
+    }
+  ]
+}
