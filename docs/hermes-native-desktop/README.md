@@ -42,6 +42,8 @@ Hermes agent startup, chat/tools, integrated inference, browser/terminal parity,
 | [NATIVE-CATALOG-CHECKPOINT.md](./NATIVE-CATALOG-CHECKPOINT.md) | Integrated owned inspection, retained profile-form behavior and final regression evidence |
 | [OWNED-WEBSOCKET-CHECKPOINT.md](./OWNED-WEBSOCKET-CHECKPOINT.md) | Finite owned socket transport, pinned protocol source, 52/489 regression evidence and the required live event loop |
 | [NEXT-BACKEND-INTEGRATION.md](./NEXT-BACKEND-INTEGRATION.md) | Proposed retained backend/gateway integration sequence and source-side-effect audit |
+| [RUST-DESIGN.md](./RUST-DESIGN.md) | Proposed bounded live socket actor, parser-progress prerequisite and lifecycle test gates |
+| [CLIENT-DESIGN.md](./CLIENT-DESIGN.md) | Retained native socket adapter, exact framing, direct URL consumers and startup dependency inventory |
 | [NATIVE-SOCKET-TEST-PLAN.md](./NATIVE-SOCKET-TEST-PLAN.md) | Proposed socket/ownership/client acceptance boundaries |
 | [QWEN3-RUNTIME-CHECKPOINT.md](./QWEN3-RUNTIME-CHECKPOINT.md) | Second opt-in EXL3 model load/generation/unload and measured owned cleanup |
 | [baseline-inventory.json](./baseline-inventory.json) | Static baseline of 252 RPC methods, 13 server requests, 77 notifications and 259 literal preload channels |

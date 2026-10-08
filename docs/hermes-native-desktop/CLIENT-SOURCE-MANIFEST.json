@@ -1,0 +1,329 @@
+{
+  "schema": 1,
+  "purpose": "Read-only source evidence for CLIENT-DESIGN.md; no approved transformation manifest",
+  "repository": "NousResearch/hermes-agent",
+  "revision": "649d6c0391029f35959cfbc240eb3534a6667cf5",
+  "projectNedCheckpoint": "dfb63a7",
+  "files": [
+    {
+      "path": "apps/shared/src/json-rpc-gateway.ts",
+      "sha256": "c70142d979b55d54072265e2d08004aa7e8cd601978118de9396ee80d9c4e9cc",
+      "anchors": [
+        16,
+        35,
+        61,
+        117,
+        193,
+        210,
+        217,
+        241,
+        255,
+        352,
+        404,
+        422,
+        438,
+        504,
+        713
+      ],
+      "url": "https://github.com/NousResearch/hermes-agent/blob/649d6c0391029f35959cfbc240eb3534a6667cf5/apps/shared/src/json-rpc-gateway.ts"
+    },
+    {
+      "path": "apps/shared/src/json-rpc-channel.ts",
+      "sha256": "5f2a753e862572f7e1721aa670d70b294073321dd8e4913d01b7d48b6150fa7a",
+      "anchors": [
+        102,
+        154,
+        164,
+        307,
+        319,
+        435,
+        521
+      ],
+      "url": "https://github.com/NousResearch/hermes-agent/blob/649d6c0391029f35959cfbc240eb3534a6667cf5/apps/shared/src/json-rpc-channel.ts"
+    },
+    {
+      "path": "apps/shared/src/websocket-url.ts",
+      "sha256": "a4282b7d610d3c022a8dbcb77597b85497885eec606f6f09a354d373fea3d10c",
+      "anchors": [
+        39,
+        79
+      ],
+      "url": "https://github.com/NousResearch/hermes-agent/blob/649d6c0391029f35959cfbc240eb3534a6667cf5/apps/shared/src/websocket-url.ts"
+    },
+    {
+      "path": "apps/desktop/src/api/client.ts",
+      "sha256": "59689ef1367065744e58b56fce35ce128b40ed9afec9c381bb56e5cb16900e6b",
+      "anchors": [
+        17,
+        27,
+        31,
+        130
+      ],
+      "url": "https://github.com/NousResearch/hermes-agent/blob/649d6c0391029f35959cfbc240eb3534a6667cf5/apps/desktop/src/api/client.ts"
+    },
+    {
+      "path": "apps/desktop/src/global.d.ts",
+      "sha256": "efeb2753162cfac0df4143139585a54fd67b08776f8fe08f52ef061b049f6c7b",
+      "anchors": [
+        971
+      ],
+      "url": "https://github.com/NousResearch/hermes-agent/blob/649d6c0391029f35959cfbc240eb3534a6667cf5/apps/desktop/src/global.d.ts"
+    },
+    {
+      "path": "apps/desktop/src/lib/gateway-ws-url.ts",
+      "sha256": "6e18b8d8974d6cb4004309d3acc6c445930b57336bcb2e62aa7f4587267e69a0",
+      "anchors": [
+        5
+      ],
+      "url": "https://github.com/NousResearch/hermes-agent/blob/649d6c0391029f35959cfbc240eb3534a6667cf5/apps/desktop/src/lib/gateway-ws-url.ts"
+    },
+    {
+      "path": "apps/desktop/src/api/plugins.ts",
+      "sha256": "17c163a7e5122adc28c3cdac9f4c4fa189dcd5c720b062b7c89dedb834d32fb7",
+      "anchors": [
+        96,
+        111
+      ],
+      "url": "https://github.com/NousResearch/hermes-agent/blob/649d6c0391029f35959cfbc240eb3534a6667cf5/apps/desktop/src/api/plugins.ts"
+    },
+    {
+      "path": "apps/desktop/src/lib/sibling-ws-url.ts",
+      "sha256": "ecd1b323e23111062ca590ae55455db68413a4ced10f3a6c6b9ae01c89ec40c9",
+      "anchors": [
+        45,
+        85
+      ],
+      "url": "https://github.com/NousResearch/hermes-agent/blob/649d6c0391029f35959cfbc240eb3534a6667cf5/apps/desktop/src/lib/sibling-ws-url.ts"
+    },
+    {
+      "path": "apps/desktop/src/lib/voice-stream.ts",
+      "sha256": "28234e6d0c0d2eec0882279445e786ee7b7d2d2bf8e53a349c14468e9464cb51",
+      "anchors": [
+        36,
+        46,
+        112
+      ],
+      "url": "https://github.com/NousResearch/hermes-agent/blob/649d6c0391029f35959cfbc240eb3534a6667cf5/apps/desktop/src/lib/voice-stream.ts"
+    },
+    {
+      "path": "apps/desktop/src/lib/voice-playback.ts",
+      "sha256": "2e394edad71ef04ee4b7baef5fb4f3329f9a02909037d456cac6899a24ee2646",
+      "anchors": [
+        174,
+        180,
+        383
+      ],
+      "url": "https://github.com/NousResearch/hermes-agent/blob/649d6c0391029f35959cfbc240eb3534a6667cf5/apps/desktop/src/lib/voice-playback.ts"
+    },
+    {
+      "path": "apps/desktop/src/plugins/hermes-bots/screen-pane.tsx",
+      "sha256": "40d0d5a3305c590c9a20726b34cc09f01b6b757c62122d22514e23de069f316b",
+      "anchors": [
+        209,
+        225
+      ],
+      "url": "https://github.com/NousResearch/hermes-agent/blob/649d6c0391029f35959cfbc240eb3534a6667cf5/apps/desktop/src/plugins/hermes-bots/screen-pane.tsx"
+    },
+    {
+      "path": "apps/desktop/src/plugins/hermes-bots/screen-connection.ts",
+      "sha256": "212214fc13580c33744d51f2f5963bcd81e4be311e107147580c9b6ac2419465",
+      "anchors": [
+        166,
+        188
+      ],
+      "url": "https://github.com/NousResearch/hermes-agent/blob/649d6c0391029f35959cfbc240eb3534a6667cf5/apps/desktop/src/plugins/hermes-bots/screen-connection.ts"
+    },
+    {
+      "path": "apps/desktop/src/lib/media.ts",
+      "sha256": "d39d5a3bd2f275edd10abf12a48d844e90a09407032c2e2a9c3f26b3a1488413",
+      "anchors": [
+        236,
+        251,
+        274
+      ],
+      "url": "https://github.com/NousResearch/hermes-agent/blob/649d6c0391029f35959cfbc240eb3534a6667cf5/apps/desktop/src/lib/media.ts"
+    },
+    {
+      "path": "apps/desktop/src/lib/desktop-fs.ts",
+      "sha256": "56c72d15b91e5fb00f942936b22ae1db0ebc8dd5beab4cf6f832f30d9ddf4656",
+      "anchors": [
+        22
+      ],
+      "url": "https://github.com/NousResearch/hermes-agent/blob/649d6c0391029f35959cfbc240eb3534a6667cf5/apps/desktop/src/lib/desktop-fs.ts"
+    },
+    {
+      "path": "apps/desktop/src/lib/connection-scoped.ts",
+      "sha256": "d3ed707102f33e97767c28836a2194a4dbdafd2ca3b6c8157ef76e3e7fa9e84c",
+      "anchors": [
+        50,
+        59
+      ],
+      "url": "https://github.com/NousResearch/hermes-agent/blob/649d6c0391029f35959cfbc240eb3534a6667cf5/apps/desktop/src/lib/connection-scoped.ts"
+    },
+    {
+      "path": "apps/desktop/src/store/session.ts",
+      "sha256": "cc2173f533888033e5d8701167ba26ccee55a1d6bd39ebff366aefb37a656bfd",
+      "anchors": [
+        342
+      ],
+      "url": "https://github.com/NousResearch/hermes-agent/blob/649d6c0391029f35959cfbc240eb3534a6667cf5/apps/desktop/src/store/session.ts"
+    },
+    {
+      "path": "apps/desktop/src/store/profile.ts",
+      "sha256": "69f9d67a5fadc7e133445a8c5e821ceb44b11372c2310ecf3744892bb933d523",
+      "anchors": [
+        78,
+        253
+      ],
+      "url": "https://github.com/NousResearch/hermes-agent/blob/649d6c0391029f35959cfbc240eb3534a6667cf5/apps/desktop/src/store/profile.ts"
+    },
+    {
+      "path": "apps/desktop/src/store/session-states.ts",
+      "sha256": "b46b8cf61d656c17b56e41d0d36c09515b2f47a0dc5336a74129ed7bf8d254d8",
+      "anchors": [
+        1409
+      ],
+      "url": "https://github.com/NousResearch/hermes-agent/blob/649d6c0391029f35959cfbc240eb3534a6667cf5/apps/desktop/src/store/session-states.ts"
+    },
+    {
+      "path": "apps/desktop/src/store/updates.ts",
+      "sha256": "0a53ac3c4d7ae544c2519b78c7e4b8b7f6c0c16d168cbaa005dd778e0b1e7806",
+      "anchors": [
+        1246
+      ],
+      "url": "https://github.com/NousResearch/hermes-agent/blob/649d6c0391029f35959cfbc240eb3534a6667cf5/apps/desktop/src/store/updates.ts"
+    },
+    {
+      "path": "apps/desktop/src/store/local-runtime-jobs.ts",
+      "sha256": "5fa61bec6371e8792bfbf0798548a0a721408087fb65adcf618fddccefc331f3",
+      "anchors": [
+        44,
+        68
+      ],
+      "url": "https://github.com/NousResearch/hermes-agent/blob/649d6c0391029f35959cfbc240eb3534a6667cf5/apps/desktop/src/store/local-runtime-jobs.ts"
+    },
+    {
+      "path": "apps/desktop/src/i18n/profile-provider.tsx",
+      "sha256": "3f20384599c0e57b1aab9c48514a9d667ff5e7f99678c6ee96550b7d7ed8ce00",
+      "anchors": [
+        23
+      ],
+      "url": "https://github.com/NousResearch/hermes-agent/blob/649d6c0391029f35959cfbc240eb3534a6667cf5/apps/desktop/src/i18n/profile-provider.tsx"
+    },
+    {
+      "path": "apps/desktop/src/store/gateway.ts",
+      "sha256": "0a419baa07bf70dbc188b801c1a21d5573ea8a1d871550656f39bf0502f8303d",
+      "anchors": [
+        835,
+        1091
+      ],
+      "url": "https://github.com/NousResearch/hermes-agent/blob/649d6c0391029f35959cfbc240eb3534a6667cf5/apps/desktop/src/store/gateway.ts"
+    },
+    {
+      "path": "apps/desktop/src/app/gateway/hooks/use-gateway-request.ts",
+      "sha256": "418a141d2fac7af7bda190f7817620c7f8284b1057eb10b98e6ccf88051e18bc",
+      "anchors": [
+        127
+      ],
+      "url": "https://github.com/NousResearch/hermes-agent/blob/649d6c0391029f35959cfbc240eb3534a6667cf5/apps/desktop/src/app/gateway/hooks/use-gateway-request.ts"
+    },
+    {
+      "path": "apps/desktop/src/app/gateway/hooks/use-gateway-boot.ts",
+      "sha256": "ae51d0b4e7f910bc1de004c7410cbaf1b1b8eb0bfd552c445e2ca0141afb5f9b",
+      "anchors": [
+        724,
+        959,
+        997,
+        1250,
+        1456,
+        1470,
+        1509,
+        1561,
+        1576
+      ],
+      "url": "https://github.com/NousResearch/hermes-agent/blob/649d6c0391029f35959cfbc240eb3534a6667cf5/apps/desktop/src/app/gateway/hooks/use-gateway-boot.ts"
+    },
+    {
+      "path": "apps/desktop/src/app/gateway/report-startup-latency.ts",
+      "sha256": "42f82f6f7034dc4277fa2589cdf376eba8f7275c7f79d55d8b5d71988d9a6d27",
+      "anchors": [
+        9
+      ],
+      "url": "https://github.com/NousResearch/hermes-agent/blob/649d6c0391029f35959cfbc240eb3534a6667cf5/apps/desktop/src/app/gateway/report-startup-latency.ts"
+    },
+    {
+      "path": "apps/desktop/src/app/session/hooks/use-hermes-config.ts",
+      "sha256": "e5c562927f2c68588a905bb0ec9f9227286a63eccb550447f1411b4c783ba83a",
+      "anchors": [
+        75,
+        163
+      ],
+      "url": "https://github.com/NousResearch/hermes-agent/blob/649d6c0391029f35959cfbc240eb3534a6667cf5/apps/desktop/src/app/session/hooks/use-hermes-config.ts"
+    },
+    {
+      "path": "apps/desktop/src/app/session/hooks/use-session-list-actions.ts",
+      "sha256": "4f3fa082a0a0125d4955faf243bc7606781ae0031053ce7810eeeda337dd0fdb",
+      "anchors": [
+        318,
+        325,
+        372
+      ],
+      "url": "https://github.com/NousResearch/hermes-agent/blob/649d6c0391029f35959cfbc240eb3534a6667cf5/apps/desktop/src/app/session/hooks/use-session-list-actions.ts"
+    },
+    {
+      "path": "apps/desktop/src/api/config.ts",
+      "sha256": "b9b91238a73bb09e0d942fdbaaefbc5f5ec628a28cd523e2cad6b36770aa5131",
+      "anchors": [
+        131,
+        165
+      ],
+      "url": "https://github.com/NousResearch/hermes-agent/blob/649d6c0391029f35959cfbc240eb3534a6667cf5/apps/desktop/src/api/config.ts"
+    },
+    {
+      "path": "apps/desktop/src/api/sessions.ts",
+      "sha256": "36505636be0ef4d6afe0b0a9bf639be1af90ca8288fb343344f180daadaed393",
+      "anchors": [
+        136,
+        310,
+        335
+      ],
+      "url": "https://github.com/NousResearch/hermes-agent/blob/649d6c0391029f35959cfbc240eb3534a6667cf5/apps/desktop/src/api/sessions.ts"
+    },
+    {
+      "path": "tui_gateway/ws.py",
+      "sha256": "87a3f4c2e2952ff62353340fd276d0fa00ce3451e8ff27a378c396fbd32e79eb",
+      "anchors": [
+        195,
+        205,
+        295,
+        353
+      ],
+      "url": "https://github.com/NousResearch/hermes-agent/blob/649d6c0391029f35959cfbc240eb3534a6667cf5/tui_gateway/ws.py"
+    },
+    {
+      "path": "tui_gateway/transport.py",
+      "sha256": "57afe5557d7c8e5d71f2cfc1970e28539b5e8ab2ddc5edc059f38ab4d78c7a4c",
+      "anchors": [
+        83
+      ],
+      "url": "https://github.com/NousResearch/hermes-agent/blob/649d6c0391029f35959cfbc240eb3534a6667cf5/tui_gateway/transport.py"
+    },
+    {
+      "path": "tui_gateway/contracts/sessions.py",
+      "sha256": "adc8a8570ecc0bb4dffda7e41723874727a629bb87ee8c8ec32ba86379003b4c",
+      "anchors": [
+        487,
+        720
+      ],
+      "url": "https://github.com/NousResearch/hermes-agent/blob/649d6c0391029f35959cfbc240eb3534a6667cf5/tui_gateway/contracts/sessions.py"
+    }
+  ],
+  "localTypeReference": {
+    "package": "typescript",
+    "version": "6.0.3",
+    "file": "node_modules/typescript/lib/lib.dom.d.ts",
+    "sha256": "d6b1eba8496bdd0eed6fc8a685768fe01b2da4a0388b5fe7df558290bffcf32f",
+    "webSocketInterfaceLine": 40868
+  },
+  "standardReference": "https://websockets.spec.whatwg.org/#the-websocket-interface"
+}

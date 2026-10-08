@@ -1,0 +1,60 @@
+{
+  "status": "design_only_unimplemented",
+  "design_sha256": "7eeb4f13a7f15fffb073177483d641497d639e8e02f5cb5f0fc09086ee69149e",
+  "sources": [
+    {
+      "path": "hermes-native/services/owned-ws/src/lib.rs",
+      "sha256": "e4ad09164b38fe0dbcb11aec3c31c0e02ce0b5dc8809560e0c07732c2da1775f",
+      "root": "project_ned"
+    },
+    {
+      "path": "hermes-native/services/owned-ws/src/stream.rs",
+      "sha256": "0749b7f1876e570d86f311febbfe663f79fb8bdc1502fcfcc32549024ea2bfb4",
+      "root": "project_ned"
+    },
+    {
+      "path": "hermes-native/services/owned-ws/vendor/tungstenite/src/protocol/mod.rs",
+      "sha256": "61b6b0f1ec257d51921caaaa5f7c6d770f747091366b31135ff24010095b4c97",
+      "root": "project_ned"
+    },
+    {
+      "path": "hermes-native/services/owned-ws/vendor/tungstenite/src/protocol/frame/mod.rs",
+      "sha256": "e036c36262bfb8e3dad2249ceb24ff9147c294592104542562a5259651cee898",
+      "root": "project_ned"
+    },
+    {
+      "path": "hermes-native/apps/desktop-shell/Cargo.lock",
+      "sha256": "12bd94bc5405006ca05a66a28243d8707933d1282f1d5b929036878420cf6db6",
+      "root": "project_ned"
+    },
+    {
+      "path": "apps/shared/src/json-rpc-channel.ts",
+      "sha256": "5f2a753e862572f7e1721aa670d70b294073321dd8e4913d01b7d48b6150fa7a",
+      "root": "hermes_upstream"
+    },
+    {
+      "path": "apps/shared/src/json-rpc-gateway.ts",
+      "sha256": "c70142d979b55d54072265e2d08004aa7e8cd601978118de9396ee80d9c4e9cc",
+      "root": "hermes_upstream"
+    },
+    {
+      "path": "tui_gateway/ws.py",
+      "sha256": "87a3f4c2e2952ff62353340fd276d0fa00ce3451e8ff27a378c396fbd32e79eb",
+      "root": "hermes_upstream"
+    }
+  ],
+  "required_progress_accessor_implemented": false,
+  "backend_or_model_launches": 0,
+  "code_changes": 0,
+  "checks": {
+    "source_hashes_unchanged": true,
+    "utf8_and_balanced_fences": true,
+    "sections": 12,
+    "stage_only": true
+  },
+  "stage_input_design_sha256": "8499cdddd19d1b7c07b2a056d515ca981c5dc02c9e91051b3284eb55272f4319",
+  "client_design_sha256": "31d8cceb5a5780673132ee6823b78604ad23fe14d7c43f366a5c6cd68242c16a",
+  "project_ned_checkpoint": "dfb63a7f2ebd8f1f321f9fb755c561dafd81d37c",
+  "hermes_upstream_revision": "649d6c0391029f35959cfbc240eb3534a6667cf5",
+  "integration_changes": "Added companion links and a proposed lifecycle diagram; source identity paths made portable. No implementation changes or runtime launches."
+}
