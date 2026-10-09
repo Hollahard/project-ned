@@ -160,7 +160,14 @@ try {
         Invoke-Check -Name 'backend-host-tests' -Command $python -ToolArguments @('-m', 'pytest', '-c', (Join-Path $backend 'pyproject.toml'), (Join-Path $backend 'tests'), '--basetemp', $backendTemp, '-q')
     }
 
-    Invoke-Check -Name 'owned-ws-vendor' -Command $python -ToolArguments @((Join-Path $nativeRoot 'services/owned-ws/verify_vendor.py'))
+    $ownedWs = Join-Path $nativeRoot 'services/owned-ws'
+    $vendorVerifier = Join-Path $ownedWs 'verify_vendor.py'
+    $vendorTests = Join-Path $ownedWs 'tests/test_vendor_integrity.py'
+    Invoke-Check -Name 'owned-ws-vendor' -Command $python -ToolArguments @($vendorVerifier)
+    $vendorTemp = New-TestDirectory -Label 'owned-ws-vendor-pytest'
+    Invoke-Check -Name 'owned-ws-vendor-tests' -Command $python -ToolArguments @('-m', 'pytest', '-o', 'addopts=', $vendorTests, '--basetemp', $vendorTemp, '-q')
+    Invoke-Check -Name 'owned-ws-vendor-lint' -Command $python -ToolArguments @('-m', 'ruff', 'check', $vendorVerifier, $vendorTests)
+    Invoke-Check -Name 'owned-ws-vendor-format' -Command $python -ToolArguments @('-m', 'ruff', 'format', '--check', $vendorVerifier, $vendorTests)
 
     foreach ($package in @('services/resource-host', 'services/preview-watch', 'services/control-host', 'services/catalog-host', 'services/owned-http', 'services/owned-ws', 'services/terminal-host', 'spikes/webview2-guest')) {
         $manifest = Join-Path (Join-Path $nativeRoot $package) 'Cargo.toml'

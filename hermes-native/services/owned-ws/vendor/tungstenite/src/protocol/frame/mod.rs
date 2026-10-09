@@ -14,7 +14,7 @@ pub use self::{
 
 use crate::{
     error::{CapacityError, Error, ProtocolError, Result},
-    protocol::frame::mask::apply_mask,
+    protocol::{frame::mask::apply_mask, progress::FrameProgress, InputProgress},
     Message,
 };
 use bytes::BytesMut;
@@ -117,6 +117,7 @@ pub(super) struct FrameCodec {
     out_buffer_write_len: usize,
     /// Header and remaining size of the incoming packet being processed.
     header: Option<(FrameHeader, u64)>,
+    pub(super) progress: FrameProgress,
 }
 
 impl FrameCodec {
@@ -129,6 +130,7 @@ impl FrameCodec {
             max_out_buffer_len: usize::MAX,
             out_buffer_write_len: 0,
             header: None,
+            progress: FrameProgress::default(),
         }
     }
 
@@ -136,6 +138,9 @@ impl FrameCodec {
     pub(super) fn from_partially_read(part: Vec<u8>, min_in_buf_len: usize) -> Self {
         let mut in_buffer = BytesMut::from_iter(part);
         in_buffer.reserve(min_in_buf_len.saturating_sub(in_buffer.len()));
+        let mut progress = FrameProgress::default();
+        // A preloaded tail has the same byte-zero origin as a raw WebSocket stream.
+        let _ = progress.receive(in_buffer.len());
         Self {
             in_buffer,
             in_buf_max_read: min_in_buf_len.max(FrameHeader::MAX_SIZE),
@@ -143,7 +148,12 @@ impl FrameCodec {
             max_out_buffer_len: usize::MAX,
             out_buffer_write_len: 0,
             header: None,
+            progress,
         }
+    }
+
+    pub(super) fn input_progress(&self) -> Result<InputProgress> {
+        Ok(self.progress.snapshot()?)
     }
 
     /// Sets a maximum size for the out buffer.
@@ -165,13 +175,16 @@ impl FrameCodec {
         unmask: bool,
         accept_unmasked: bool,
     ) -> Result<Option<Frame>> {
+        self.progress.check()?;
         let max_size = max_size.unwrap_or_else(usize::max_value);
 
         let mut payload = loop {
             if self.header.is_none() {
+                self.progress.begin()?;
                 let mut cursor = Cursor::new(&mut self.in_buffer);
                 self.header = FrameHeader::parse(&mut cursor)?;
                 let advanced = cursor.position();
+                self.progress.advance(advanced as usize)?;
                 bytes::Buf::advance(&mut self.in_buffer, advanced as _);
 
                 if let Some((_, len)) = &self.header {
@@ -197,6 +210,7 @@ impl FrameCodec {
             if let Some((_, len)) = &self.header {
                 let len = *len as usize;
                 if len <= self.in_buffer.len() {
+                    self.progress.advance(len)?;
                     break self.in_buffer.split_to(len);
                 }
             }
@@ -225,6 +239,7 @@ impl FrameCodec {
             }
         }
 
+        self.progress.finish()?;
         let frame = Frame::from_payload(header, payload.freeze());
         trace!("WebSocket protocol event.");
         Ok(Some(frame))
@@ -237,6 +252,9 @@ impl FrameCodec {
         self.in_buffer.resize(self.in_buffer.capacity().min(len + self.in_buf_max_read), 0);
         let size = stream.read(&mut self.in_buffer[len..]);
         self.in_buffer.truncate(len + size.as_ref().copied().unwrap_or(0));
+        if let Ok(received) = size {
+            self.progress.receive(received)?;
+        }
         size
     }
 

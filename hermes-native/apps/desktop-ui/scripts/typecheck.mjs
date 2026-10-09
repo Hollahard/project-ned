@@ -28,7 +28,7 @@ const config = {
       '@hermes/shared/*': [path.join(upstream.root, 'apps/shared/src/*')]
     }
   },
-  files: [...['host-adapter.ts', 'bootstrap.ts', 'entry.ts', 'virtual.d.ts'].map(file => path.join(APP_ROOT, 'src', file)),
+  files: [...['host-adapter.ts', 'bootstrap.ts', 'entry.ts', 'virtual.d.ts', 'native-gateway-socket.ts'].map(file => path.join(APP_ROOT, 'src', file)),
     path.join(upstream.desktop, 'src/vite-env.d.ts')]
 }
 const configPath = path.join(checks, 'tsconfig.json')

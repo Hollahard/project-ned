@@ -167,7 +167,7 @@ impl CoreProxy {
         tabby_admin_key: String,
     ) -> Self {
         Self {
-            client: Client::builder().build().unwrap(),
+            client: Client::builder().no_proxy().build().unwrap(),
             core_base_url: format!("http://127.0.0.1:{}", core_port),
             core_bearer_token: Arc::new(core_bearer_token),
             tabby_base_url: format!("http://127.0.0.1:{}", tabby_port),

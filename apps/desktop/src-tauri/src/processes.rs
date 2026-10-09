@@ -312,6 +312,7 @@ impl ProcessManager {
             "info",
         ])
         .current_dir(core_root)
+        .env_clear()
         .envs(&sanitized)
         .stdin(Stdio::null())
         .stdout(Stdio::inherit())
@@ -351,6 +352,7 @@ impl ProcessManager {
         let mut cmd = Command::new(python_exe);
         cmd.args(["main.py"])
             .current_dir(tabby_root)
+            .env_clear()
             .envs(&sanitized)
             .stdin(Stdio::null())
             .stdout(Stdio::inherit())

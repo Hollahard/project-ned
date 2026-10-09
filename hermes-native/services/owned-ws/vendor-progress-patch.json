@@ -1,0 +1,119 @@
+{
+  "schema": 1,
+  "base_revision": "hermes-logsafe-1",
+  "revision": "hermes-progress-2",
+  "replacements": [
+    {
+      "path": "src/protocol/mod.rs",
+      "before": "pub mod frame;\n\nmod message;\n\npub use self::{frame::CloseFrame, message::Message};\n\n",
+      "after": "pub mod frame;\n\nmod message;\nmod progress;\npub use progress::InputProgress;\n\npub use self::{frame::CloseFrame, message::Message};\n\n",
+      "occurrences": 1,
+      "before_sha256": "fe124bca95dd1c3d1771af91ea45f51f5225b598d5b1bb5fdadc85e999a21b89",
+      "after_sha256": "388c75868314aa3d1f26072ce39c9858586d82557f3ca3c1e43172fdae8acb5d"
+    },
+    {
+      "path": "src/protocol/mod.rs",
+      "before": "        self.socket\n    }\n\n    /// Returns a shared reference to the inner stream.\n    pub fn get_ref(&self) -> &Stream {\n        &self.socket\n",
+      "after": "        self.socket\n    }\n\n    /// Numeric receive progress. Never exposes payloads, credentials or timestamps.\n    /// Valid after successful reads or WouldBlock; other errors remain fatal.\n    pub fn input_progress(&self) -> Result<InputProgress> {\n        self.context.input_progress()\n    }\n\n    /// Returns a shared reference to the inner stream.\n    pub fn get_ref(&self) -> &Stream {\n        &self.socket\n",
+      "occurrences": 1,
+      "before_sha256": "2ad8106edaca71b9e0d58a20cbb7c6ddd15d3eee70b1c54d5ef455412ce50759",
+      "after_sha256": "0b4e9043846cee72b81d75ec704f5b557b980a1267bea373614fadf83dd63d58"
+    },
+    {
+      "path": "src/protocol/mod.rs",
+      "before": "    state: WebSocketState,\n    /// Receive: an incomplete message being processed.\n    incomplete: Option<IncompleteMessage>,\n    /// Send in addition to regular messages E.g. \"pong\" or \"close\".\n    additional_send: Option<Frame>,\n    /// True indicates there is an additional message (like a pong)\n",
+      "after": "    state: WebSocketState,\n    /// Receive: an incomplete message being processed.\n    incomplete: Option<IncompleteMessage>,\n    fragmented_data_start: Option<u64>,\n    fragmented_data_frame_count: u64,\n    /// Send in addition to regular messages E.g. \"pong\" or \"close\".\n    additional_send: Option<Frame>,\n    /// True indicates there is an additional message (like a pong)\n",
+      "occurrences": 1,
+      "before_sha256": "8022142a9f73ef32ece9d2a579dd963b949242423449bff752adfa23fc1d51ff",
+      "after_sha256": "1d56e7f5d30a6a37704f0a54a23d1ce0fb330d3c0199cd6a19709c5903fe319e"
+    },
+    {
+      "path": "src/protocol/mod.rs",
+      "before": "            frame,\n            state: WebSocketState::Active,\n            incomplete: None,\n            additional_send: None,\n            unflushed_additional: false,\n            config,\n        }\n    }\n\n    /// Change the configuration.\n",
+      "after": "            frame,\n            state: WebSocketState::Active,\n            incomplete: None,\n            fragmented_data_start: None,\n            fragmented_data_frame_count: 0,\n            additional_send: None,\n            unflushed_additional: false,\n            config,\n        }\n    }\n\n    /// Numeric receive progress; partial data survives interleaved control frames.\n    pub fn input_progress(&self) -> Result<InputProgress> {\n        let mut result = self.frame.input_progress()?;\n        result.fragmented_data_start = self.fragmented_data_start;\n        result.fragmented_data_frame_count = self.fragmented_data_frame_count;\n        Ok(result)\n    }\n\n    /// Change the configuration.\n",
+      "occurrences": 1,
+      "before_sha256": "681d4728b99023d708844035e4ad4624758f45404e3ef0f010854358a86fde1e",
+      "after_sha256": "53216522da9fe3ec15495c4919b25c89c59e1ee34ce142235ad2473b1402183c"
+    },
+    {
+      "path": "src/protocol/mod.rs",
+      "before": "    where\n        Stream: Read + Write,\n    {\n        // Do not read from already closed connections.\n        self.state.check_not_terminated()?;\n\n",
+      "after": "    where\n        Stream: Read + Write,\n    {\n        self.frame.progress.check()?;\n        // Do not read from already closed connections.\n        self.state.check_not_terminated()?;\n\n",
+      "occurrences": 1,
+      "before_sha256": "6c7381b70dd2dfac80f3d9e3dac31d6a31c499094090edfa59ed31cd2a54e12b",
+      "after_sha256": "6d8b1d9f97e211168ac3a71e3ea198863d04d38966b35581015390a2fd41fe32"
+    },
+    {
+      "path": "src/protocol/mod.rs",
+      "before": "                    (OpData::Continue, None) => Err(ProtocolError::UnexpectedContinueFrame),\n                    (OpData::Continue, Some(incomplete)) => {\n                        incomplete.extend(frame.into_payload(), self.config.max_message_size)?;\n                        Ok(None)\n                    }\n                    (_, Some(_)) => Err(ProtocolError::ExpectedFragment(data)),\n",
+      "after": "                    (OpData::Continue, None) => Err(ProtocolError::UnexpectedContinueFrame),\n                    (OpData::Continue, Some(incomplete)) => {\n                        incomplete.extend(frame.into_payload(), self.config.max_message_size)?;\n                        self.fragmented_data_frame_count = self.frame.progress\n                            .increment(self.fragmented_data_frame_count)?;\n                        Ok(None)\n                    }\n                    (_, Some(_)) => Err(ProtocolError::ExpectedFragment(data)),\n",
+      "occurrences": 1,
+      "before_sha256": "d5159b572d5a1eafe50fa1d59bd524d96af4d34f30332d02c8a04a3b7970cbcf",
+      "after_sha256": "92d64bf76e064d753ad4b2336f570698c62d8e8b337019ceedc9930be09bc020"
+    },
+    {
+      "path": "src/protocol/mod.rs",
+      "before": "                }?;\n\n                match (payload, fin) {\n                    (None, true) => Ok(Some(self.incomplete.take().unwrap().complete()?)),\n                    (None, false) => Ok(None),\n                    (Some((payload, t)), true) => {\n                        check_max_size(payload.len(), self.config.max_message_size)?;\n",
+      "after": "                }?;\n\n                match (payload, fin) {\n                    (None, true) => {\n                        let message = self.incomplete.take().unwrap().complete()?;\n                        self.fragmented_data_start = None;\n                        self.fragmented_data_frame_count = 0;\n                        Ok(Some(message))\n                    },\n                    (None, false) => Ok(None),\n                    (Some((payload, t)), true) => {\n                        check_max_size(payload.len(), self.config.max_message_size)?;\n",
+      "occurrences": 1,
+      "before_sha256": "45007782f2192ae0af31f2af4a0482f0b8f270cef923d6e24adc7c9feead31a7",
+      "after_sha256": "7b1dc0a5275b6bb3b0bb5ad6694bc0ec9b864497e898665ef9287dbad790ceac"
+    },
+    {
+      "path": "src/protocol/mod.rs",
+      "before": "                        let mut incomplete = IncompleteMessage::new(t);\n                        incomplete.extend(payload, self.config.max_message_size)?;\n                        self.incomplete = Some(incomplete);\n                        Ok(None)\n                    }\n                }\n",
+      "after": "                        let mut incomplete = IncompleteMessage::new(t);\n                        incomplete.extend(payload, self.config.max_message_size)?;\n                        self.incomplete = Some(incomplete);\n                        self.fragmented_data_start = self.frame.progress.last_start;\n                        self.fragmented_data_frame_count = 1;\n                        Ok(None)\n                    }\n                }\n",
+      "occurrences": 1,
+      "before_sha256": "55eedc2de3447487c1cbb8e624f850ad746ca511a7559aaaa7e3d73e045c8139",
+      "after_sha256": "8d0e013e1376be18d80dfb2add36582b626622a5fe54f2f421fd490f068d30f2"
+    },
+    {
+      "path": "src/protocol/frame/mod.rs",
+      "before": "    frame::{CloseFrame, Frame, FrameHeader},\n    utf8::Utf8Bytes,\n};\n\nuse crate::{\n    error::{CapacityError, Error, ProtocolError, Result},\n    protocol::frame::mask::apply_mask,\n    Message,\n};\nuse bytes::BytesMut;\nuse log::*;\nuse std::io::{self, Cursor, Error as IoError, ErrorKind as IoErrorKind, Read, Write};\n\n",
+      "after": "    frame::{CloseFrame, Frame, FrameHeader},\n    utf8::Utf8Bytes,\n};\n\nuse crate::{\n    error::{CapacityError, Error, ProtocolError, Result},\n    protocol::{frame::mask::apply_mask, progress::FrameProgress, InputProgress},\n    Message,\n};\nuse bytes::BytesMut;\nuse log::*;\nuse std::io::{self, Cursor, Error as IoError, ErrorKind as IoErrorKind, Read, Write};\n\n",
+      "occurrences": 1,
+      "before_sha256": "735a0b4c792edbc64cf0f5b55202c9bb08e4edebdbf55faadf759f1c601cd0ad",
+      "after_sha256": "3e34b5939a4afe9c8a51c31e0fe80aa5953915d31ff15da140dc375c0c550f3f"
+    },
+    {
+      "path": "src/protocol/frame/mod.rs",
+      "before": "    ///\n    /// Setting this to non-zero will buffer small writes from hitting\n    /// the stream.\n    out_buffer_write_len: usize,\n    /// Header and remaining size of the incoming packet being processed.\n    header: Option<(FrameHeader, u64)>,\n}\n\nimpl FrameCodec {\n    /// Create a new frame codec.\n    pub(super) fn new(in_buf_len: usize) -> Self {\n        Self {\n            in_buffer: BytesMut::with_capacity(in_buf_len),\n            in_buf_max_read: in_buf_len.max(FrameHeader::MAX_SIZE),\n            out_buffer: <_>::default(),\n            max_out_buffer_len: usize::MAX,\n            out_buffer_write_len: 0,\n            header: None,\n        }\n    }\n\n    /// Create a new frame codec from partially read data.\n    pub(super) fn from_partially_read(part: Vec<u8>, min_in_buf_len: usize) -> Self {\n        let mut in_buffer = BytesMut::from_iter(part);\n        in_buffer.reserve(min_in_buf_len.saturating_sub(in_buffer.len()));\n        Self {\n            in_buffer,\n            in_buf_max_read: min_in_buf_len.max(FrameHeader::MAX_SIZE),\n            out_buffer: <_>::default(),\n            max_out_buffer_len: usize::MAX,\n            out_buffer_write_len: 0,\n            header: None,\n        }\n    }\n\n    /// Sets a maximum size for the out buffer.\n    pub(super) fn set_max_out_buffer_len(&mut self, max: usize) {\n        self.max_out_buffer_len = max;\n    }\n",
+      "after": "    ///\n    /// Setting this to non-zero will buffer small writes from hitting\n    /// the stream.\n    out_buffer_write_len: usize,\n    /// Header and remaining size of the incoming packet being processed.\n    header: Option<(FrameHeader, u64)>,\n    pub(super) progress: FrameProgress,\n}\n\nimpl FrameCodec {\n    /// Create a new frame codec.\n    pub(super) fn new(in_buf_len: usize) -> Self {\n        Self {\n            in_buffer: BytesMut::with_capacity(in_buf_len),\n            in_buf_max_read: in_buf_len.max(FrameHeader::MAX_SIZE),\n            out_buffer: <_>::default(),\n            max_out_buffer_len: usize::MAX,\n            out_buffer_write_len: 0,\n            header: None,\n            progress: FrameProgress::default(),\n        }\n    }\n\n    /// Create a new frame codec from partially read data.\n    pub(super) fn from_partially_read(part: Vec<u8>, min_in_buf_len: usize) -> Self {\n        let mut in_buffer = BytesMut::from_iter(part);\n        in_buffer.reserve(min_in_buf_len.saturating_sub(in_buffer.len()));\n        let mut progress = FrameProgress::default();\n        // A preloaded tail has the same byte-zero origin as a raw WebSocket stream.\n        let _ = progress.receive(in_buffer.len());\n        Self {\n            in_buffer,\n            in_buf_max_read: min_in_buf_len.max(FrameHeader::MAX_SIZE),\n            out_buffer: <_>::default(),\n            max_out_buffer_len: usize::MAX,\n            out_buffer_write_len: 0,\n            header: None,\n            progress,\n        }\n    }\n\n    pub(super) fn input_progress(&self) -> Result<InputProgress> {\n        Ok(self.progress.snapshot()?)\n    }\n\n    /// Sets a maximum size for the out buffer.\n    pub(super) fn set_max_out_buffer_len(&mut self, max: usize) {\n        self.max_out_buffer_len = max;\n    }\n",
+      "occurrences": 1,
+      "before_sha256": "c7330cbf00082f01113298901b54aae113fb3f579a42fa175511244c04f13f33",
+      "after_sha256": "7cb0f2810153296450fb1b29ebae2e389574409c83432640bc0c03ecbac45898"
+    },
+    {
+      "path": "src/protocol/frame/mod.rs",
+      "before": "        &mut self,\n        stream: &mut impl Read,\n        max_size: Option<usize>,\n        unmask: bool,\n        accept_unmasked: bool,\n    ) -> Result<Option<Frame>> {\n        let max_size = max_size.unwrap_or_else(usize::max_value);\n\n        let mut payload = loop {\n            if self.header.is_none() {\n                let mut cursor = Cursor::new(&mut self.in_buffer);\n                self.header = FrameHeader::parse(&mut cursor)?;\n                let advanced = cursor.position();\n                bytes::Buf::advance(&mut self.in_buffer, advanced as _);\n\n                if let Some((_, len)) = &self.header {\n                    // Enforce frame size limit early. Compare in u64 before\n                    // narrowing so a length above usize::MAX can't wrap on\n                    // 32-bit/wasm32 targets and slip past the check.\n",
+      "after": "        &mut self,\n        stream: &mut impl Read,\n        max_size: Option<usize>,\n        unmask: bool,\n        accept_unmasked: bool,\n    ) -> Result<Option<Frame>> {\n        self.progress.check()?;\n        let max_size = max_size.unwrap_or_else(usize::max_value);\n\n        let mut payload = loop {\n            if self.header.is_none() {\n                self.progress.begin()?;\n                let mut cursor = Cursor::new(&mut self.in_buffer);\n                self.header = FrameHeader::parse(&mut cursor)?;\n                let advanced = cursor.position();\n                self.progress.advance(advanced as usize)?;\n                bytes::Buf::advance(&mut self.in_buffer, advanced as _);\n\n                if let Some((_, len)) = &self.header {\n                    // Enforce frame size limit early. Compare in u64 before\n                    // narrowing so a length above usize::MAX can't wrap on\n                    // 32-bit/wasm32 targets and slip past the check.\n",
+      "occurrences": 1,
+      "before_sha256": "479fc30248c649305c8de8e6731de55e3d6dd2cea34c3e73d3642b15e90e8536",
+      "after_sha256": "bfb8895aba11e5550d4f250b81af1e36d931aca32b0b81898a22a10f00c2357a"
+    },
+    {
+      "path": "src/protocol/frame/mod.rs",
+      "before": "                }\n            }\n\n            if let Some((_, len)) = &self.header {\n                let len = *len as usize;\n                if len <= self.in_buffer.len() {\n                    break self.in_buffer.split_to(len);\n                }\n            }\n\n            // Not enough data in buffer.\n            if self.read_in(stream)? == 0 {\n",
+      "after": "                }\n            }\n\n            if let Some((_, len)) = &self.header {\n                let len = *len as usize;\n                if len <= self.in_buffer.len() {\n                    self.progress.advance(len)?;\n                    break self.in_buffer.split_to(len);\n                }\n            }\n\n            // Not enough data in buffer.\n            if self.read_in(stream)? == 0 {\n",
+      "occurrences": 1,
+      "before_sha256": "df0dc72ba3df245ee0b03975b6b931b55ccccacf323a6b8874b6c0df874c6226",
+      "after_sha256": "346cc64be9512766e90f156b16c9e016022315ec80a200ff659df8a860235e52"
+    },
+    {
+      "path": "src/protocol/frame/mod.rs",
+      "before": "                // The only exception here is if the user explicitly accepts given\n                // stream by setting WebSocketConfig.accept_unmasked_frames to true\n                return Err(Error::Protocol(ProtocolError::UnmaskedFrameFromClient));\n            }\n        }\n\n        let frame = Frame::from_payload(header, payload.freeze());\n        trace!(\"WebSocket protocol event.\");\n        Ok(Some(frame))\n    }\n\n    /// Read into available `in_buffer` capacity.\n    fn read_in(&mut self, stream: &mut impl Read) -> io::Result<usize> {\n        let len = self.in_buffer.len();\n        debug_assert!(self.in_buffer.capacity() > len);\n        self.in_buffer.resize(self.in_buffer.capacity().min(len + self.in_buf_max_read), 0);\n        let size = stream.read(&mut self.in_buffer[len..]);\n        self.in_buffer.truncate(len + size.as_ref().copied().unwrap_or(0));\n        size\n    }\n\n    /// Writes a frame into the `out_buffer`.\n    /// If the out buffer size is over the `out_buffer_write_len` will also write\n    /// the out buffer into the provided `stream`.\n",
+      "after": "                // The only exception here is if the user explicitly accepts given\n                // stream by setting WebSocketConfig.accept_unmasked_frames to true\n                return Err(Error::Protocol(ProtocolError::UnmaskedFrameFromClient));\n            }\n        }\n\n        self.progress.finish()?;\n        let frame = Frame::from_payload(header, payload.freeze());\n        trace!(\"WebSocket protocol event.\");\n        Ok(Some(frame))\n    }\n\n    /// Read into available `in_buffer` capacity.\n    fn read_in(&mut self, stream: &mut impl Read) -> io::Result<usize> {\n        let len = self.in_buffer.len();\n        debug_assert!(self.in_buffer.capacity() > len);\n        self.in_buffer.resize(self.in_buffer.capacity().min(len + self.in_buf_max_read), 0);\n        let size = stream.read(&mut self.in_buffer[len..]);\n        self.in_buffer.truncate(len + size.as_ref().copied().unwrap_or(0));\n        if let Ok(received) = size {\n            self.progress.receive(received)?;\n        }\n        size\n    }\n\n    /// Writes a frame into the `out_buffer`.\n    /// If the out buffer size is over the `out_buffer_write_len` will also write\n    /// the out buffer into the provided `stream`.\n",
+      "occurrences": 1,
+      "before_sha256": "b1f4a2c8a29233c2520f11391b41ad36cb9e5b368d0863efb522baed93f73323",
+      "after_sha256": "0c91128a5cc79d270a5b9bf2f9479419bdf86e84b94eb10ad0793956a0ddb29d"
+    }
+  ],
+  "added_files": [
+    {
+      "path": "src/protocol/progress.rs",
+      "content": "//! Numeric observations only; no frame syntax or payload parsing.\nuse std::io;\n\n/// Read-only parser progress in WebSocket wire bytes (HTTP headers excluded).\n/// Buffered tail may contain complete frames; it is not necessarily stalled input.\n/// Use only after a successful read or WouldBlock, not after other protocol errors.\n#[derive(Debug, Clone, Copy, PartialEq, Eq)]\npub struct InputProgress {\n    /// First byte still buffered, after any parsed header has been consumed.\n    pub buffered_wire_start: u64,\n    /// Exclusive end of all bytes acquired, including preserved handshake tail.\n    pub buffered_wire_end: u64,\n    /// Start of the parser's current frame, including a partial header.\n    /// Unparsed coalesced tail is represented by the buffered range instead.\n    pub pending_frame_start: Option<u64>,\n    /// First data frame of the current fragmented message; controls do not change it.\n    pub fragmented_data_start: Option<u64>,\n    /// Fully decoded frames, including control frames (not application acceptance).\n    pub completed_frame_count: u64,\n    /// Completed data frames of the current fragmented message, excluding controls.\n    pub fragmented_data_frame_count: u64,\n}\n\n#[derive(Debug, Default)]\npub(super) struct FrameProgress {\n    pub(super) received: u64,\n    pub(super) consumed: u64,\n    pub(super) current_start: Option<u64>,\n    pub(super) last_start: Option<u64>,\n    pub(super) completed: u64,\n    pub(super) failed: bool,\n}\n\npub(super) fn progress_error() -> io::Error {\n    io::Error::other(\"WebSocket input progress exhausted\")\n}\n\nimpl FrameProgress {\n    pub(super) fn check(&self) -> io::Result<()> {\n        if self.failed {\n            Err(progress_error())\n        } else {\n            Ok(())\n        }\n    }\n    pub(super) fn fail(&mut self) -> io::Error {\n        self.failed = true;\n        progress_error()\n    }\n    pub(super) fn receive(&mut self, size: usize) -> io::Result<()> {\n        self.check()?;\n        let size = u64::try_from(size).map_err(|_| self.fail())?;\n        self.received = self.received.checked_add(size).ok_or_else(|| self.fail())?;\n        Ok(())\n    }\n    pub(super) fn advance(&mut self, size: usize) -> io::Result<()> {\n        self.check()?;\n        let size = u64::try_from(size).map_err(|_| self.fail())?;\n        let next = self.consumed.checked_add(size).ok_or_else(|| self.fail())?;\n        if next > self.received {\n            return Err(self.fail());\n        }\n        self.consumed = next;\n        Ok(())\n    }\n    pub(super) fn begin(&mut self) -> io::Result<()> {\n        self.check()?;\n        if self.current_start.is_none() && self.consumed < self.received {\n            self.current_start = Some(self.consumed);\n        }\n        Ok(())\n    }\n    pub(super) fn increment(&mut self, counter: u64) -> io::Result<u64> {\n        self.check()?;\n        counter.checked_add(1).ok_or_else(|| self.fail())\n    }\n    pub(super) fn finish(&mut self) -> io::Result<()> {\n        self.check()?;\n        let count = self.increment(self.completed)?;\n        let start = self.current_start.ok_or_else(|| self.fail())?;\n        self.completed = count;\n        self.last_start = Some(start);\n        self.current_start = None;\n        Ok(())\n    }\n    pub(super) fn snapshot(&self) -> io::Result<InputProgress> {\n        self.check()?;\n        Ok(InputProgress {\n            buffered_wire_start: self.consumed,\n            buffered_wire_end: self.received,\n            pending_frame_start: self.current_start,\n            fragmented_data_start: None,\n            completed_frame_count: self.completed,\n            fragmented_data_frame_count: 0,\n        })\n    }\n}\n",
+      "sha256": "2793af71d5b0b21e5bac750516be9f7204f00bc0f1185f1b3960a8469d8d9009"
+    }
+  ],
+  "input_newline_mode": "crlf_to_lf_for_replacement_files"
+}

@@ -65,3 +65,52 @@ Server restarted and context was truncated. Please report the current status of 
    - `cmd.exe /c ".\.venv\Scripts\pytest.exe services/core/tests/ tests/security/ tests/e2e/ -v > regression_verify.txt 2>&1"` in G:\Project_Ned
    Inspect and delete log files, then report pass/fail counts.
 Report back with the final verdict so Phase 16 can be formally sealed.
+
+
+## 2026-10-09T13:42:19Z
+
+Resume Project Ned native desktop integration from checkpoint commit 2afa8ea on branch codex/hermes-native-foundation. Promote unfinished socket actor candidates, fix client TypeScript typechecking, verify owned WebSocket transports, and implement the local vector database / memory foundation with strict Windows process isolation.
+
+Working directory: c:\Users\Ghols\.codex\worktrees\hermes-compat\Project_Ned
+Integrity mode: development
+
+## Requirements
+
+### R1. Candidate Socket Promotion & Client Typecheck Resolution
+- Promote and integrate preserved candidates from docs/hermes-native-desktop/implementation-evidence/socket-candidates-20261008.zip and manifest socket-candidates-20261008.json.
+- Fix the TypeScript strict typecheck error TS2367 in hermes-native/apps/desktop-ui/src/native-gateway-socket.ts (state comparison between narrowed CONNECTING and CLOSING after async operation).
+- Ensure all 28 vendored Tungstenite 0.30.0 output files reconstruct cleanly with verified hashes and no silent newline mutations.
+- Enforce parser progress safety: observations after fatal protocol errors must never produce valid application state; peer close must not self-certify actor retirement; preceding message order must be preserved ahead of terminal frames.
+
+### R2. Owned WebSocket & Transport Foundation Verification
+- Run and pass all 19 owned-ws tests, 7 owned-http tests, 8 parser progress tests, and 8 Python vendor-tamper tests against frozen vendor sources.
+- Expand and pass hermes-native/scripts/Verify-Foundation.ps1 to incorporate the new transport gates and receipt evidence without regressing existing 52 groups / 489 component tests.
+- Keep the desktop UI truthfully reporting backend unavailable until live gateway handshake and startup contracts are fully qualified.
+
+### R3. Core Memory & Vector Database Foundation
+- Design and implement durable local memory schema with sqlite-vec / SQLite storage.
+- Establish embedding strategies, retrieval, eviction, and reconciliation boundaries without unmanaged external network calls or cloud dependencies.
+- Ensure async database connections and thread pools cleanly teardown to prevent hanging pytest subshells or orphaned worker threads on Windows.
+
+### R4. Process Guardian & Windows Job Object Security Containment
+- All child processes (Core and TabbyAPI / inference sidecars) must execute strictly inside Windows Job Objects with JOB_OBJECT_LIMIT_KILL_ON_JOB_CLOSE enabled.
+- Sanitize child process environments by whitelisting only explicit variables (PATH, TEMP, SYSTEMROOT) and stripping parent secrets.
+- Isolate credentials: tokens must be one-shot HMAC-SHA256, bound to Win32 window handles (HWND), with zero credential leakage to WebView2 URLs or renderer events.
+
+## Acceptance Criteria
+
+### Transport & Client Readiness
+- [ ] TypeScript strict check passes cleanly with zero errors on hermes-native/apps/desktop-ui/src/native-gateway-socket.ts.
+- [ ] All 19 owned-ws tests, 7 owned-http tests, and 8 input_progress tests pass cleanly.
+- [ ] Python vendor integrity suite (test_vendor_integrity.py) passes 8/8 tests.
+- [ ] Foundation verification script (Verify-Foundation.ps1) completes with 100% passing status and records complete verification evidence.
+
+### Memory & Vector Storage
+- [ ] SQLite / sqlite-vec memory database initializes cleanly in isolated test fixtures.
+- [ ] Vector retrieval, deletion, and reconciliation pass programmatic unit and integration tests.
+- [ ] All async database fixtures explicitly await db_manager.close() during teardown with zero worker thread hangs.
+
+### Security & Invariant Verification
+- [ ] Process guardian terminates all child processes upon parent exit without orphan leaks.
+- [ ] Zero bearer tokens or credentials appear in WebView2 console logs, URLs, or client-side storage.
+- [ ] Baseline dirty files remain strictly byte-identical to preexisting-dirty-file-hashes.json.

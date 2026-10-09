@@ -1,13 +1,14 @@
 """Memory coordinator: Unified multi-tier query interface and untrusted data fencing."""
 
 import logging
-from typing import Any, Dict, List, Optional
 
 from friday.memory.episodic import EpisodicMemory
 from friday.memory.procedural import ProceduralMemory
 from friday.memory.semantic import SemanticMemory
+from friday.memory.vector import VectorMemory
 from friday.memory.working import WorkingMemory
 from friday.storage.db import DatabaseManager
+from friday.storage.vector_db import VectorDatabaseManager
 
 logger = logging.getLogger(__name__)
 
@@ -22,24 +23,39 @@ MEMORY_OUTPUT_FENCE_PREFIX = (
 class MemoryCoordinator:
     """Orchestrates memory search across all tiers, enforcing passive summarization and snippet capping."""
 
-    def __init__(self, db_manager: DatabaseManager) -> None:
+    def __init__(
+        self,
+        db_manager: DatabaseManager,
+        vector_db: VectorDatabaseManager | None = None,
+        vector_memory: VectorMemory | None = None,
+    ) -> None:
         self.db = db_manager
         self.working = WorkingMemory()
         self.episodic = EpisodicMemory(db_manager)
         self.semantic = SemanticMemory(db_manager)
         self.procedural = ProceduralMemory(db_manager)
+        if vector_memory is not None:
+            self.vector: VectorMemory | None = vector_memory
+        elif vector_db is not None:
+            self.vector = VectorMemory(vector_db=vector_db, canonical_db=db_manager)
+        else:
+            self.vector = None
 
     async def search(
         self,
         query: str,
         workspace_root: str,
-        tiers: Optional[List[str]] = None,
+        tiers: list[str] | None = None,
         limit_per_tier: int = 3,
         total_max_chars: int = 3000,
+        profile: str = "default",
     ) -> str:
         """Search requested tiers, enforcing workspace isolation, procedural passive summarization, and budget limits."""
-        active_tiers = set(tiers or ["semantic", "episodic", "procedural"])
-        blocks: List[str] = []
+        default_tiers = ["semantic", "episodic", "procedural"]
+        if self.vector is not None:
+            default_tiers.append("vector")
+        active_tiers = set(tiers or default_tiers)
+        blocks: list[str] = []
 
         # 1. Semantic Memory
         if "semantic" in active_tiers:
@@ -82,6 +98,24 @@ class MemoryCoordinator:
                         f"- [PAST CHAT ({e['role']})] Session '{e['session_title']}': {content_snippet}"
                     )
                 blocks.append("--- Episodic Conversation Records ---\n" + "\n".join(ep_items))
+
+        # 4. Vector Memory
+        if "vector" in active_tiers and self.vector is not None:
+            vector_results = await self.vector.search(
+                query=query,
+                profile=profile,
+                top_k=limit_per_tier,
+                workspace_root=workspace_root,
+            )
+            if vector_results:
+                vec_items = []
+                for v in vector_results:
+                    content_snippet = v.text[:600] + ("..." if len(v.text) > 600 else "")
+                    vec_items.append(
+                        f"- [VECTOR RECALL (score={v.score:.2f})] {content_snippet} "
+                        f"(Provenance: {v.source_kind}:{v.canonical_locator})"
+                    )
+                blocks.append("--- Vector Knowledge Base ---\n" + "\n".join(vec_items))
 
         if not blocks:
             return "(No matching memory records found for this workspace)"

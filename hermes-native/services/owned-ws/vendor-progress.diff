@@ -1,0 +1,288 @@
+--- hermes-logsafe-1/src/protocol/mod.rs
++++ hermes-progress-2/src/protocol/mod.rs
+@@ -3,6 +3,8 @@
+ pub mod frame;
+ 
+ mod message;
++mod progress;
++pub use progress::InputProgress;
+ 
+ pub use self::{frame::CloseFrame, message::Message};
+ 
+@@ -204,6 +206,12 @@
+         self.socket
+     }
+ 
++    /// Numeric receive progress. Never exposes payloads, credentials or timestamps.
++    /// Valid after successful reads or WouldBlock; other errors remain fatal.
++    pub fn input_progress(&self) -> Result<InputProgress> {
++        self.context.input_progress()
++    }
++
+     /// Returns a shared reference to the inner stream.
+     pub fn get_ref(&self) -> &Stream {
+         &self.socket
+@@ -368,6 +376,8 @@
+     state: WebSocketState,
+     /// Receive: an incomplete message being processed.
+     incomplete: Option<IncompleteMessage>,
++    fragmented_data_start: Option<u64>,
++    fragmented_data_frame_count: u64,
+     /// Send in addition to regular messages E.g. "pong" or "close".
+     additional_send: Option<Frame>,
+     /// True indicates there is an additional message (like a pong)
+@@ -405,10 +415,20 @@
+             frame,
+             state: WebSocketState::Active,
+             incomplete: None,
++            fragmented_data_start: None,
++            fragmented_data_frame_count: 0,
+             additional_send: None,
+             unflushed_additional: false,
+             config,
+         }
++    }
++
++    /// Numeric receive progress; partial data survives interleaved control frames.
++    pub fn input_progress(&self) -> Result<InputProgress> {
++        let mut result = self.frame.input_progress()?;
++        result.fragmented_data_start = self.fragmented_data_start;
++        result.fragmented_data_frame_count = self.fragmented_data_frame_count;
++        Ok(result)
+     }
+ 
+     /// Change the configuration.
+@@ -450,6 +470,7 @@
+     where
+         Stream: Read + Write,
+     {
++        self.frame.progress.check()?;
+         // Do not read from already closed connections.
+         self.state.check_not_terminated()?;
+ 
+@@ -684,6 +705,8 @@
+                     (OpData::Continue, None) => Err(ProtocolError::UnexpectedContinueFrame),
+                     (OpData::Continue, Some(incomplete)) => {
+                         incomplete.extend(frame.into_payload(), self.config.max_message_size)?;
++                        self.fragmented_data_frame_count = self.frame.progress
++                            .increment(self.fragmented_data_frame_count)?;
+                         Ok(None)
+                     }
+                     (_, Some(_)) => Err(ProtocolError::ExpectedFragment(data)),
+@@ -693,7 +716,12 @@
+                 }?;
+ 
+                 match (payload, fin) {
+-                    (None, true) => Ok(Some(self.incomplete.take().unwrap().complete()?)),
++                    (None, true) => {
++                        let message = self.incomplete.take().unwrap().complete()?;
++                        self.fragmented_data_start = None;
++                        self.fragmented_data_frame_count = 0;
++                        Ok(Some(message))
++                    },
+                     (None, false) => Ok(None),
+                     (Some((payload, t)), true) => {
+                         check_max_size(payload.len(), self.config.max_message_size)?;
+@@ -706,6 +734,8 @@
+                         let mut incomplete = IncompleteMessage::new(t);
+                         incomplete.extend(payload, self.config.max_message_size)?;
+                         self.incomplete = Some(incomplete);
++                        self.fragmented_data_start = self.frame.progress.last_start;
++                        self.fragmented_data_frame_count = 1;
+                         Ok(None)
+                     }
+                 }
+--- hermes-logsafe-1/src/protocol/frame/mod.rs
++++ hermes-progress-2/src/protocol/frame/mod.rs
+@@ -14,7 +14,7 @@
+ 
+ use crate::{
+     error::{CapacityError, Error, ProtocolError, Result},
+-    protocol::frame::mask::apply_mask,
++    protocol::{frame::mask::apply_mask, progress::FrameProgress, InputProgress},
+     Message,
+ };
+ use bytes::BytesMut;
+@@ -117,6 +117,7 @@
+     out_buffer_write_len: usize,
+     /// Header and remaining size of the incoming packet being processed.
+     header: Option<(FrameHeader, u64)>,
++    pub(super) progress: FrameProgress,
+ }
+ 
+ impl FrameCodec {
+@@ -129,6 +130,7 @@
+             max_out_buffer_len: usize::MAX,
+             out_buffer_write_len: 0,
+             header: None,
++            progress: FrameProgress::default(),
+         }
+     }
+ 
+@@ -136,6 +138,9 @@
+     pub(super) fn from_partially_read(part: Vec<u8>, min_in_buf_len: usize) -> Self {
+         let mut in_buffer = BytesMut::from_iter(part);
+         in_buffer.reserve(min_in_buf_len.saturating_sub(in_buffer.len()));
++        let mut progress = FrameProgress::default();
++        // A preloaded tail has the same byte-zero origin as a raw WebSocket stream.
++        let _ = progress.receive(in_buffer.len());
+         Self {
+             in_buffer,
+             in_buf_max_read: min_in_buf_len.max(FrameHeader::MAX_SIZE),
+@@ -143,7 +148,12 @@
+             max_out_buffer_len: usize::MAX,
+             out_buffer_write_len: 0,
+             header: None,
+-        }
++            progress,
++        }
++    }
++
++    pub(super) fn input_progress(&self) -> Result<InputProgress> {
++        Ok(self.progress.snapshot()?)
+     }
+ 
+     /// Sets a maximum size for the out buffer.
+@@ -165,13 +175,16 @@
+         unmask: bool,
+         accept_unmasked: bool,
+     ) -> Result<Option<Frame>> {
++        self.progress.check()?;
+         let max_size = max_size.unwrap_or_else(usize::max_value);
+ 
+         let mut payload = loop {
+             if self.header.is_none() {
++                self.progress.begin()?;
+                 let mut cursor = Cursor::new(&mut self.in_buffer);
+                 self.header = FrameHeader::parse(&mut cursor)?;
+                 let advanced = cursor.position();
++                self.progress.advance(advanced as usize)?;
+                 bytes::Buf::advance(&mut self.in_buffer, advanced as _);
+ 
+                 if let Some((_, len)) = &self.header {
+@@ -197,6 +210,7 @@
+             if let Some((_, len)) = &self.header {
+                 let len = *len as usize;
+                 if len <= self.in_buffer.len() {
++                    self.progress.advance(len)?;
+                     break self.in_buffer.split_to(len);
+                 }
+             }
+@@ -225,6 +239,7 @@
+             }
+         }
+ 
++        self.progress.finish()?;
+         let frame = Frame::from_payload(header, payload.freeze());
+         trace!("WebSocket protocol event.");
+         Ok(Some(frame))
+@@ -237,6 +252,9 @@
+         self.in_buffer.resize(self.in_buffer.capacity().min(len + self.in_buf_max_read), 0);
+         let size = stream.read(&mut self.in_buffer[len..]);
+         self.in_buffer.truncate(len + size.as_ref().copied().unwrap_or(0));
++        if let Ok(received) = size {
++            self.progress.receive(received)?;
++        }
+         size
+     }
+ 
+--- /dev/null
++++ hermes-progress-2/src/protocol/progress.rs
+@@ -0,0 +1,97 @@
++//! Numeric observations only; no frame syntax or payload parsing.
++use std::io;
++
++/// Read-only parser progress in WebSocket wire bytes (HTTP headers excluded).
++/// Buffered tail may contain complete frames; it is not necessarily stalled input.
++/// Use only after a successful read or WouldBlock, not after other protocol errors.
++#[derive(Debug, Clone, Copy, PartialEq, Eq)]
++pub struct InputProgress {
++    /// First byte still buffered, after any parsed header has been consumed.
++    pub buffered_wire_start: u64,
++    /// Exclusive end of all bytes acquired, including preserved handshake tail.
++    pub buffered_wire_end: u64,
++    /// Start of the parser's current frame, including a partial header.
++    /// Unparsed coalesced tail is represented by the buffered range instead.
++    pub pending_frame_start: Option<u64>,
++    /// First data frame of the current fragmented message; controls do not change it.
++    pub fragmented_data_start: Option<u64>,
++    /// Fully decoded frames, including control frames (not application acceptance).
++    pub completed_frame_count: u64,
++    /// Completed data frames of the current fragmented message, excluding controls.
++    pub fragmented_data_frame_count: u64,
++}
++
++#[derive(Debug, Default)]
++pub(super) struct FrameProgress {
++    pub(super) received: u64,
++    pub(super) consumed: u64,
++    pub(super) current_start: Option<u64>,
++    pub(super) last_start: Option<u64>,
++    pub(super) completed: u64,
++    pub(super) failed: bool,
++}
++
++pub(super) fn progress_error() -> io::Error {
++    io::Error::other("WebSocket input progress exhausted")
++}
++
++impl FrameProgress {
++    pub(super) fn check(&self) -> io::Result<()> {
++        if self.failed {
++            Err(progress_error())
++        } else {
++            Ok(())
++        }
++    }
++    pub(super) fn fail(&mut self) -> io::Error {
++        self.failed = true;
++        progress_error()
++    }
++    pub(super) fn receive(&mut self, size: usize) -> io::Result<()> {
++        self.check()?;
++        let size = u64::try_from(size).map_err(|_| self.fail())?;
++        self.received = self.received.checked_add(size).ok_or_else(|| self.fail())?;
++        Ok(())
++    }
++    pub(super) fn advance(&mut self, size: usize) -> io::Result<()> {
++        self.check()?;
++        let size = u64::try_from(size).map_err(|_| self.fail())?;
++        let next = self.consumed.checked_add(size).ok_or_else(|| self.fail())?;
++        if next > self.received {
++            return Err(self.fail());
++        }
++        self.consumed = next;
++        Ok(())
++    }
++    pub(super) fn begin(&mut self) -> io::Result<()> {
++        self.check()?;
++        if self.current_start.is_none() && self.consumed < self.received {
++            self.current_start = Some(self.consumed);
++        }
++        Ok(())
++    }
++    pub(super) fn increment(&mut self, counter: u64) -> io::Result<u64> {
++        self.check()?;
++        counter.checked_add(1).ok_or_else(|| self.fail())
++    }
++    pub(super) fn finish(&mut self) -> io::Result<()> {
++        self.check()?;
++        let count = self.increment(self.completed)?;
++        let start = self.current_start.ok_or_else(|| self.fail())?;
++        self.completed = count;
++        self.last_start = Some(start);
++        self.current_start = None;
++        Ok(())
++    }
++    pub(super) fn snapshot(&self) -> io::Result<InputProgress> {
++        self.check()?;
++        Ok(InputProgress {
++            buffered_wire_start: self.consumed,
++            buffered_wire_end: self.received,
++            pending_frame_start: self.current_start,
++            fragmented_data_start: None,
++            completed_frame_count: self.completed,
++            fragmented_data_frame_count: 0,
++        })
++    }
++}

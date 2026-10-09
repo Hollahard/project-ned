@@ -3,6 +3,8 @@
 pub mod frame;
 
 mod message;
+mod progress;
+pub use progress::InputProgress;
 
 pub use self::{frame::CloseFrame, message::Message};
 
@@ -204,6 +206,12 @@ impl<Stream> WebSocket<Stream> {
         self.socket
     }
 
+    /// Numeric receive progress. Never exposes payloads, credentials or timestamps.
+    /// Valid after successful reads or WouldBlock; other errors remain fatal.
+    pub fn input_progress(&self) -> Result<InputProgress> {
+        self.context.input_progress()
+    }
+
     /// Returns a shared reference to the inner stream.
     pub fn get_ref(&self) -> &Stream {
         &self.socket
@@ -368,6 +376,8 @@ pub struct WebSocketContext {
     state: WebSocketState,
     /// Receive: an incomplete message being processed.
     incomplete: Option<IncompleteMessage>,
+    fragmented_data_start: Option<u64>,
+    fragmented_data_frame_count: u64,
     /// Send in addition to regular messages E.g. "pong" or "close".
     additional_send: Option<Frame>,
     /// True indicates there is an additional message (like a pong)
@@ -405,10 +415,20 @@ impl WebSocketContext {
             frame,
             state: WebSocketState::Active,
             incomplete: None,
+            fragmented_data_start: None,
+            fragmented_data_frame_count: 0,
             additional_send: None,
             unflushed_additional: false,
             config,
         }
+    }
+
+    /// Numeric receive progress; partial data survives interleaved control frames.
+    pub fn input_progress(&self) -> Result<InputProgress> {
+        let mut result = self.frame.input_progress()?;
+        result.fragmented_data_start = self.fragmented_data_start;
+        result.fragmented_data_frame_count = self.fragmented_data_frame_count;
+        Ok(result)
     }
 
     /// Change the configuration.
@@ -450,6 +470,7 @@ impl WebSocketContext {
     where
         Stream: Read + Write,
     {
+        self.frame.progress.check()?;
         // Do not read from already closed connections.
         self.state.check_not_terminated()?;
 
@@ -684,6 +705,8 @@ impl WebSocketContext {
                     (OpData::Continue, None) => Err(ProtocolError::UnexpectedContinueFrame),
                     (OpData::Continue, Some(incomplete)) => {
                         incomplete.extend(frame.into_payload(), self.config.max_message_size)?;
+                        self.fragmented_data_frame_count = self.frame.progress
+                            .increment(self.fragmented_data_frame_count)?;
                         Ok(None)
                     }
                     (_, Some(_)) => Err(ProtocolError::ExpectedFragment(data)),
@@ -693,7 +716,12 @@ impl WebSocketContext {
                 }?;
 
                 match (payload, fin) {
-                    (None, true) => Ok(Some(self.incomplete.take().unwrap().complete()?)),
+                    (None, true) => {
+                        let message = self.incomplete.take().unwrap().complete()?;
+                        self.fragmented_data_start = None;
+                        self.fragmented_data_frame_count = 0;
+                        Ok(Some(message))
+                    },
                     (None, false) => Ok(None),
                     (Some((payload, t)), true) => {
                         check_max_size(payload.len(), self.config.max_message_size)?;
@@ -706,6 +734,8 @@ impl WebSocketContext {
                         let mut incomplete = IncompleteMessage::new(t);
                         incomplete.extend(payload, self.config.max_message_size)?;
                         self.incomplete = Some(incomplete);
+                        self.fragmented_data_start = self.frame.progress.last_start;
+                        self.fragmented_data_frame_count = 1;
                         Ok(None)
                     }
                 }
