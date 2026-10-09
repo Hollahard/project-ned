@@ -13,6 +13,7 @@ from friday.memory.vector import (
     VectorMemory,
     chunk_text,
 )
+from friday.memory.session_memory import MutationRecord, SessionMemoryManager
 from friday.memory.working import WorkingMemory
 
 __all__ = [
@@ -28,6 +29,8 @@ __all__ = [
     "ReconciliationEngine",
     "SemanticMemory",
     "SemanticMemoryEntry",
+    "SessionMemoryManager",
+    "MutationRecord",
     "VectorMemory",
     "WorkingMemory",
     "chunk_text",

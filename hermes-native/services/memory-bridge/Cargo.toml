@@ -1,0 +1,15 @@
+[package]
+name = "hermes-memory-bridge"
+version = "0.1.0"
+edition = "2021"
+rust-version = "1.82"
+publish = false
+description = "Hermes native memory bridge, mutation routing, stale-result fencing, and recall engine"
+
+[lib]
+name = "hermes_memory_bridge"
+path = "src/lib.rs"
+
+[dependencies]
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
