@@ -26,6 +26,7 @@ apps/desktop/dist-ssr/
 *.local
 
 # Rust & Cargo
+target/
 apps/desktop/src-tauri/target/
 Cargo.lock
 
