@@ -1,0 +1,78 @@
+{
+  "compilerOptions": {
+    "target": "ES2023",
+    "lib": [
+      "ES2023",
+      "DOM",
+      "DOM.Iterable"
+    ],
+    "module": "ESNext",
+    "moduleResolution": "Bundler",
+    "strict": true,
+    "noEmit": true,
+    "skipLibCheck": true,
+    "allowImportingTsExtensions": true,
+    "resolveJsonModule": true,
+    "esModuleInterop": true,
+    "jsx": "react-jsx",
+    "types": [
+      "node"
+    ],
+    "typeRoots": [
+      "G:\\Personal_Assistant\\hermes\\hermes-agent\\apps\\desktop\\node_modules\\@types",
+      "G:\\Personal_Assistant\\hermes\\hermes-agent\\node_modules\\@types"
+    ],
+    "paths": {
+      "@/*": [
+        "G:\\Personal_Assistant\\hermes\\hermes-agent\\apps\\desktop\\src\\*"
+      ],
+      "@hermes/plugin-sdk": [
+        "G:\\Personal_Assistant\\hermes\\hermes-agent\\apps\\desktop\\src\\sdk\\index.ts"
+      ],
+      "@hermes/shared/ansi": [
+        "G:\\Personal_Assistant\\hermes\\hermes-agent\\apps\\shared\\src\\ansi.ts"
+      ],
+      "@hermes/shared/billing": [
+        "G:\\Personal_Assistant\\hermes\\hermes-agent\\apps\\shared\\src\\billing-types.ts"
+      ],
+      "@hermes/shared/color": [
+        "G:\\Personal_Assistant\\hermes\\hermes-agent\\apps\\shared\\src\\color.ts"
+      ],
+      "@hermes/shared/i18n": [
+        "G:\\Personal_Assistant\\hermes\\hermes-agent\\apps\\shared\\src\\i18n.ts"
+      ],
+      "@hermes/shared/translucency": [
+        "G:\\Personal_Assistant\\hermes\\hermes-agent\\apps\\shared\\src\\translucency.ts"
+      ],
+      "@hermes/shared": [
+        "G:\\Personal_Assistant\\hermes\\hermes-agent\\apps\\shared\\src\\index.ts"
+      ],
+      "@hermes/upstream-global": [
+        "G:\\Personal_Assistant\\hermes\\hermes-agent\\apps\\desktop\\src\\global.d.ts"
+      ],
+      "@hermes-native/plugin-context": [
+        "G:\\Personal_Assistant\\hermes\\hermes-agent\\apps\\desktop\\src\\contrib\\plugin.ts"
+      ],
+      "@hermes-native/plugin-inventory": [
+        "G:\\Personal_Assistant\\hermes\\hermes-agent\\apps\\desktop\\src\\contrib\\plugins-store.ts"
+      ],
+      "react": [
+        "G:\\Personal_Assistant\\hermes\\hermes-agent\\apps\\desktop\\node_modules\\@types\\react\\index.d.ts"
+      ],
+      "react/jsx-runtime": [
+        "G:\\Personal_Assistant\\hermes\\hermes-agent\\apps\\desktop\\node_modules\\@types\\react\\jsx-runtime.d.ts"
+      ],
+      "@hermes/shared/*": [
+        "G:\\Personal_Assistant\\hermes\\hermes-agent\\apps\\shared\\src\\*"
+      ]
+    }
+  },
+  "files": [
+    "C:\\Users\\Ghols\\.codex\\worktrees\\hermes-compat\\Project_Ned\\hermes-native\\apps\\desktop-ui\\src\\host-adapter.ts",
+    "C:\\Users\\Ghols\\.codex\\worktrees\\hermes-compat\\Project_Ned\\hermes-native\\apps\\desktop-ui\\src\\bootstrap.ts",
+    "C:\\Users\\Ghols\\.codex\\worktrees\\hermes-compat\\Project_Ned\\hermes-native\\apps\\desktop-ui\\src\\entry.ts",
+    "C:\\Users\\Ghols\\.codex\\worktrees\\hermes-compat\\Project_Ned\\hermes-native\\apps\\desktop-ui\\src\\virtual.d.ts",
+    "C:\\Users\\Ghols\\.codex\\worktrees\\hermes-compat\\Project_Ned\\hermes-native\\apps\\desktop-ui\\src\\native-gateway-socket.ts",
+    "G:\\Personal_Assistant\\hermes\\hermes-agent\\apps\\desktop\\src\\vite-env.d.ts"
+  ]
+}

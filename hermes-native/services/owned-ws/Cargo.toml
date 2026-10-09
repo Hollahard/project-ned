@@ -1,9 +1,13 @@
 [package]
-name="hermes-owned-ws"
+name="owned-ws"
 version="0.1.0"
 edition="2021"
 rust-version="1.85"
 publish=false
+
+[lib]
+name="hermes_owned_ws"
+path="src/lib.rs"
 
 [dependencies]
 hermes-resource-host={path="../resource-host"}

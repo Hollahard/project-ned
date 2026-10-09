@@ -1,4 +1,3 @@
-#Requires -Version 7.0
 # CPU-only foundation checks. -NativeFixtures includes owned harmless processes,
 # filesystem watches and the retained settings UI integration (npm test:integration).
 # Desktop-shell asset packaging, full Tauri builds and its bounded native UI modes
@@ -7,15 +6,31 @@
 # Model-catalog checks use only synthetic metadata/header fixtures; real user
 # model directories are never inspected by this foundation runner.
 param(
-    [Parameter(Mandatory = $true)][string]$UpstreamRoot,
-    [Parameter(Mandatory = $true)][string]$TabbySource,
+    [Parameter(Mandatory = $false)][string]$UpstreamRoot = $(if ($env:HERMES_UPSTREAM_ROOT) { $env:HERMES_UPSTREAM_ROOT } else { 'G:\Personal_Assistant\hermes\hermes-agent' }),
+    [Parameter(Mandatory = $false)][string]$TabbySource = $(if ($env:HERMES_TABBY_SOURCE) { $env:HERMES_TABBY_SOURCE } else { 'G:\Project_Ned\runtime\tabbyAPI' }),
     [switch]$BuildRenderer,
-    [switch]$NativeFixtures
+    [switch]$NativeFixtures = $true
 )
+
+if ($PSVersionTable.PSVersion.Major -lt 7) {
+    if (Get-Command pwsh.exe -ErrorAction SilentlyContinue) {
+        & pwsh.exe -NoProfile -ExecutionPolicy Bypass -File $MyInvocation.MyCommand.Path -UpstreamRoot $UpstreamRoot -TabbySource $TabbySource @PSBoundParameters
+        exit $LASTEXITCODE
+    }
+}
 
 $ErrorActionPreference = 'Stop'
 Set-StrictMode -Version Latest
-if (-not $env:VIRTUAL_ENV) { throw 'Activate the project Python virtual environment before automation.' }
+if (-not $env:VIRTUAL_ENV) {
+    $worktreeRoot = Split-Path -Parent (Split-Path -Parent $PSScriptRoot)
+    $possibleVenv = Join-Path $worktreeRoot '.venv'
+    if (Test-Path $possibleVenv) {
+        $env:VIRTUAL_ENV = (Resolve-Path $possibleVenv).Path
+        $env:PATH = "$env:VIRTUAL_ENV\Scripts;$env:PATH"
+    } else {
+        throw 'Activate the project Python virtual environment before automation.'
+    }
+}
 $python = (Get-Command python -ErrorAction Stop).Source
 & $python -c 'import sys; raise SystemExit(0 if sys.prefix != sys.base_prefix else 1)'
 if ($LASTEXITCODE -ne 0) { throw 'The active Python interpreter is not a virtual environment.' }
