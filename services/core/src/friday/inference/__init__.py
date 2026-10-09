@@ -32,6 +32,20 @@ from friday.inference.profiler import (
     ArtifactFingerprint,
     compute_artifact_fingerprint,
 )
+from friday.inference.gaming_mode import (
+    GamingModeController,
+    GamingModeStatus,
+)
+from friday.inference.gpu_authority import (
+    GpuAuthority,
+    GpuWorkerType,
+    GamingModeState,
+    GatewayBusyGamingModeError,
+    GpuLease,
+    GamingModeReport,
+    GATEWAY_BUSY_GAMING_MODE,
+    RTX_5090_TOTAL_VRAM_BYTES,
+)
 
 __all__ = [
     "ChatRequest",
@@ -62,4 +76,13 @@ __all__ = [
     "BenchmarkTelemetry",
     "ArtifactFingerprint",
     "compute_artifact_fingerprint",
+    "GpuAuthority",
+    "GpuWorkerType",
+    "GamingModeState",
+    "GatewayBusyGamingModeError",
+    "GpuLease",
+    "GamingModeReport",
+    "GATEWAY_BUSY_GAMING_MODE",
+    "RTX_5090_TOTAL_VRAM_BYTES",
 ]
+

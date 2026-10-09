@@ -1,0 +1,15 @@
+[package]
+name = "hermes-gpu-coordinator"
+version = "0.1.0"
+edition = "2021"
+rust-version = "1.82"
+publish = false
+description = "Hermes native GPU resource authority, Gaming Mode admission barrier, and cancellation drain engine"
+
+[lib]
+name = "hermes_gpu_coordinator"
+path = "src/lib.rs"
+
+[dependencies]
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
