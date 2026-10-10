@@ -37,5 +37,5 @@ name = "friday_supervisor"
 path = "src/lib.rs"
 
 [[bin]]
-name = "friday"
+name = "hermes-desktop"
 path = "src/main.rs"

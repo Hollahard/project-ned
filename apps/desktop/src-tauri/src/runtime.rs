@@ -42,12 +42,54 @@ pub struct SupervisorConfig {
 
 impl Default for SupervisorConfig {
     fn default() -> Self {
+        let base_dir = std::env::current_dir().unwrap_or_else(|_| PathBuf::from("."));
+        let (root, py) = if base_dir.join("services/core").exists() {
+            let py = if base_dir.join(".venv/Scripts/python.exe").exists() {
+                base_dir.join(".venv/Scripts/python.exe")
+            } else {
+                PathBuf::from(r"G:\Project_Ned\.venv\Scripts\python.exe")
+            };
+            (base_dir, py)
+        } else if let Some(parent) = base_dir.parent() {
+            if parent.join("services/core").exists() {
+                let py = if parent.join(".venv/Scripts/python.exe").exists() {
+                    parent.join(".venv/Scripts/python.exe")
+                } else {
+                    PathBuf::from(r"G:\Project_Ned\.venv\Scripts\python.exe")
+                };
+                (parent.to_path_buf(), py)
+            } else if let Some(grandparent) = parent.parent() {
+                if grandparent.join("services/core").exists() {
+                    let py = if grandparent.join(".venv/Scripts/python.exe").exists() {
+                        grandparent.join(".venv/Scripts/python.exe")
+                    } else {
+                        PathBuf::from(r"G:\Project_Ned\.venv\Scripts\python.exe")
+                    };
+                    (grandparent.to_path_buf(), py)
+                } else {
+                    (PathBuf::from(r"G:\Project_Ned"), PathBuf::from(r"G:\Project_Ned\.venv\Scripts\python.exe"))
+                }
+            } else {
+                (PathBuf::from(r"G:\Project_Ned"), PathBuf::from(r"G:\Project_Ned\.venv\Scripts\python.exe"))
+            }
+        } else {
+            (PathBuf::from(r"G:\Project_Ned"), PathBuf::from(r"G:\Project_Ned\.venv\Scripts\python.exe"))
+        };
+
+        let core_root = root.join("services/core");
+        let tabby_root = root.join("runtime/tabbyAPI");
+        let tabby_py = if tabby_root.join(".venv/Scripts/python.exe").exists() {
+            tabby_root.join(".venv/Scripts/python.exe")
+        } else {
+            PathBuf::from(r"G:\Project_Ned\runtime\tabbyAPI\.venv\Scripts\python.exe")
+        };
+
         Self {
-            core_root: PathBuf::from(r"G:\Project_Ned\services\core"),
-            core_python: PathBuf::from(r"G:\Project_Ned\.venv\Scripts\python.exe"),
-            core_port: 8000,
-            tabby_root: Some(PathBuf::from(r"G:\Project_Ned\runtime\tabbyAPI")),
-            tabby_python: Some(PathBuf::from(r"G:\Project_Ned\runtime\tabbyAPI\.venv\Scripts\python.exe")),
+            core_root,
+            core_python: py,
+            core_port: 8200,
+            tabby_root: Some(tabby_root),
+            tabby_python: Some(tabby_py),
             tabby_port: 5000,
             tabby_admin_key: "admin".to_string(),
             token_secret: Uuid::new_v4().to_string(),

@@ -56,14 +56,24 @@ pub fn run() {
         ])
         .build(tauri::generate_context!())
         .expect("error while building tauri application")
-        .run(move |_app_handle, event| {
-            if let tauri::RunEvent::ExitRequested { .. } = event {
-                info!("Exit requested. Stopping supervisor and terminating child processes...");
-                let rt = runtime.clone();
-                tauri::async_runtime::block_on(async move {
-                    let mut guard = rt.write().await;
-                    guard.stop().await;
-                });
+        .run(move |app_handle, event| {
+            match event {
+                tauri::RunEvent::ExitRequested { .. } | tauri::RunEvent::Exit => {
+                    info!("Exit requested. Stopping supervisor and terminating child processes...");
+                    let rt = runtime.clone();
+                    tauri::async_runtime::block_on(async move {
+                        let mut guard = rt.write().await;
+                        guard.stop().await;
+                    });
+                }
+                tauri::RunEvent::WindowEvent {
+                    event: tauri::WindowEvent::CloseRequested { .. },
+                    ..
+                } => {
+                    info!("Window close requested. Exiting application and stopping supervisor...");
+                    app_handle.exit(0);
+                }
+                _ => {}
             }
         });
 }
