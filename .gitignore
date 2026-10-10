@@ -23,10 +23,12 @@ pytest_run.txt
 node_modules/
 apps/desktop/dist/
 apps/desktop/dist-ssr/
+hermes-native/src-tauri
 *.local
 
 # Rust & Cargo
 target/
+hermes-native/target/
 apps/desktop/src-tauri/target/
 Cargo.lock
 

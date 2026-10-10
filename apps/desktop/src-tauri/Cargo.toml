@@ -1,7 +1,7 @@
 [package]
 name = "friday-supervisor"
-version = "0.1.0"
-description = "Project Friday Desktop Supervisor & Process Guardian"
+version = "1.1.0"
+description = "Hermes Native Desktop Supervisor & Process Guardian"
 edition = "2021"
 
 [build-dependencies]
