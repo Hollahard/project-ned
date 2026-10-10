@@ -64,6 +64,53 @@ async def test_session_lifecycle(test_app):
 
 
 @pytest.mark.asyncio
+async def test_create_session_empty_payload_and_defaults(test_app):
+    transport = ASGITransport(app=test_app)
+    async with AsyncClient(transport=transport, base_url="http://127.0.0.1:8200") as client:
+        # 1. Empty JSON object {}
+        resp1 = await client.post("/api/v1/sessions", json={})
+        assert resp1.status_code == 201
+        data1 = resp1.json()
+        assert data1["title"] == "New Session"
+        assert data1["working_directory"] == "."
+        assert data1["model_profile"] == "Mistral-Small-3.1-24B-Instruct-2503-exl3"
+        assert data1["message_count"] == 0
+
+        # 2. Null fields from Tauri proxy ("working_directory": null, "title": null)
+        resp2 = await client.post(
+            "/api/v1/sessions",
+            json={"title": None, "working_directory": None},
+        )
+        assert resp2.status_code == 201
+        data2 = resp2.json()
+        assert data2["title"] == "New Session"
+        assert data2["working_directory"] == "."
+
+        # 3. Model and metadata passed by frontend
+        resp3 = await client.post(
+            "/api/v1/sessions",
+            json={
+                "title": "Configured Model Session",
+                "model": "Mistral-Small-3.1-24B-Instruct-2503-exl3",
+                "metadata": {"origin": "desktop_ui"},
+            },
+        )
+        assert resp3.status_code == 201
+        data3 = resp3.json()
+        assert data3["title"] == "Configured Model Session"
+        assert data3["model_profile"] == "Mistral-Small-3.1-24B-Instruct-2503-exl3"
+
+        # 4. Unbound session creation
+        resp4 = await client.post(
+            "/api/v1/sessions",
+            json={"title": "Unbound Session", "model_profile": "unbound"},
+        )
+        assert resp4.status_code == 201
+        data4 = resp4.json()
+        assert data4["model_profile"] == "unbound"
+
+
+@pytest.mark.asyncio
 async def test_non_loopback_host_rejection(test_app):
     transport = ASGITransport(app=test_app)
     # Using an external Host header (e.g., example.com) must be rejected

@@ -82,10 +82,11 @@ class AIAgentConversationEngine:
 
     def create_session(
         self,
-        profile_id: str,
+        profile_id: Optional[str] = None,
         idempotency_key: Optional[str] = None,
         title: Optional[str] = None,
     ) -> Dict[str, Any]:
+        profile = profile_id or "Mistral-Small-3.1-24B-Instruct-2503-exl3"
         if idempotency_key and idempotency_key in self.idempotency_map:
             sid = self.idempotency_map[idempotency_key]
             return {
@@ -96,11 +97,11 @@ class AIAgentConversationEngine:
             }
 
         self._next_id += 1
-        sid = f"sess-{profile_id}-{self._next_id}"
+        sid = f"sess-{profile}-{self._next_id}"
         session = {
             "session_id": sid,
-            "profile_id": profile_id,
-            "title": title or "Untitled Session",
+            "profile_id": profile,
+            "title": title or "New Session",
             "state": "idle",
             "submit_status": "idle",
             "history": [],
@@ -115,7 +116,7 @@ class AIAgentConversationEngine:
         return {
             "session_id": sid,
             "reused": False,
-            "profile_id": profile_id,
+            "profile_id": profile,
             "message_count": 0,
         }
 
@@ -333,6 +334,22 @@ async def test_session_create_idempotency_and_initial_state(
     res3 = engine.create_session("profile-1", idempotency_key="key-xyz", title="Other Chat")
     assert res3["session_id"] != sid1
     assert not res3["reused"]
+
+
+@pytest.mark.asyncio
+async def test_session_create_unbound_and_default_model_fallbacks(
+    engine: AIAgentConversationEngine,
+) -> None:
+    # 1. Create with empty arguments defaults to primary model and New Session
+    default_sess = engine.create_session()
+    assert default_sess["profile_id"] == "Mistral-Small-3.1-24B-Instruct-2503-exl3"
+    assert default_sess["message_count"] == 0
+    assert "Mistral-Small-3.1-24B-Instruct-2503-exl3" in default_sess["session_id"]
+
+    # 2. Create in unbound state allows explicit unbound profile
+    unbound_sess = engine.create_session(profile_id="unbound", title="Unbound Exploration")
+    assert unbound_sess["profile_id"] == "unbound"
+    assert "sess-unbound" in unbound_sess["session_id"]
 
 
 @pytest.mark.asyncio

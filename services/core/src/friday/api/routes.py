@@ -1,8 +1,8 @@
 """REST routes for Friday Core."""
 
 import json
-from typing import Any, Dict, List
-from fastapi import APIRouter, HTTPException, Request, status
+from typing import Any, Dict, List, Optional
+from fastapi import APIRouter, Body, HTTPException, Request, status
 from pydantic import BaseModel
 
 from friday.sessions.manager import Session
@@ -13,11 +13,17 @@ from friday.inference.gaming_mode import GamingModeStatus
 
 router = APIRouter(prefix="/api/v1")
 
+DEFAULT_PRIMARY_MODEL = "Mistral-Small-3.1-24B-Instruct-2503-exl3"
+
 
 class CreateSessionPayload(BaseModel):
-    title: str = "New Session"
-    working_directory: str = "."
-    model_profile: str = "default"
+    model_config = {"extra": "ignore"}
+
+    title: Optional[str] = "New Session"
+    working_directory: Optional[str] = "."
+    model_profile: Optional[str] = None
+    model: Optional[str] = None
+    metadata: Optional[Dict[str, Any]] = None
 
 
 class TurnPayload(BaseModel):
@@ -37,12 +43,23 @@ async def list_sessions(request: Request) -> List[Session]:
 
 
 @router.post("/sessions", response_model=Session, status_code=status.HTTP_201_CREATED)
-async def create_session(request: Request, payload: CreateSessionPayload) -> Session:
+async def create_session(
+    request: Request,
+    payload: Optional[CreateSessionPayload] = Body(default=None),
+) -> Session:
     mgr = request.app.state.session_manager
+    p = payload or CreateSessionPayload()
+    title = p.title if (p.title is not None and p.title != "") else "New Session"
+    working_directory = (
+        p.working_directory
+        if (p.working_directory is not None and p.working_directory != "")
+        else "."
+    )
+    model_profile = p.model or p.model_profile or DEFAULT_PRIMARY_MODEL
     return await mgr.create_session(
-        title=payload.title,
-        working_directory=payload.working_directory,
-        model_profile=payload.model_profile,
+        title=title,
+        working_directory=working_directory,
+        model_profile=model_profile,
     )
 
 

@@ -21,6 +21,7 @@ class Session(BaseModel):
     updated_at: float
     working_directory: str
     model_profile: str
+    message_count: int = 0
 
 
 class SessionManager:

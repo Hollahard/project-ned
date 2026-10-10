@@ -125,12 +125,67 @@ pub struct RuntimeStatus {
     pub gaming_mode: Option<GamingModeStatus>,
 }
 
+fn deserialize_flexible_string<'de, D>(deserializer: D) -> Result<String, D::Error>
+where
+    D: serde::Deserializer<'de>,
+{
+    struct StringVisitor;
+
+    impl<'de> serde::de::Visitor<'de> for StringVisitor {
+        type Value = String;
+
+        fn expecting(&self, formatter: &mut std::fmt::Formatter) -> std::fmt::Result {
+            formatter.write_str("string or number")
+        }
+
+        fn visit_str<E>(self, value: &str) -> Result<String, E>
+        where
+            E: serde::de::Error,
+        {
+            Ok(value.to_string())
+        }
+
+        fn visit_string<E>(self, value: String) -> Result<String, E>
+        where
+            E: serde::de::Error,
+        {
+            Ok(value)
+        }
+
+        fn visit_f64<E>(self, value: f64) -> Result<String, E>
+        where
+            E: serde::de::Error,
+        {
+            Ok(value.to_string())
+        }
+
+        fn visit_u64<E>(self, value: u64) -> Result<String, E>
+        where
+            E: serde::de::Error,
+        {
+            Ok(value.to_string())
+        }
+
+        fn visit_i64<E>(self, value: i64) -> Result<String, E>
+        where
+            E: serde::de::Error,
+        {
+            Ok(value.to_string())
+        }
+    }
+
+    deserializer.deserialize_any(StringVisitor)
+}
+
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct SessionSummary {
     pub id: String,
     pub title: String,
+    #[serde(default, deserialize_with = "deserialize_flexible_string")]
     pub created_at: String,
+    #[serde(default, deserialize_with = "deserialize_flexible_string")]
     pub updated_at: String,
+    #[serde(default)]
     pub message_count: u64,
 }
 
@@ -307,7 +362,7 @@ impl CoreProxy {
         let url = format!("{}/api/v1/sessions", self.core_base_url);
         let body = serde_json::json!({
             "title": title.unwrap_or("New Session"),
-            "working_directory": working_directory
+            "working_directory": working_directory.unwrap_or(".")
         });
 
         let res = self
